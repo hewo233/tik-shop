@@ -1,12 +1,10 @@
 # 根目录 Makefile
 
 # 定义所有的服务目录和对应的 IDL 文件
-SERVICES := user-service product-service order-service
+SERVICES := user-service
 
 # 定义服务和 IDL 文件的映射
-SERVICE_IDL_MAP := user-service=user \
-                   product-service=product
-
+SERVICE_IDL_MAP := user-service=user
 .PHONY: init update clean
 
 # 初始化生成代码
