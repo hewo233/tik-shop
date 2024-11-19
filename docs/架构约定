@@ -3,3 +3,4 @@ idl: thrift文件，目前统一放一起
 rpc: rpc服务
 rpc/xx/kitex-gen: 生成的代码
 common: 公共通用代码
+route: 网关代码
