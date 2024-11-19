@@ -3,26 +3,32 @@
 # 服务名称
 SERVICE_NAME := user
 
+SERVICE_DIR := $(shell pwd)
+ROOT_DIR := $(SERVICE_DIR)/../..
+
 # IDL 文件路径（相对于服务目录）
-IDL_FILE := ../../idl/$(SERVICE_NAME).thrift
+IDL_FILE := $(ROOT_DIR)/idl/$(SERVICE_NAME).thrift
 
 # Go module 名称
-MODULE := github.com/hewo/tik-shop/rpc/$(SERVICE_NAME)-service
+MODULE := github.com/hewo/tik-shop/kitex_gen
 
 # Kitex 生成代码的输出目录
-GEN_DIR := ./kitex_gen
+GEN_DIR := tik-shop/kitex_gen
 
 # Kitex 生成代码的选项
-KITEX_OPTIONS := -module $(MODULE) -service $(SERVICE_NAME) -verbose
+MODULE_OPTIONS := -module $(MODULE)
+KITEX_OPTIONS := $(MODULE_OPTIONS) -service $(SERVICE_NAME) -use $(GEN_DIR) -verbose
 
 .PHONY: init update clean
 
 # 初始化生成代码（初次生成）
 init:
+	cd $(ROOT_DIR) && kitex $(MODULE_OPTIONS) $(IDL_FILE)
 	kitex $(KITEX_OPTIONS) $(IDL_FILE)
 
 # 更新生成代码（IDL 文件更新后）
 update:
+	cd $(ROOT_DIR) && kitex $(MODULE_OPTIONS) $(IDL_FILE)
 	kitex $(KITEX_OPTIONS) $(IDL_FILE)
 
 # 清理生成的代码

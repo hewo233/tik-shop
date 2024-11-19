@@ -1,4 +1,4 @@
-namespace go example.shop.base
+namespace go hewo.tikshop.base
 
 struct BaseResp {
     1: string code
