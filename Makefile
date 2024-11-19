@@ -1,10 +1,10 @@
 # 根目录 Makefile
 
 # 定义所有的服务目录和对应的 IDL 文件
-SERVICES := user-service
+SERVICES := user-service product-service order-service cart-service
 
 # 定义服务和 IDL 文件的映射
-SERVICE_IDL_MAP := user-service=user
+SERVICE_IDL_MAP := user-service=user product-service=product order-service=order cart-service=cart
 .PHONY: init update clean
 
 # 初始化生成代码
@@ -16,7 +16,7 @@ endif
 		for service in $(SERVICES); do \
 			idl_name=$$(echo $(SERVICE_IDL_MAP) | tr ' ' '\n' | grep $$service= | cut -d'=' -f2); \
 			echo "Generating code for $$service with IDL $$idl_name.thrift"; \
-			$(MAKE) -C $$service init; \
+			$(MAKE) -C ./rpc/$$service init; \
 		done; \
 	else \
 		found=0; \
@@ -45,7 +45,7 @@ endif
 		for service in $(SERVICES); do \
 			idl_name=$$(echo $(SERVICE_IDL_MAP) | tr ' ' '\n' | grep $$service= | cut -d'=' -f2); \
 			echo "Updating code for $$service with IDL $$idl_name.thrift"; \
-			$(MAKE) -C $$service update; \
+			$(MAKE) -C ./rpc/$$service update; \
 		done; \
 	else \
 		found=0; \
