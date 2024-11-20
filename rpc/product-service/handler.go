@@ -69,7 +69,7 @@ func (s *ProductServiceImpl) UpdateProduct(ctx context.Context, request *product
 }
 
 // DeleteProduct implements the ProductServiceImpl interface.
-func (s *ProductServiceImpl) DeleteProduct(ctx context.Context, request *product.DeleteProductRequset) (resp *product.DeleteProductResponse, err error) {
+func (s *ProductServiceImpl) DeleteProduct(ctx context.Context, request *product.DeleteProductRequest) (resp *product.DeleteProductResponse, err error) {
 	// TODO: Your code here...
 	resp = &product.DeleteProductResponse{
 		Message: "Product deleted successfully",

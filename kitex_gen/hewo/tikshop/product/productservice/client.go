@@ -15,7 +15,7 @@ type Client interface {
 	GetProductById(ctx context.Context, request *product.GetProductByIdRequest, callOptions ...callopt.Option) (r *product.GetProductByIdResponse, err error)
 	CreateProduct(ctx context.Context, request *product.CreateProductRequest, callOptions ...callopt.Option) (r *product.CreateProductResponse, err error)
 	UpdateProduct(ctx context.Context, request *product.UpdateProductRequest, callOptions ...callopt.Option) (r *product.UpdateProductResponse, err error)
-	DeleteProduct(ctx context.Context, request *product.DeleteProductRequset, callOptions ...callopt.Option) (r *product.DeleteProductResponse, err error)
+	DeleteProduct(ctx context.Context, request *product.DeleteProductRequest, callOptions ...callopt.Option) (r *product.DeleteProductResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -67,7 +67,7 @@ func (p *kProductServiceClient) UpdateProduct(ctx context.Context, request *prod
 	return p.kClient.UpdateProduct(ctx, request)
 }
 
-func (p *kProductServiceClient) DeleteProduct(ctx context.Context, request *product.DeleteProductRequset, callOptions ...callopt.Option) (r *product.DeleteProductResponse, err error) {
+func (p *kProductServiceClient) DeleteProduct(ctx context.Context, request *product.DeleteProductRequest, callOptions ...callopt.Option) (r *product.DeleteProductResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DeleteProduct(ctx, request)
 }

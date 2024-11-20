@@ -301,7 +301,7 @@ func (p *kClient) UpdateProduct(ctx context.Context, request *product.UpdateProd
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) DeleteProduct(ctx context.Context, request *product.DeleteProductRequset) (r *product.DeleteProductResponse, err error) {
+func (p *kClient) DeleteProduct(ctx context.Context, request *product.DeleteProductRequest) (r *product.DeleteProductResponse, err error) {
 	var _args product.ProductServiceDeleteProductArgs
 	_args.Request = request
 	var _result product.ProductServiceDeleteProductResult

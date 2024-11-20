@@ -57,7 +57,7 @@ struct UpdateProductResponse {
 }
 
 // 商品删除响应结构
-struct DeleteProductRequset {
+struct DeleteProductRequest {
     1: i64 id;
 }
 
@@ -80,5 +80,5 @@ service ProductService {
     UpdateProductResponse updateProduct(1: UpdateProductRequest request) throws (1: base.ErrorResponse error),
 
     // 删除商品（管理员权限）
-    DeleteProductResponse deleteProduct(1: DeleteProductRequset request) throws (1: base.ErrorResponse error)
+    DeleteProductResponse deleteProduct(1: DeleteProductRequest request) throws (1: base.ErrorResponse error)
 }

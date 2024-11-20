@@ -2355,29 +2355,29 @@ func (p *UpdateProductResponse) Field1DeepEqual(src string) bool {
 	return true
 }
 
-type DeleteProductRequset struct {
+type DeleteProductRequest struct {
 	Id int64 `thrift:"id,1" frugal:"1,default,i64" json:"id"`
 }
 
-func NewDeleteProductRequset() *DeleteProductRequset {
-	return &DeleteProductRequset{}
+func NewDeleteProductRequest() *DeleteProductRequest {
+	return &DeleteProductRequest{}
 }
 
-func (p *DeleteProductRequset) InitDefault() {
+func (p *DeleteProductRequest) InitDefault() {
 }
 
-func (p *DeleteProductRequset) GetId() (v int64) {
+func (p *DeleteProductRequest) GetId() (v int64) {
 	return p.Id
 }
-func (p *DeleteProductRequset) SetId(val int64) {
+func (p *DeleteProductRequest) SetId(val int64) {
 	p.Id = val
 }
 
-var fieldIDToName_DeleteProductRequset = map[int16]string{
+var fieldIDToName_DeleteProductRequest = map[int16]string{
 	1: "id",
 }
 
-func (p *DeleteProductRequset) Read(iprot thrift.TProtocol) (err error) {
+func (p *DeleteProductRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -2423,7 +2423,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DeleteProductRequset[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DeleteProductRequest[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -2433,7 +2433,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *DeleteProductRequset) ReadField1(iprot thrift.TProtocol) error {
+func (p *DeleteProductRequest) ReadField1(iprot thrift.TProtocol) error {
 
 	var _field int64
 	if v, err := iprot.ReadI64(); err != nil {
@@ -2445,10 +2445,10 @@ func (p *DeleteProductRequset) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DeleteProductRequset) Write(oprot thrift.TProtocol) (err error) {
+func (p *DeleteProductRequest) Write(oprot thrift.TProtocol) (err error) {
 
 	var fieldId int16
-	if err = oprot.WriteStructBegin("DeleteProductRequset"); err != nil {
+	if err = oprot.WriteStructBegin("DeleteProductRequest"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -2474,7 +2474,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DeleteProductRequset) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *DeleteProductRequest) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -2491,15 +2491,15 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DeleteProductRequset) String() string {
+func (p *DeleteProductRequest) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DeleteProductRequset(%+v)", *p)
+	return fmt.Sprintf("DeleteProductRequest(%+v)", *p)
 
 }
 
-func (p *DeleteProductRequset) DeepEqual(ano *DeleteProductRequset) bool {
+func (p *DeleteProductRequest) DeepEqual(ano *DeleteProductRequest) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -2511,7 +2511,7 @@ func (p *DeleteProductRequset) DeepEqual(ano *DeleteProductRequset) bool {
 	return true
 }
 
-func (p *DeleteProductRequset) Field1DeepEqual(src int64) bool {
+func (p *DeleteProductRequest) Field1DeepEqual(src int64) bool {
 
 	if p.Id != src {
 		return false
@@ -2692,7 +2692,7 @@ type ProductService interface {
 
 	UpdateProduct(ctx context.Context, request *UpdateProductRequest) (r *UpdateProductResponse, err error)
 
-	DeleteProduct(ctx context.Context, request *DeleteProductRequset) (r *DeleteProductResponse, err error)
+	DeleteProduct(ctx context.Context, request *DeleteProductRequest) (r *DeleteProductResponse, err error)
 }
 
 type ProductServiceGetProductsArgs struct {
@@ -4332,7 +4332,7 @@ func (p *ProductServiceUpdateProductResult) Field1DeepEqual(src *base.ErrorRespo
 }
 
 type ProductServiceDeleteProductArgs struct {
-	Request *DeleteProductRequset `thrift:"request,1" frugal:"1,default,DeleteProductRequset" json:"request"`
+	Request *DeleteProductRequest `thrift:"request,1" frugal:"1,default,DeleteProductRequest" json:"request"`
 }
 
 func NewProductServiceDeleteProductArgs() *ProductServiceDeleteProductArgs {
@@ -4342,15 +4342,15 @@ func NewProductServiceDeleteProductArgs() *ProductServiceDeleteProductArgs {
 func (p *ProductServiceDeleteProductArgs) InitDefault() {
 }
 
-var ProductServiceDeleteProductArgs_Request_DEFAULT *DeleteProductRequset
+var ProductServiceDeleteProductArgs_Request_DEFAULT *DeleteProductRequest
 
-func (p *ProductServiceDeleteProductArgs) GetRequest() (v *DeleteProductRequset) {
+func (p *ProductServiceDeleteProductArgs) GetRequest() (v *DeleteProductRequest) {
 	if !p.IsSetRequest() {
 		return ProductServiceDeleteProductArgs_Request_DEFAULT
 	}
 	return p.Request
 }
-func (p *ProductServiceDeleteProductArgs) SetRequest(val *DeleteProductRequset) {
+func (p *ProductServiceDeleteProductArgs) SetRequest(val *DeleteProductRequest) {
 	p.Request = val
 }
 
@@ -4419,7 +4419,7 @@ ReadStructEndError:
 }
 
 func (p *ProductServiceDeleteProductArgs) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewDeleteProductRequset()
+	_field := NewDeleteProductRequest()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -4493,7 +4493,7 @@ func (p *ProductServiceDeleteProductArgs) DeepEqual(ano *ProductServiceDeletePro
 	return true
 }
 
-func (p *ProductServiceDeleteProductArgs) Field1DeepEqual(src *DeleteProductRequset) bool {
+func (p *ProductServiceDeleteProductArgs) Field1DeepEqual(src *DeleteProductRequest) bool {
 
 	if !p.Request.DeepEqual(src) {
 		return false
