@@ -7,6 +7,7 @@ import (
 	"errors"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
+	base "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	order "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/order"
 )
 
@@ -120,7 +121,7 @@ func submitOrderHandler(ctx context.Context, handler interface{}, arg, result in
 	success, err := handler.(order.OrderService).SubmitOrder(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *order.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -144,7 +145,7 @@ func payOrderHandler(ctx context.Context, handler interface{}, arg, result inter
 	success, err := handler.(order.OrderService).PayOrder(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *order.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -168,7 +169,7 @@ func cancelOrderHandler(ctx context.Context, handler interface{}, arg, result in
 	success, err := handler.(order.OrderService).CancelOrder(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *order.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -192,7 +193,7 @@ func getOrdersHandler(ctx context.Context, handler interface{}, arg, result inte
 	success, err := handler.(order.OrderService).GetOrders(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *order.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -216,7 +217,7 @@ func getOrderByIdHandler(ctx context.Context, handler interface{}, arg, result i
 	success, err := handler.(order.OrderService).GetOrderById(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *order.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err

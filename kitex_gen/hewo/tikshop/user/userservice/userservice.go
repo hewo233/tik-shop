@@ -7,6 +7,7 @@ import (
 	"errors"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
+	base "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	user "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/user"
 )
 
@@ -127,7 +128,7 @@ func authHandler(ctx context.Context, handler interface{}, arg, result interface
 	success, err := handler.(user.UserService).Auth(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *user.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Err = v
 		default:
 			return err
@@ -151,7 +152,7 @@ func adminAuthHandler(ctx context.Context, handler interface{}, arg, result inte
 	success, err := handler.(user.UserService).AdminAuth(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *user.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Err = v
 		default:
 			return err
@@ -175,7 +176,7 @@ func getUserInfoHandler(ctx context.Context, handler interface{}, arg, result in
 	success, err := handler.(user.UserService).GetUserInfo(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *user.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Err = v
 		default:
 			return err
@@ -199,7 +200,7 @@ func updateUserHandler(ctx context.Context, handler interface{}, arg, result int
 	success, err := handler.(user.UserService).UpdateUser(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *user.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Err = v
 		default:
 			return err
@@ -223,7 +224,7 @@ func registerHandler(ctx context.Context, handler interface{}, arg, result inter
 	success, err := handler.(user.UserService).Register(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *user.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Err = v
 		default:
 			return err
@@ -247,7 +248,7 @@ func updatePasswordHandler(ctx context.Context, handler interface{}, arg, result
 	success, err := handler.(user.UserService).UpdatePassword(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *user.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Err = v
 		default:
 			return err

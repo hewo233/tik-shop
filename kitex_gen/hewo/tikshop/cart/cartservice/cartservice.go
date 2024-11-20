@@ -7,6 +7,7 @@ import (
 	"errors"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
+	base "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	cart "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/cart"
 )
 
@@ -120,7 +121,7 @@ func getCartHandler(ctx context.Context, handler interface{}, arg, result interf
 	success, err := handler.(cart.CartService).GetCart(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *cart.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -144,7 +145,7 @@ func addToCartHandler(ctx context.Context, handler interface{}, arg, result inte
 	success, err := handler.(cart.CartService).AddToCart(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *cart.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -168,7 +169,7 @@ func updateCartHandler(ctx context.Context, handler interface{}, arg, result int
 	success, err := handler.(cart.CartService).UpdateCart(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *cart.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -192,7 +193,7 @@ func removeFromCartHandler(ctx context.Context, handler interface{}, arg, result
 	success, err := handler.(cart.CartService).RemoveFromCart(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *cart.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -216,7 +217,7 @@ func clearCartHandler(ctx context.Context, handler interface{}, arg, result inte
 	success, err := handler.(cart.CartService).ClearCart(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *cart.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err

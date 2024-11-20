@@ -6,231 +6,9 @@ import (
 	"context"
 	"fmt"
 	thrift "github.com/cloudwego/kitex/pkg/protocol/bthrift/apache"
+	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	"strings"
 )
-
-type ErrorResponse struct {
-	Code    int64  `thrift:"code,1" frugal:"1,default,i64" json:"code"`
-	Message string `thrift:"message,2" frugal:"2,default,string" json:"message"`
-}
-
-func NewErrorResponse() *ErrorResponse {
-	return &ErrorResponse{}
-}
-
-func (p *ErrorResponse) InitDefault() {
-}
-
-func (p *ErrorResponse) GetCode() (v int64) {
-	return p.Code
-}
-
-func (p *ErrorResponse) GetMessage() (v string) {
-	return p.Message
-}
-func (p *ErrorResponse) SetCode(val int64) {
-	p.Code = val
-}
-func (p *ErrorResponse) SetMessage(val string) {
-	p.Message = val
-}
-
-var fieldIDToName_ErrorResponse = map[int16]string{
-	1: "code",
-	2: "message",
-}
-
-func (p *ErrorResponse) Read(iprot thrift.TProtocol) (err error) {
-
-	var fieldTypeId thrift.TType
-	var fieldId int16
-
-	if _, err = iprot.ReadStructBegin(); err != nil {
-		goto ReadStructBeginError
-	}
-
-	for {
-		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-
-		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 2:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField2(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		default:
-			if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		}
-		if err = iprot.ReadFieldEnd(); err != nil {
-			goto ReadFieldEndError
-		}
-	}
-	if err = iprot.ReadStructEnd(); err != nil {
-		goto ReadStructEndError
-	}
-
-	return nil
-ReadStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
-ReadFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ErrorResponse[fieldId]), err)
-SkipFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-
-ReadFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
-ReadStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-}
-
-func (p *ErrorResponse) ReadField1(iprot thrift.TProtocol) error {
-
-	var _field int64
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.Code = _field
-	return nil
-}
-func (p *ErrorResponse) ReadField2(iprot thrift.TProtocol) error {
-
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.Message = _field
-	return nil
-}
-
-func (p *ErrorResponse) Write(oprot thrift.TProtocol) (err error) {
-
-	var fieldId int16
-	if err = oprot.WriteStructBegin("ErrorResponse"); err != nil {
-		goto WriteStructBeginError
-	}
-	if p != nil {
-		if err = p.writeField1(oprot); err != nil {
-			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
-			goto WriteFieldError
-		}
-	}
-	if err = oprot.WriteFieldStop(); err != nil {
-		goto WriteFieldStopError
-	}
-	if err = oprot.WriteStructEnd(); err != nil {
-		goto WriteStructEndError
-	}
-	return nil
-WriteStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
-WriteFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
-WriteFieldStopError:
-	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
-WriteStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
-}
-
-func (p *ErrorResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("code", thrift.I64, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.Code); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *ErrorResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("message", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Message); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *ErrorResponse) String() string {
-	if p == nil {
-		return "<nil>"
-	}
-	return fmt.Sprintf("ErrorResponse(%+v)", *p)
-
-}
-
-func (p *ErrorResponse) DeepEqual(ano *ErrorResponse) bool {
-	if p == ano {
-		return true
-	} else if p == nil || ano == nil {
-		return false
-	}
-	if !p.Field1DeepEqual(ano.Code) {
-		return false
-	}
-	if !p.Field2DeepEqual(ano.Message) {
-		return false
-	}
-	return true
-}
-
-func (p *ErrorResponse) Field1DeepEqual(src int64) bool {
-
-	if p.Code != src {
-		return false
-	}
-	return true
-}
-func (p *ErrorResponse) Field2DeepEqual(src string) bool {
-
-	if strings.Compare(p.Message, src) != 0 {
-		return false
-	}
-	return true
-}
 
 type CartItem struct {
 	ProductId int64 `thrift:"productId,1" frugal:"1,default,i64" json:"productId"`
@@ -2599,8 +2377,8 @@ func (p *CartServiceGetCartArgs) Field1DeepEqual(src *GetCartRequest) bool {
 }
 
 type CartServiceGetCartResult struct {
-	Success *GetCartResponse `thrift:"success,0,optional" frugal:"0,optional,GetCartResponse" json:"success,omitempty"`
-	Error   *ErrorResponse   `thrift:"error,1,optional" frugal:"1,optional,ErrorResponse" json:"error,omitempty"`
+	Success *GetCartResponse    `thrift:"success,0,optional" frugal:"0,optional,GetCartResponse" json:"success,omitempty"`
+	Error   *base.ErrorResponse `thrift:"error,1,optional" frugal:"1,optional,base.ErrorResponse" json:"error,omitempty"`
 }
 
 func NewCartServiceGetCartResult() *CartServiceGetCartResult {
@@ -2619,9 +2397,9 @@ func (p *CartServiceGetCartResult) GetSuccess() (v *GetCartResponse) {
 	return p.Success
 }
 
-var CartServiceGetCartResult_Error_DEFAULT *ErrorResponse
+var CartServiceGetCartResult_Error_DEFAULT *base.ErrorResponse
 
-func (p *CartServiceGetCartResult) GetError() (v *ErrorResponse) {
+func (p *CartServiceGetCartResult) GetError() (v *base.ErrorResponse) {
 	if !p.IsSetError() {
 		return CartServiceGetCartResult_Error_DEFAULT
 	}
@@ -2630,7 +2408,7 @@ func (p *CartServiceGetCartResult) GetError() (v *ErrorResponse) {
 func (p *CartServiceGetCartResult) SetSuccess(x interface{}) {
 	p.Success = x.(*GetCartResponse)
 }
-func (p *CartServiceGetCartResult) SetError(val *ErrorResponse) {
+func (p *CartServiceGetCartResult) SetError(val *base.ErrorResponse) {
 	p.Error = val
 }
 
@@ -2720,7 +2498,7 @@ func (p *CartServiceGetCartResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 func (p *CartServiceGetCartResult) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewErrorResponse()
+	_field := base.NewErrorResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -2829,7 +2607,7 @@ func (p *CartServiceGetCartResult) Field0DeepEqual(src *GetCartResponse) bool {
 	}
 	return true
 }
-func (p *CartServiceGetCartResult) Field1DeepEqual(src *ErrorResponse) bool {
+func (p *CartServiceGetCartResult) Field1DeepEqual(src *base.ErrorResponse) bool {
 
 	if !p.Error.DeepEqual(src) {
 		return false
@@ -3008,8 +2786,8 @@ func (p *CartServiceAddToCartArgs) Field1DeepEqual(src *AddToCartRequest) bool {
 }
 
 type CartServiceAddToCartResult struct {
-	Success *AddToCartResponse `thrift:"success,0,optional" frugal:"0,optional,AddToCartResponse" json:"success,omitempty"`
-	Error   *ErrorResponse     `thrift:"error,1,optional" frugal:"1,optional,ErrorResponse" json:"error,omitempty"`
+	Success *AddToCartResponse  `thrift:"success,0,optional" frugal:"0,optional,AddToCartResponse" json:"success,omitempty"`
+	Error   *base.ErrorResponse `thrift:"error,1,optional" frugal:"1,optional,base.ErrorResponse" json:"error,omitempty"`
 }
 
 func NewCartServiceAddToCartResult() *CartServiceAddToCartResult {
@@ -3028,9 +2806,9 @@ func (p *CartServiceAddToCartResult) GetSuccess() (v *AddToCartResponse) {
 	return p.Success
 }
 
-var CartServiceAddToCartResult_Error_DEFAULT *ErrorResponse
+var CartServiceAddToCartResult_Error_DEFAULT *base.ErrorResponse
 
-func (p *CartServiceAddToCartResult) GetError() (v *ErrorResponse) {
+func (p *CartServiceAddToCartResult) GetError() (v *base.ErrorResponse) {
 	if !p.IsSetError() {
 		return CartServiceAddToCartResult_Error_DEFAULT
 	}
@@ -3039,7 +2817,7 @@ func (p *CartServiceAddToCartResult) GetError() (v *ErrorResponse) {
 func (p *CartServiceAddToCartResult) SetSuccess(x interface{}) {
 	p.Success = x.(*AddToCartResponse)
 }
-func (p *CartServiceAddToCartResult) SetError(val *ErrorResponse) {
+func (p *CartServiceAddToCartResult) SetError(val *base.ErrorResponse) {
 	p.Error = val
 }
 
@@ -3129,7 +2907,7 @@ func (p *CartServiceAddToCartResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 func (p *CartServiceAddToCartResult) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewErrorResponse()
+	_field := base.NewErrorResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -3238,7 +3016,7 @@ func (p *CartServiceAddToCartResult) Field0DeepEqual(src *AddToCartResponse) boo
 	}
 	return true
 }
-func (p *CartServiceAddToCartResult) Field1DeepEqual(src *ErrorResponse) bool {
+func (p *CartServiceAddToCartResult) Field1DeepEqual(src *base.ErrorResponse) bool {
 
 	if !p.Error.DeepEqual(src) {
 		return false
@@ -3418,7 +3196,7 @@ func (p *CartServiceUpdateCartArgs) Field1DeepEqual(src *UpdateCartRequest) bool
 
 type CartServiceUpdateCartResult struct {
 	Success *UpdateCartResponse `thrift:"success,0,optional" frugal:"0,optional,UpdateCartResponse" json:"success,omitempty"`
-	Error   *ErrorResponse      `thrift:"error,1,optional" frugal:"1,optional,ErrorResponse" json:"error,omitempty"`
+	Error   *base.ErrorResponse `thrift:"error,1,optional" frugal:"1,optional,base.ErrorResponse" json:"error,omitempty"`
 }
 
 func NewCartServiceUpdateCartResult() *CartServiceUpdateCartResult {
@@ -3437,9 +3215,9 @@ func (p *CartServiceUpdateCartResult) GetSuccess() (v *UpdateCartResponse) {
 	return p.Success
 }
 
-var CartServiceUpdateCartResult_Error_DEFAULT *ErrorResponse
+var CartServiceUpdateCartResult_Error_DEFAULT *base.ErrorResponse
 
-func (p *CartServiceUpdateCartResult) GetError() (v *ErrorResponse) {
+func (p *CartServiceUpdateCartResult) GetError() (v *base.ErrorResponse) {
 	if !p.IsSetError() {
 		return CartServiceUpdateCartResult_Error_DEFAULT
 	}
@@ -3448,7 +3226,7 @@ func (p *CartServiceUpdateCartResult) GetError() (v *ErrorResponse) {
 func (p *CartServiceUpdateCartResult) SetSuccess(x interface{}) {
 	p.Success = x.(*UpdateCartResponse)
 }
-func (p *CartServiceUpdateCartResult) SetError(val *ErrorResponse) {
+func (p *CartServiceUpdateCartResult) SetError(val *base.ErrorResponse) {
 	p.Error = val
 }
 
@@ -3538,7 +3316,7 @@ func (p *CartServiceUpdateCartResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 func (p *CartServiceUpdateCartResult) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewErrorResponse()
+	_field := base.NewErrorResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -3647,7 +3425,7 @@ func (p *CartServiceUpdateCartResult) Field0DeepEqual(src *UpdateCartResponse) b
 	}
 	return true
 }
-func (p *CartServiceUpdateCartResult) Field1DeepEqual(src *ErrorResponse) bool {
+func (p *CartServiceUpdateCartResult) Field1DeepEqual(src *base.ErrorResponse) bool {
 
 	if !p.Error.DeepEqual(src) {
 		return false
@@ -3827,7 +3605,7 @@ func (p *CartServiceRemoveFromCartArgs) Field1DeepEqual(src *RemoveFromCartReque
 
 type CartServiceRemoveFromCartResult struct {
 	Success *RemoveFromCartResponse `thrift:"success,0,optional" frugal:"0,optional,RemoveFromCartResponse" json:"success,omitempty"`
-	Error   *ErrorResponse          `thrift:"error,1,optional" frugal:"1,optional,ErrorResponse" json:"error,omitempty"`
+	Error   *base.ErrorResponse     `thrift:"error,1,optional" frugal:"1,optional,base.ErrorResponse" json:"error,omitempty"`
 }
 
 func NewCartServiceRemoveFromCartResult() *CartServiceRemoveFromCartResult {
@@ -3846,9 +3624,9 @@ func (p *CartServiceRemoveFromCartResult) GetSuccess() (v *RemoveFromCartRespons
 	return p.Success
 }
 
-var CartServiceRemoveFromCartResult_Error_DEFAULT *ErrorResponse
+var CartServiceRemoveFromCartResult_Error_DEFAULT *base.ErrorResponse
 
-func (p *CartServiceRemoveFromCartResult) GetError() (v *ErrorResponse) {
+func (p *CartServiceRemoveFromCartResult) GetError() (v *base.ErrorResponse) {
 	if !p.IsSetError() {
 		return CartServiceRemoveFromCartResult_Error_DEFAULT
 	}
@@ -3857,7 +3635,7 @@ func (p *CartServiceRemoveFromCartResult) GetError() (v *ErrorResponse) {
 func (p *CartServiceRemoveFromCartResult) SetSuccess(x interface{}) {
 	p.Success = x.(*RemoveFromCartResponse)
 }
-func (p *CartServiceRemoveFromCartResult) SetError(val *ErrorResponse) {
+func (p *CartServiceRemoveFromCartResult) SetError(val *base.ErrorResponse) {
 	p.Error = val
 }
 
@@ -3947,7 +3725,7 @@ func (p *CartServiceRemoveFromCartResult) ReadField0(iprot thrift.TProtocol) err
 	return nil
 }
 func (p *CartServiceRemoveFromCartResult) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewErrorResponse()
+	_field := base.NewErrorResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -4056,7 +3834,7 @@ func (p *CartServiceRemoveFromCartResult) Field0DeepEqual(src *RemoveFromCartRes
 	}
 	return true
 }
-func (p *CartServiceRemoveFromCartResult) Field1DeepEqual(src *ErrorResponse) bool {
+func (p *CartServiceRemoveFromCartResult) Field1DeepEqual(src *base.ErrorResponse) bool {
 
 	if !p.Error.DeepEqual(src) {
 		return false
@@ -4235,8 +4013,8 @@ func (p *CartServiceClearCartArgs) Field1DeepEqual(src *ClearCartRequest) bool {
 }
 
 type CartServiceClearCartResult struct {
-	Success *ClearCartResponse `thrift:"success,0,optional" frugal:"0,optional,ClearCartResponse" json:"success,omitempty"`
-	Error   *ErrorResponse     `thrift:"error,1,optional" frugal:"1,optional,ErrorResponse" json:"error,omitempty"`
+	Success *ClearCartResponse  `thrift:"success,0,optional" frugal:"0,optional,ClearCartResponse" json:"success,omitempty"`
+	Error   *base.ErrorResponse `thrift:"error,1,optional" frugal:"1,optional,base.ErrorResponse" json:"error,omitempty"`
 }
 
 func NewCartServiceClearCartResult() *CartServiceClearCartResult {
@@ -4255,9 +4033,9 @@ func (p *CartServiceClearCartResult) GetSuccess() (v *ClearCartResponse) {
 	return p.Success
 }
 
-var CartServiceClearCartResult_Error_DEFAULT *ErrorResponse
+var CartServiceClearCartResult_Error_DEFAULT *base.ErrorResponse
 
-func (p *CartServiceClearCartResult) GetError() (v *ErrorResponse) {
+func (p *CartServiceClearCartResult) GetError() (v *base.ErrorResponse) {
 	if !p.IsSetError() {
 		return CartServiceClearCartResult_Error_DEFAULT
 	}
@@ -4266,7 +4044,7 @@ func (p *CartServiceClearCartResult) GetError() (v *ErrorResponse) {
 func (p *CartServiceClearCartResult) SetSuccess(x interface{}) {
 	p.Success = x.(*ClearCartResponse)
 }
-func (p *CartServiceClearCartResult) SetError(val *ErrorResponse) {
+func (p *CartServiceClearCartResult) SetError(val *base.ErrorResponse) {
 	p.Error = val
 }
 
@@ -4356,7 +4134,7 @@ func (p *CartServiceClearCartResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 func (p *CartServiceClearCartResult) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewErrorResponse()
+	_field := base.NewErrorResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -4465,7 +4243,7 @@ func (p *CartServiceClearCartResult) Field0DeepEqual(src *ClearCartResponse) boo
 	}
 	return true
 }
-func (p *CartServiceClearCartResult) Field1DeepEqual(src *ErrorResponse) bool {
+func (p *CartServiceClearCartResult) Field1DeepEqual(src *base.ErrorResponse) bool {
 
 	if !p.Error.DeepEqual(src) {
 		return false

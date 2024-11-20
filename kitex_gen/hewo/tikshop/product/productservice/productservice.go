@@ -7,6 +7,7 @@ import (
 	"errors"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
+	base "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	product "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/product"
 )
 
@@ -120,7 +121,7 @@ func getProductsHandler(ctx context.Context, handler interface{}, arg, result in
 	success, err := handler.(product.ProductService).GetProducts(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *product.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -144,7 +145,7 @@ func getProductByIdHandler(ctx context.Context, handler interface{}, arg, result
 	success, err := handler.(product.ProductService).GetProductById(ctx, realArg.Requset)
 	if err != nil {
 		switch v := err.(type) {
-		case *product.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -168,7 +169,7 @@ func createProductHandler(ctx context.Context, handler interface{}, arg, result 
 	success, err := handler.(product.ProductService).CreateProduct(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *product.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -192,7 +193,7 @@ func updateProductHandler(ctx context.Context, handler interface{}, arg, result 
 	success, err := handler.(product.ProductService).UpdateProduct(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *product.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
@@ -216,7 +217,7 @@ func deleteProductHandler(ctx context.Context, handler interface{}, arg, result 
 	success, err := handler.(product.ProductService).DeleteProduct(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
-		case *product.ErrorResponse:
+		case *base.ErrorResponse:
 			realResult.Error = v
 		default:
 			return err
