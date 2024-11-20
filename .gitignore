@@ -98,6 +98,7 @@ fabric.properties
 *.dll
 *.so
 *.dylib
+rpc/*/output/*
 
 # Test binary, built with `go test -c`
 *.test
