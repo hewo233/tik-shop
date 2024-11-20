@@ -18,14 +18,14 @@ func (s *ProductServiceImpl) GetProducts(ctx context.Context, request *product.G
 			{
 				Id:          1,
 				Name:        "Product 1",
-				Price:       99.99,
+				Price:       9999,
 				Stock:       100,
 				Description: "This is product 1",
 			},
 			{
 				Id:          2,
 				Name:        "Product 2",
-				Price:       199.99,
+				Price:       19999,
 				Stock:       200,
 				Description: "This is product 2",
 			},
@@ -41,7 +41,7 @@ func (s *ProductServiceImpl) GetProductById(ctx context.Context, request *produc
 		Product: &product.Product{
 			Id:          request.Id,
 			Name:        "Product " + fmt.Sprint(request.Id),
-			Price:       123.45,
+			Price:       12345,
 			Stock:       50,
 			Description: "This is the product with ID " + fmt.Sprint(request.Id),
 		},
