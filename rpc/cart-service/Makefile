@@ -10,10 +10,10 @@ ROOT_DIR := $(SERVICE_DIR)/../..
 IDL_FILE := $(ROOT_DIR)/idl/$(SERVICE_NAME).thrift
 
 # Go module 名称
-MODULE := github.com/hewo/tik-shop/kitex_gen
+MODULE := github.com/hewo/tik-shop
 
 # Kitex 生成代码的输出目录
-GEN_DIR := tik-shop/kitex_gen
+GEN_DIR := github.com/hewo/tik-shop/kitex_gen
 
 # Kitex 生成代码的选项
 MODULE_OPTIONS := -module $(MODULE)

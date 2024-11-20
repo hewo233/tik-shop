@@ -13,7 +13,7 @@ IDL_FILE := $(ROOT_DIR)/idl/$(SERVICE_NAME).thrift
 MODULE := github.com/hewo/tik-shop/kitex_gen
 
 # Kitex 生成代码的输出目录
-GEN_DIR := tik-shop/kitex_gen
+GEN_DIR := github.com/hewo/tik-shop/kitex_gen
 
 # Kitex 生成代码的选项
 MODULE_OPTIONS := -module $(MODULE)
