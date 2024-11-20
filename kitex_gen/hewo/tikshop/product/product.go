@@ -2686,7 +2686,7 @@ func (p *DeleteProductResponse) Field1DeepEqual(src string) bool {
 type ProductService interface {
 	GetProducts(ctx context.Context, request *GetProductsRequest) (r *GetProductsReqsponse, err error)
 
-	GetProductById(ctx context.Context, requset *GetProductByIdRequest) (r *GetProductByIdResponse, err error)
+	GetProductById(ctx context.Context, request *GetProductByIdRequest) (r *GetProductByIdResponse, err error)
 
 	CreateProduct(ctx context.Context, request *CreateProductRequest) (r *CreateProductResponse, err error)
 
@@ -3105,7 +3105,7 @@ func (p *ProductServiceGetProductsResult) Field1DeepEqual(src *base.ErrorRespons
 }
 
 type ProductServiceGetProductByIdArgs struct {
-	Requset *GetProductByIdRequest `thrift:"requset,1" frugal:"1,default,GetProductByIdRequest" json:"requset"`
+	Request *GetProductByIdRequest `thrift:"request,1" frugal:"1,default,GetProductByIdRequest" json:"request"`
 }
 
 func NewProductServiceGetProductByIdArgs() *ProductServiceGetProductByIdArgs {
@@ -3115,24 +3115,24 @@ func NewProductServiceGetProductByIdArgs() *ProductServiceGetProductByIdArgs {
 func (p *ProductServiceGetProductByIdArgs) InitDefault() {
 }
 
-var ProductServiceGetProductByIdArgs_Requset_DEFAULT *GetProductByIdRequest
+var ProductServiceGetProductByIdArgs_Request_DEFAULT *GetProductByIdRequest
 
-func (p *ProductServiceGetProductByIdArgs) GetRequset() (v *GetProductByIdRequest) {
-	if !p.IsSetRequset() {
-		return ProductServiceGetProductByIdArgs_Requset_DEFAULT
+func (p *ProductServiceGetProductByIdArgs) GetRequest() (v *GetProductByIdRequest) {
+	if !p.IsSetRequest() {
+		return ProductServiceGetProductByIdArgs_Request_DEFAULT
 	}
-	return p.Requset
+	return p.Request
 }
-func (p *ProductServiceGetProductByIdArgs) SetRequset(val *GetProductByIdRequest) {
-	p.Requset = val
+func (p *ProductServiceGetProductByIdArgs) SetRequest(val *GetProductByIdRequest) {
+	p.Request = val
 }
 
 var fieldIDToName_ProductServiceGetProductByIdArgs = map[int16]string{
-	1: "requset",
+	1: "request",
 }
 
-func (p *ProductServiceGetProductByIdArgs) IsSetRequset() bool {
-	return p.Requset != nil
+func (p *ProductServiceGetProductByIdArgs) IsSetRequest() bool {
+	return p.Request != nil
 }
 
 func (p *ProductServiceGetProductByIdArgs) Read(iprot thrift.TProtocol) (err error) {
@@ -3196,7 +3196,7 @@ func (p *ProductServiceGetProductByIdArgs) ReadField1(iprot thrift.TProtocol) er
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
-	p.Requset = _field
+	p.Request = _field
 	return nil
 }
 
@@ -3230,10 +3230,10 @@ WriteStructEndError:
 }
 
 func (p *ProductServiceGetProductByIdArgs) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("requset", thrift.STRUCT, 1); err != nil {
+	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.Requset.Write(oprot); err != nil {
+	if err := p.Request.Write(oprot); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3260,7 +3260,7 @@ func (p *ProductServiceGetProductByIdArgs) DeepEqual(ano *ProductServiceGetProdu
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Requset) {
+	if !p.Field1DeepEqual(ano.Request) {
 		return false
 	}
 	return true
@@ -3268,7 +3268,7 @@ func (p *ProductServiceGetProductByIdArgs) DeepEqual(ano *ProductServiceGetProdu
 
 func (p *ProductServiceGetProductByIdArgs) Field1DeepEqual(src *GetProductByIdRequest) bool {
 
-	if !p.Requset.DeepEqual(src) {
+	if !p.Request.DeepEqual(src) {
 		return false
 	}
 	return true

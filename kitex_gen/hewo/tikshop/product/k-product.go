@@ -2023,7 +2023,7 @@ func (p *ProductServiceGetProductByIdArgs) FastReadField1(buf []byte) (int, erro
 	} else {
 		offset += l
 	}
-	p.Requset = _field
+	p.Request = _field
 	return offset, nil
 }
 
@@ -2053,14 +2053,14 @@ func (p *ProductServiceGetProductByIdArgs) BLength() int {
 func (p *ProductServiceGetProductByIdArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-	offset += p.Requset.FastWriteNocopy(buf[offset:], w)
+	offset += p.Request.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
 func (p *ProductServiceGetProductByIdArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += p.Requset.BLength()
+	l += p.Request.BLength()
 	return l
 }
 
@@ -2952,7 +2952,7 @@ func (p *ProductServiceGetProductsResult) GetResult() interface{} {
 }
 
 func (p *ProductServiceGetProductByIdArgs) GetFirstArgument() interface{} {
-	return p.Requset
+	return p.Request
 }
 
 func (p *ProductServiceGetProductByIdResult) GetResult() interface{} {

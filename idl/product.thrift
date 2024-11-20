@@ -71,7 +71,7 @@ service ProductService {
     GetProductsReqsponse getProducts(1: GetProductsRequest request) throws (1: base.ErrorResponse error),
 
     // 获取单个商品详情
-    GetProductByIdResponse getProductById(1: GetProductByIdRequest requset) throws (1: base.ErrorResponse error),
+    GetProductByIdResponse getProductById(1: GetProductByIdRequest request) throws (1: base.ErrorResponse error),
 
     // 添加新商品（管理员权限）
     CreateProductResponse createProduct(1: CreateProductRequest request) throws (1: base.ErrorResponse error),

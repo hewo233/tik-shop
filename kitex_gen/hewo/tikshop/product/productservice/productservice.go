@@ -142,7 +142,7 @@ func newProductServiceGetProductsResult() interface{} {
 func getProductByIdHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*product.ProductServiceGetProductByIdArgs)
 	realResult := result.(*product.ProductServiceGetProductByIdResult)
-	success, err := handler.(product.ProductService).GetProductById(ctx, realArg.Requset)
+	success, err := handler.(product.ProductService).GetProductById(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -259,9 +259,9 @@ func (p *kClient) GetProducts(ctx context.Context, request *product.GetProductsR
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetProductById(ctx context.Context, requset *product.GetProductByIdRequest) (r *product.GetProductByIdResponse, err error) {
+func (p *kClient) GetProductById(ctx context.Context, request *product.GetProductByIdRequest) (r *product.GetProductByIdResponse, err error) {
 	var _args product.ProductServiceGetProductByIdArgs
-	_args.Requset = requset
+	_args.Request = request
 	var _result product.ProductServiceGetProductByIdResult
 	if err = p.c.Call(ctx, "getProductById", &_args, &_result); err != nil {
 		return

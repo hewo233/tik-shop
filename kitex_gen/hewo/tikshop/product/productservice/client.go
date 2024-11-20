@@ -12,7 +12,7 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	GetProducts(ctx context.Context, request *product.GetProductsRequest, callOptions ...callopt.Option) (r *product.GetProductsReqsponse, err error)
-	GetProductById(ctx context.Context, requset *product.GetProductByIdRequest, callOptions ...callopt.Option) (r *product.GetProductByIdResponse, err error)
+	GetProductById(ctx context.Context, request *product.GetProductByIdRequest, callOptions ...callopt.Option) (r *product.GetProductByIdResponse, err error)
 	CreateProduct(ctx context.Context, request *product.CreateProductRequest, callOptions ...callopt.Option) (r *product.CreateProductResponse, err error)
 	UpdateProduct(ctx context.Context, request *product.UpdateProductRequest, callOptions ...callopt.Option) (r *product.UpdateProductResponse, err error)
 	DeleteProduct(ctx context.Context, request *product.DeleteProductRequset, callOptions ...callopt.Option) (r *product.DeleteProductResponse, err error)
@@ -52,9 +52,9 @@ func (p *kProductServiceClient) GetProducts(ctx context.Context, request *produc
 	return p.kClient.GetProducts(ctx, request)
 }
 
-func (p *kProductServiceClient) GetProductById(ctx context.Context, requset *product.GetProductByIdRequest, callOptions ...callopt.Option) (r *product.GetProductByIdResponse, err error) {
+func (p *kProductServiceClient) GetProductById(ctx context.Context, request *product.GetProductByIdRequest, callOptions ...callopt.Option) (r *product.GetProductByIdResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetProductById(ctx, requset)
+	return p.kClient.GetProductById(ctx, request)
 }
 
 func (p *kProductServiceClient) CreateProduct(ctx context.Context, request *product.CreateProductRequest, callOptions ...callopt.Option) (r *product.CreateProductResponse, err error) {
