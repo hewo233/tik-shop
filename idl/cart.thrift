@@ -1,10 +1,6 @@
 namespace go hewo.tikshop.cart
 
-// 公共的错误结构
-struct ErrorResponse {
-    1: i64    code,      // 错误码
-    2: string message    // 错误信息
-}
+include "base.thrift"
 
 // 商品项结构（在购物车中）
 struct CartItem {
@@ -70,17 +66,17 @@ struct ClearCartResponse {
 // 购物车服务接口
 service CartService {
     // 获取购物车列表
-    GetCartResponse getCart(1: GetCartRequest request) throws (1: ErrorResponse error),
+    GetCartResponse getCart(1: GetCartRequest request) throws (1: base.ErrorResponse error),
 
     // 添加商品到购物车
-    AddToCartResponse addToCart(1: AddToCartRequest request) throws (1: ErrorResponse error),
+    AddToCartResponse addToCart(1: AddToCartRequest request) throws (1: base.ErrorResponse error),
 
     // 更新购物车中商品数量
-    UpdateCartResponse updateCart(1: UpdateCartRequest request) throws (1: ErrorResponse error),
+    UpdateCartResponse updateCart(1: UpdateCartRequest request) throws (1: base.ErrorResponse error),
 
     // 从购物车中移除商品
-    RemoveFromCartResponse removeFromCart(1: RemoveFromCartRequest request) throws (1: ErrorResponse error),
+    RemoveFromCartResponse removeFromCart(1: RemoveFromCartRequest request) throws (1: base.ErrorResponse error),
 
     // 清空购物车
-    ClearCartResponse clearCart(1: ClearCartRequest request) throws (1: ErrorResponse error)
+    ClearCartResponse clearCart(1: ClearCartRequest request) throws (1: base.ErrorResponse error)
 }

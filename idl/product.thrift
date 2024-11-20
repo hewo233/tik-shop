@@ -1,11 +1,6 @@
 namespace go hewo.tikshop.product
 
-// 公共的错误结构
-struct ErrorResponse {
-    1: i64    code, // 错误码
-    2: string message // 错误信息
-}
-
+include "base.thrift"
 // 商品信息结构
 struct Product {
     1: i64    id, // 商品ID
@@ -73,17 +68,17 @@ struct DeleteProductResponse {
 // 商品服务接口
 service ProductService {
     // 获取商品列表，支持分页
-    GetProductsReqsponse getProducts(1: GetProductsRequest request) throws (1: ErrorResponse error),
+    GetProductsReqsponse getProducts(1: GetProductsRequest request) throws (1: base.ErrorResponse error),
 
     // 获取单个商品详情
-    GetProductByIdResponse getProductById(1: GetProductByIdRequest requset) throws (1: ErrorResponse error),
+    GetProductByIdResponse getProductById(1: GetProductByIdRequest requset) throws (1: base.ErrorResponse error),
 
     // 添加新商品（管理员权限）
-    CreateProductResponse createProduct(1: CreateProductRequest request) throws (1: ErrorResponse error),
+    CreateProductResponse createProduct(1: CreateProductRequest request) throws (1: base.ErrorResponse error),
 
     // 更新商品信息（管理员权限）
-    UpdateProductResponse updateProduct(1: UpdateProductRequest request) throws (1: ErrorResponse error),
+    UpdateProductResponse updateProduct(1: UpdateProductRequest request) throws (1: base.ErrorResponse error),
 
     // 删除商品（管理员权限）
-    DeleteProductResponse deleteProduct(1: DeleteProductRequset request) throws (1: ErrorResponse error)
+    DeleteProductResponse deleteProduct(1: DeleteProductRequset request) throws (1: base.ErrorResponse error)
 }

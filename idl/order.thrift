@@ -1,11 +1,6 @@
 namespace go hewo.tikshop.order
 
-// 公共错误结构
-struct ErrorResponse {
-    1: i64    code,      // 错误码
-    2: string message    // 错误信息
-}
-
+include "base.thrift"
 // 订单商品项
 struct OrderItem {
     1: i64 productId,    // 商品ID
@@ -103,17 +98,17 @@ struct Order {
 // 订单服务接口
 service OrderService {
     // 提交订单
-    SubmitOrderResponse submitOrder(1: SubmitOrderRequest request) throws (1: ErrorResponse error),
+    SubmitOrderResponse submitOrder(1: SubmitOrderRequest request) throws (1: base.ErrorResponse error),
 
     // 支付订单
-    PayOrderResponse payOrder(1: PayOrderRequest request) throws (1: ErrorResponse error),
+    PayOrderResponse payOrder(1: PayOrderRequest request) throws (1: base.ErrorResponse error),
 
     // 取消订单
-    CancelOrderResponse cancelOrder(1: CancelOrderRequest request) throws (1: ErrorResponse error),
+    CancelOrderResponse cancelOrder(1: CancelOrderRequest request) throws (1: base.ErrorResponse error),
 
     // 获取用户订单列表
-    GetOrdersResponse getOrders(1: GetOrdersRequest request) throws (1: ErrorResponse error),
+    GetOrdersResponse getOrders(1: GetOrdersRequest request) throws (1: base.ErrorResponse error),
 
     // 获取单个订单详情
-    GetOrderByIdResponse getOrderById(1: GetOrderByIdRequest request) throws (1: ErrorResponse error)
+    GetOrderByIdResponse getOrderById(1: GetOrderByIdRequest request) throws (1: base.ErrorResponse error)
 }

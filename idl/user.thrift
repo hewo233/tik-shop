@@ -1,10 +1,6 @@
 namespace go hewo.tikshop.user
 
-struct ErrorResponse {
-    1: i64    code; // 错误码
-    2: string message; // 错误信息
-}
-
+include "base.thrift"
 // 定义公共的用户信息结构
 struct User {
     1: i64    id; // 用户 ID
@@ -67,12 +63,12 @@ struct UpdatePasswordResponse {
 // 定义 UserService 接口
 service UserService {
     // 鉴权模块
-    AuthResponse Auth(1: AuthRequest request) throws (1: ErrorResponse err);
-    AuthResponse AdminAuth(1: AuthRequest request) throws (1: ErrorResponse err);
+    AuthResponse Auth(1: AuthRequest request) throws (1: base.ErrorResponse err);
+    AuthResponse AdminAuth(1: AuthRequest request) throws (1: base.ErrorResponse err);
 
     // 用户模块
-    GetUserInfoResponse GetUserInfo(1: GetUserInfoRequest request) throws (1: ErrorResponse err);
-    UpdateUserResponse UpdateUser(1: UpdateUserRequest request) throws (1: ErrorResponse err);
-    RegisterResponse Register(1: RegisterRequest request) throws (1: ErrorResponse err);
-    UpdatePasswordResponse UpdatePassword(1: UpdatePasswordRequest request) throws (1: ErrorResponse err);
+    GetUserInfoResponse GetUserInfo(1: GetUserInfoRequest request) throws (1: base.ErrorResponse err);
+    UpdateUserResponse UpdateUser(1: UpdateUserRequest request) throws (1: base.ErrorResponse err);
+    RegisterResponse Register(1: RegisterRequest request) throws (1: base.ErrorResponse err);
+    UpdatePasswordResponse UpdatePassword(1: UpdatePasswordRequest request) throws (1: base.ErrorResponse err);
 }
