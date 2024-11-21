@@ -1,0 +1,164 @@
+# Test 1: User Login (POST /api/auth/login)
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "password123"
+}
+
+###
+
+# Test 2: Admin Login with Invalid Credentials (POST /api/auth/admin/login)
+POST http://localhost:8080/api/auth/admin/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "wrongpassword"
+}
+
+###
+
+# Test 3: Unauthorized Access (GET /api/auth/verify)
+GET http://localhost:8080/api/auth/verify
+Authorization: Bearer invalid-token
+
+###
+
+# Test 4: Fetch User Information (GET /api/user/1)
+GET http://localhost:8080/api/user/1
+Authorization: Bearer {{userLoginToken}}
+
+###
+
+# Test 5: User Registration (POST /api/user/register)
+POST http://localhost:8080/api/user/register
+Content-Type: application/json
+
+{
+  "username": "newUser",
+  "email": "newuser@example.com",
+  "password": "newpassword"
+}
+
+###
+
+# Test 6: Update User Information (PUT /api/user/1)
+PUT http://localhost:8080/api/user/1
+Authorization: Bearer {{userLoginToken}}
+Content-Type: application/json
+
+{
+  "email": "updateduser@example.com"
+}
+
+###
+
+# Test 7: Get Product List (GET /api/products)
+GET http://localhost:8080/api/products?page=1&limit=10
+Authorization: Bearer {{userLoginToken}}
+
+###
+
+# Test 8: Get Single Product (GET /api/products/1)
+GET http://localhost:8080/api/products/1
+Authorization: Bearer {{userLoginToken}}
+
+###
+
+# Test 9: Admin Add Product (POST /api/products)
+POST http://localhost:8080/api/products
+Authorization: Bearer {{userLoginToken}}
+Content-Type: application/json
+
+{
+  "name": "New Product",
+  "price": 199.99,
+  "stock": 5,
+  "description": "A new product"
+}
+
+###
+
+# Test 10: Add Product to Cart (POST /api/cart)
+POST http://localhost:8080/api/cart
+Authorization: Bearer {{userLoginToken}}
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 2
+}
+
+###
+
+# Test 11: Update Cart (PUT /api/cart)
+PUT http://localhost:8080/api/cart
+Authorization: Bearer {{userLoginToken}}
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 3
+}
+
+###
+
+# Test 12: Remove Product from Cart (DELETE /api/cart/1)
+DELETE http://localhost:8080/api/cart/1
+Authorization: Bearer {{userLoginToken}}
+
+###
+
+# Test 13: Place Order (POST /api/order)
+POST http://localhost:8080/api/order
+Authorization: Bearer {{userLoginToken}}
+Content-Type: application/json
+
+{
+  "items": [
+    { "productId": 1, "quantity": 2 }
+  ],
+  "address": {
+    "street": "123 Main St",
+    "city": "Springfield",
+    "postalCode": "12345",
+    "country": "USA"
+  },
+  "paymentMethod": "credit_card"
+}
+
+###
+
+# Test 14: Pay for Order (POST /api/order/12345/pay)
+POST http://localhost:8080/api/order/12345/pay
+Authorization: Bearer {{userLoginToken}}
+Content-Type: application/json
+
+{
+  "paymentMethod": "credit_card",
+  "paymentDetails": {
+    "cardNumber": "4111111111111111",
+    "expiryDate": "12/25",
+    "cvv": "123"
+  }
+}
+
+###
+
+# Test 15: Unauthorized Access (GET /api/user/1)
+GET http://localhost:8080/api/user/1
+Authorization: Bearer invalid-token
+
+###
+
+# Test 16: Conflict in Registration (POST /api/user/register)
+POST http://localhost:8080/api/user/register
+Content-Type: application/json
+
+{
+  "username": "existingUser",
+  "email": "existing@example.com",
+  "password": "password123"
+}
