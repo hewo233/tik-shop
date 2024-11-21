@@ -18,7 +18,7 @@ make clean
 make clean-all
 ```
 
-不建议使用 clean!!!!
+**不建议使用 clean!!!!**
 
 clean 删除 kitex-gen
 clean-all 删除 除了 handler 和 main 之外的所有文件（防止彻底炸掉）
