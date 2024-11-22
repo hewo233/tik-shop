@@ -104,8 +104,7 @@ GPT 加人工了。注意 `查询参数` 是 URL Param 就是那个 `/api/foo?ba
   - 查询参数：`page=number`，`limit=number`
   - 响应：
     ```json5
-    // 一个数组
-    [
+   [
         { 
             "id": "number", 
             "name": "string", 
@@ -118,7 +117,7 @@ GPT 加人工了。注意 `查询参数` 是 URL Param 就是那个 `/api/foo?ba
   - 错误码：
     - `400 Bad Request`：请求参数不正确。
 
-- **GET /api/products/:id**：获取单个商品的详细信息。
+- **GET /api/product/:id**：获取单个商品的详细信息。
   - 参数：`id`（商品ID）
   - 响应：
     ```json5
@@ -133,7 +132,7 @@ GPT 加人工了。注意 `查询参数` 是 URL Param 就是那个 `/api/foo?ba
   - 错误码：
     - `404 Not Found`：商品不存在。
 
-- **POST /api/products**（管理员）：添加新商品。
+- **POST /api/product**（管理员）：添加新商品。
   - Headers：`Authorization: Bearer <token>`
   - 请求体：`{ "name": "string", "price": "number", "stock": "number", "description": "string" }`
   - 响应：`{ "message": "Product created successfully.", "productId": "number" }`
@@ -142,7 +141,7 @@ GPT 加人工了。注意 `查询参数` 是 URL Param 就是那个 `/api/foo?ba
     - `401 Unauthorized`：无效的 token。
     - `403 Forbidden`：权限不足。
 
-- **PUT /api/products/:id**（管理员）：更新商品信息。
+- **PUT /api/product/:id**（管理员）：更新商品信息。
   - Headers：`Authorization: Bearer <token>`
   - 参数：`id`（商品ID）
   - 请求体：`{ "name": "string", "price": "number", "stock": "number", "description": "string" }`
@@ -153,7 +152,7 @@ GPT 加人工了。注意 `查询参数` 是 URL Param 就是那个 `/api/foo?ba
     - `403 Forbidden`：权限不足。
     - `404 Not Found`：商品不存在。
 
-- **DELETE /api/products/:id**（管理员）：删除商品。
+- **DELETE /api/product/:id**（管理员）：删除商品。
   - Headers：`Authorization: Bearer <token>`
   - 参数：`id`（商品ID）
   - 响应：`{ "message": "Product deleted successfully." }`
@@ -187,9 +186,9 @@ GPT 加人工了。注意 `查询参数` 是 URL Param 就是那个 `/api/foo?ba
     - `404 Not Found`：商品不存在。
     - `409 Conflict`：商品已在购物车中。
 
-- **PUT /api/cart**：更新购物车中商品的数量。
+- **PUT /api/cart/:productId**：更新购物车中商品的数量。
   - Headers：`Authorization: Bearer <token>`
-  - 请求体：`{ "productId": "number", "quantity": "number" }`
+  - 请求体：`{ "quantity": "number" }`
   - 响应：`{ "message": "Cart updated successfully." }`
   - 错误码：
     - `400 Bad Request`：请求参数不正确。
@@ -257,7 +256,7 @@ GPT 加人工了。注意 `查询参数` 是 URL Param 就是那个 `/api/foo?ba
       "paymentMethod": "string", // 支付方式：如"credit_card", "paypal"等
       "paymentDetails": { // 支付详情（根据支付方式而定）
         "cardNumber": "string",
-        "expiryDate": "string",
+    2   "expiryDate": "string",
         "cvv": "string"
       }
     }
@@ -388,15 +387,9 @@ GPT 加人工了。注意 `查询参数` 是 URL Param 就是那个 `/api/foo?ba
     - `404 Not Found`：用户不存在。
 
 ### 错误响应结构
-为了统一 API 错误处理，每个错误响应可以包含如下结构：
-```json
-{
-  "error": {
-    "code": "string",  // 错误代码（如 "USER_NOT_FOUND", "ORDER_ALREADY_PAID"）
-    "message": "string" // 错误信息描述
-  }
-}
-```
+
+为了统一 API 错误处理，每个错误响应应该为纯文本。即使用 `c.String(CODE, MESSAGE)` 返回
+
 
 ### 全局错误码
 - **400 Bad Request**：请求参数错误。

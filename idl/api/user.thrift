@@ -1,34 +1,39 @@
 namespace go hewo.tikshop.route.user
 
-include "base.thrift"
+include "./base.thrift"
 
-struct User {
+struct UserResponse {
   1: i64 id
   2: string username
   3: string email
   4: string createdAt
 }
 
-struct RegisterRequest {
-  1: string username
-  2: string email
-  3: string password
+struct GetUserRequest {
+  1: i64 id (api.path = "id", api.vd = "$>0")
 }
 
-struct UpdatePasswordRequest {
-  1: string oldPassword
-  2: string newPassword
+struct RegisterRequest {
+  1: string username (api.body = "name", api.form = "name", api.vd = "(len($) > 0 && len($) < 128)")
+  2: string email (api.body = "email", api.form = "email", api.vd = "(len($) > 0 && len($) < 512)")
+  3: string password (api.body = "password", api.form = "password", api.vd = "(len($) > 0 && len($) < 128)")
 }
+struct UpdatePasswordRequest {
+  1: i64 id (api.path = "id", api.vd = "$>0")
+  2: string oldPassword (api.body = "password", api.form = "password", api.vd = "(len($) > 0 && len($) < 128)")
+  3: string newPassword (api.body = "password", api.form = "password", api.vd = "(len($) > 0 && len($) < 128)")
+}
+
 
 struct UpdateUserRequest {
-  1: string username
-  2: string email
+  1: i64 id (api.path = "id", api.vd = "$>0")
+  2: string name (api.body = "name", api.form = "name", api.vd = "(len($) > 0 && len($) < 128)")
+  3: string email (api.body = "email", api.form = "email", api.vd = "(len($) > 0 && len($) < 512)")
 }
 
-
 service UserService {
-  User getUser(1: i64 id) throws (1: base.BaseErrorResponse error) (api.get 
-  User updateUser(1: i64 id, 2: UpdateUserRequest req) throws (1: base.BaseErrorResponse error)
-  void register(1: RegisterRequest req) throws (1: base.BaseErrorResponse error)
-  void updatePassword(1: i64 id, 2: UpdatePasswordRequest req) throws (1: base.BaseErrorResponse error)
+  UserResponse getUser(1: GetUserRequest req) (api.get="/api/user/:id")
+  UserResponse updateUser(1: UpdateUserRequest req) (api.put="/api/user/:id")
+  base.MessageResponse register(1: RegisterRequest req) (api.post="/api/user/register")
+  base.MessageResponse updatePassword(1: UpdatePasswordRequest req) (api.put="/api/user/:id/password")
 }
