@@ -99,6 +99,7 @@ fabric.properties
 *.so
 *.dylib
 rpc/*/output/*
+route/output/*
 
 # Test binary, built with `go test -c`
 *.test
