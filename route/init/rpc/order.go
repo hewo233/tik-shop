@@ -16,4 +16,5 @@ func InitOrder(r discovery.Resolver) {
 		log.Fatal(err)
 	}
 	OrderClient = c
+	log.Println("Inited OrderClient")
 }

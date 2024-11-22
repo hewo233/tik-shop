@@ -11,6 +11,7 @@ func InitAll() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("Initing RPC")
 	InitCart(r)
 	InitOrder(r)
 	InitProduct(r)

@@ -16,4 +16,5 @@ func InitProduct(r discovery.Resolver) {
 		log.Fatal(err)
 	}
 	ProductClient = c
+	log.Println("Inited ProductClient")
 }

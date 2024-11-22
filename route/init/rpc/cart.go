@@ -16,4 +16,5 @@ func InitCart(r discovery.Resolver) {
 		log.Fatal(err)
 	}
 	CartClient = c
+	log.Println("Inited CartClient")
 }

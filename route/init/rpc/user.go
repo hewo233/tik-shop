@@ -16,4 +16,5 @@ func InitUser(r discovery.Resolver) {
 		log.Fatal(err)
 	}
 	UserClient = c
+	log.Println("Inited UserClient")
 }
