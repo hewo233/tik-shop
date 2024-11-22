@@ -4,9 +4,12 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/hewo/tik-shop/route/init/rpc"
 )
 
 func main() {
+
+	rpc.InitAll()
 	h := server.Default()
 
 	register(h)
