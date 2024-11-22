@@ -21,10 +21,10 @@ Here are some subtasks.
 ### connect route with RPC service
 
 - [ ] Register each RPC service to etcd.
-    - [ ] register with fixed port.
+    - [X] register with fixed port.
     - [ ] allow using Environment variable to listen ports(see below).
-- [ ] Get and init each RPC connection in route.
-    - [ ] get and init with service name in etcd.
+- [X] Get and init each RPC connection in route.
+    - [X] get and init with service name in etcd.
 
 ## DB Related logic
 
