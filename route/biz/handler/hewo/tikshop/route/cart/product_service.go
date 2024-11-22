@@ -7,8 +7,10 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	cartrpc "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/cart"
 	base "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/base"
 	cart "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/cart"
+	"github.com/hewo/tik-shop/route/init/rpc"
 )
 
 // GetCart .
@@ -22,7 +24,18 @@ func GetCart(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new([]*base.CartItem)
+	res, err := rpc.CartClient.GetCart(ctx, cartrpc.NewGetCartRequest())
+	if err != nil {
+		c.String(consts.StatusInternalServerError, err.Error())
+	}
+	resp := make([]*base.CartItem, len(res.Items))
+
+	for i, v := range res.Items {
+		resp[i] = &base.CartItem{
+			ProductId: v.ProductId,
+			Quantity:  v.Quantity,
+		}
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
