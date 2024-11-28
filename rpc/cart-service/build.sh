@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 RUN_NAME="cart"
 
 mkdir -p output/bin

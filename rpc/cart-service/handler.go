@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
-
+	"fmt"
+	"github.com/hewo/tik-shop/db/superquery"
 	cart "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/cart"
+	"log"
 )
 
 // CartServiceImpl implements the last service interface defined in the IDL.
@@ -11,13 +13,15 @@ type CartServiceImpl struct{}
 
 // GetCart implements the CartServiceImpl interface.
 func (s *CartServiceImpl) GetCart(ctx context.Context, request *cart.GetCartRequest) (resp *cart.GetCartResponse, err error) {
-	// TODO: Your code here...
-	items := []*cart.CartItem{
-		{ProductId: 1, Quantity: 2},
-		{ProductId: 2, Quantity: 3},
-		{ProductId: 3, Quantity: 1},
-	}
+	// 获取购物车中的所有项
+	items, err := superquery.GetCart()
+	if err != nil {
+		// 记录错误日志
+		log.Println("Error getting cart items:", err)
 
+		// 返回带有错误信息的响应
+		return nil, fmt.Errorf("failed to retrieve cart items: %w", err)
+	}
 	resp = &cart.GetCartResponse{
 		Items: items,
 	}

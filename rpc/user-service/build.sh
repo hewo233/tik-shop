@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/.env bash
 RUN_NAME="user"
 
 mkdir -p output/bin
