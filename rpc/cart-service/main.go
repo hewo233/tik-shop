@@ -1,17 +1,22 @@
 package main
 
 import (
+	"github.com/hewo/tik-shop/db"
 	"log"
 	"net"
 
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/hewo/tik-shop/db/query"
 	cart "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/cart/cartservice"
 	etcd "github.com/kitex-contrib/registry-etcd"
 )
 
 func main() {
-
+	database, err := db.ConnectDB()
+	if err != nil {
+	}
+	query.SetDefault(database)
 	r, err := etcd.NewEtcdRegistry([]string{"127.0.0.1:2379"})
 	if err != nil {
 		log.Fatal(err)
