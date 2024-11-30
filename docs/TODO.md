@@ -30,10 +30,10 @@ Here are some subtasks.
 
 ### Connect to DB
 
-- [ ] write struct to store in gorm.
-- [ ] connect to DB and do some manual test.
-- [ ] warp a model unit for rpc service unit to call. Better build with multiple isolated model for each unit, and connect to same db sharing(? maybe shouldn't) connection.
-- [ ] let each rpc unit connect to db.
+- [x] write struct to store in gorm.
+- [x] connect to DB and do some manual test.
+- [x] warp a model unit for rpc service unit to call. Better build with multiple isolated model for each unit, and connect to same db sharing(? maybe shouldn't) connection.
+- [x] let each rpc unit connect to db.
 
 ## ENV Management
 
