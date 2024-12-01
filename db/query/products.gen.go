@@ -31,6 +31,37 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 	_product.Price = field.NewFloat64(tableName, "Price")
 	_product.Stock = field.NewInt64(tableName, "Stock")
 	_product.Description = field.NewString(tableName, "Description")
+	_product.CartItems = productHasManyCartItems{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("CartItems", "model.CartItem"),
+		Users: struct {
+			field.RelationField
+			CartItems struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("CartItems.Users", "model.Users"),
+			CartItems: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("CartItems.Users.CartItems", "model.CartItem"),
+			},
+		},
+		Product: struct {
+			field.RelationField
+			CartItems struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("CartItems.Product", "model.Product"),
+			CartItems: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("CartItems.Product.CartItems", "model.CartItem"),
+			},
+		},
+	}
 
 	_product.fillFieldMap()
 
@@ -46,6 +77,7 @@ type product struct {
 	Price       field.Float64
 	Stock       field.Int64
 	Description field.String
+	CartItems   productHasManyCartItems
 
 	fieldMap map[string]field.Expr
 }
@@ -83,12 +115,13 @@ func (p *product) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (p *product) fillFieldMap() {
-	p.fieldMap = make(map[string]field.Expr, 5)
+	p.fieldMap = make(map[string]field.Expr, 6)
 	p.fieldMap["Id"] = p.Id
 	p.fieldMap["Name"] = p.Name
 	p.fieldMap["Price"] = p.Price
 	p.fieldMap["Stock"] = p.Stock
 	p.fieldMap["Description"] = p.Description
+
 }
 
 func (p product) clone(db *gorm.DB) product {
@@ -99,6 +132,90 @@ func (p product) clone(db *gorm.DB) product {
 func (p product) replaceDB(db *gorm.DB) product {
 	p.productDo.ReplaceDB(db)
 	return p
+}
+
+type productHasManyCartItems struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	Users struct {
+		field.RelationField
+		CartItems struct {
+			field.RelationField
+		}
+	}
+	Product struct {
+		field.RelationField
+		CartItems struct {
+			field.RelationField
+		}
+	}
+}
+
+func (a productHasManyCartItems) Where(conds ...field.Expr) *productHasManyCartItems {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a productHasManyCartItems) WithContext(ctx context.Context) *productHasManyCartItems {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a productHasManyCartItems) Session(session *gorm.Session) *productHasManyCartItems {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a productHasManyCartItems) Model(m *model.Product) *productHasManyCartItemsTx {
+	return &productHasManyCartItemsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type productHasManyCartItemsTx struct{ tx *gorm.Association }
+
+func (a productHasManyCartItemsTx) Find() (result []*model.CartItem, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a productHasManyCartItemsTx) Append(values ...*model.CartItem) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a productHasManyCartItemsTx) Replace(values ...*model.CartItem) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a productHasManyCartItemsTx) Delete(values ...*model.CartItem) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a productHasManyCartItemsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a productHasManyCartItemsTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type productDo struct{ gen.DO }
