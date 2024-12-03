@@ -26,10 +26,24 @@ func newOrder(db *gorm.DB, opts ...gen.DOOption) order {
 
 	tableName := _order.orderDo.TableName()
 	_order.ALL = field.NewAsterisk(tableName)
-	_order.ID = field.NewInt64(tableName, "ID")
+	_order.Id = field.NewInt64(tableName, "Id")
+	_order.UserId = field.NewInt64(tableName, "UserId")
 	_order.Status = field.NewInt64(tableName, "Status")
 	_order.TotalAmount = field.NewFloat64(tableName, "TotalAmount")
 	_order.CreatedAt = field.NewTime(tableName, "CreatedAt")
+	_order.PaymentMethod = field.NewString(tableName, "PaymentMethod")
+	_order.Address = orderHasOneAddress{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Address", "model.Address"),
+	}
+
+	_order.PaymentDetails = orderHasOnePaymentDetails{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("PaymentDetails", "model.PaymentDetails"),
+	}
+
 	_order.Items = orderHasManyItems{
 		db: db.Session(&gorm.Session{}),
 
@@ -44,12 +58,18 @@ func newOrder(db *gorm.DB, opts ...gen.DOOption) order {
 type order struct {
 	orderDo
 
-	ALL         field.Asterisk
-	ID          field.Int64
-	Status      field.Int64
-	TotalAmount field.Float64
-	CreatedAt   field.Time
-	Items       orderHasManyItems
+	ALL           field.Asterisk
+	Id            field.Int64
+	UserId        field.Int64
+	Status        field.Int64
+	TotalAmount   field.Float64
+	CreatedAt     field.Time
+	PaymentMethod field.String
+	Address       orderHasOneAddress
+
+	PaymentDetails orderHasOnePaymentDetails
+
+	Items orderHasManyItems
 
 	fieldMap map[string]field.Expr
 }
@@ -66,10 +86,12 @@ func (o order) As(alias string) *order {
 
 func (o *order) updateTableName(table string) *order {
 	o.ALL = field.NewAsterisk(table)
-	o.ID = field.NewInt64(table, "ID")
+	o.Id = field.NewInt64(table, "Id")
+	o.UserId = field.NewInt64(table, "UserId")
 	o.Status = field.NewInt64(table, "Status")
 	o.TotalAmount = field.NewFloat64(table, "TotalAmount")
 	o.CreatedAt = field.NewTime(table, "CreatedAt")
+	o.PaymentMethod = field.NewString(table, "PaymentMethod")
 
 	o.fillFieldMap()
 
@@ -86,11 +108,13 @@ func (o *order) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (o *order) fillFieldMap() {
-	o.fieldMap = make(map[string]field.Expr, 5)
-	o.fieldMap["ID"] = o.ID
+	o.fieldMap = make(map[string]field.Expr, 9)
+	o.fieldMap["Id"] = o.Id
+	o.fieldMap["UserId"] = o.UserId
 	o.fieldMap["Status"] = o.Status
 	o.fieldMap["TotalAmount"] = o.TotalAmount
 	o.fieldMap["CreatedAt"] = o.CreatedAt
+	o.fieldMap["PaymentMethod"] = o.PaymentMethod
 
 }
 
@@ -102,6 +126,148 @@ func (o order) clone(db *gorm.DB) order {
 func (o order) replaceDB(db *gorm.DB) order {
 	o.orderDo.ReplaceDB(db)
 	return o
+}
+
+type orderHasOneAddress struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a orderHasOneAddress) Where(conds ...field.Expr) *orderHasOneAddress {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a orderHasOneAddress) WithContext(ctx context.Context) *orderHasOneAddress {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a orderHasOneAddress) Session(session *gorm.Session) *orderHasOneAddress {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a orderHasOneAddress) Model(m *model.Order) *orderHasOneAddressTx {
+	return &orderHasOneAddressTx{a.db.Model(m).Association(a.Name())}
+}
+
+type orderHasOneAddressTx struct{ tx *gorm.Association }
+
+func (a orderHasOneAddressTx) Find() (result *model.Address, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a orderHasOneAddressTx) Append(values ...*model.Address) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a orderHasOneAddressTx) Replace(values ...*model.Address) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a orderHasOneAddressTx) Delete(values ...*model.Address) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a orderHasOneAddressTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a orderHasOneAddressTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type orderHasOnePaymentDetails struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a orderHasOnePaymentDetails) Where(conds ...field.Expr) *orderHasOnePaymentDetails {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a orderHasOnePaymentDetails) WithContext(ctx context.Context) *orderHasOnePaymentDetails {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a orderHasOnePaymentDetails) Session(session *gorm.Session) *orderHasOnePaymentDetails {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a orderHasOnePaymentDetails) Model(m *model.Order) *orderHasOnePaymentDetailsTx {
+	return &orderHasOnePaymentDetailsTx{a.db.Model(m).Association(a.Name())}
+}
+
+type orderHasOnePaymentDetailsTx struct{ tx *gorm.Association }
+
+func (a orderHasOnePaymentDetailsTx) Find() (result *model.PaymentDetails, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a orderHasOnePaymentDetailsTx) Append(values ...*model.PaymentDetails) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a orderHasOnePaymentDetailsTx) Replace(values ...*model.PaymentDetails) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a orderHasOnePaymentDetailsTx) Delete(values ...*model.PaymentDetails) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a orderHasOnePaymentDetailsTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a orderHasOnePaymentDetailsTx) Count() int64 {
+	return a.tx.Count()
 }
 
 type orderHasManyItems struct {

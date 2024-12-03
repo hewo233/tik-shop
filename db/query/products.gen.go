@@ -35,32 +35,6 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("CartItems", "model.CartItem"),
-		Users: struct {
-			field.RelationField
-			CartItems struct {
-				field.RelationField
-			}
-		}{
-			RelationField: field.NewRelation("CartItems.Users", "model.Users"),
-			CartItems: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("CartItems.Users.CartItems", "model.CartItem"),
-			},
-		},
-		Product: struct {
-			field.RelationField
-			CartItems struct {
-				field.RelationField
-			}
-		}{
-			RelationField: field.NewRelation("CartItems.Product", "model.Product"),
-			CartItems: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("CartItems.Product.CartItems", "model.CartItem"),
-			},
-		},
 	}
 
 	_product.fillFieldMap()
@@ -138,19 +112,6 @@ type productHasManyCartItems struct {
 	db *gorm.DB
 
 	field.RelationField
-
-	Users struct {
-		field.RelationField
-		CartItems struct {
-			field.RelationField
-		}
-	}
-	Product struct {
-		field.RelationField
-		CartItems struct {
-			field.RelationField
-		}
-	}
 }
 
 func (a productHasManyCartItems) Where(conds ...field.Expr) *productHasManyCartItems {

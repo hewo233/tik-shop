@@ -26,53 +26,10 @@ func newCartItem(db *gorm.DB, opts ...gen.DOOption) cartItem {
 
 	tableName := _cartItem.cartItemDo.TableName()
 	_cartItem.ALL = field.NewAsterisk(tableName)
-	_cartItem.ID = field.NewUint(tableName, "id")
-	_cartItem.ProductID = field.NewInt64(tableName, "ProductID")
-	_cartItem.UserID = field.NewUint(tableName, "UserID")
+	_cartItem.Id = field.NewUint(tableName, "id")
+	_cartItem.ProductId = field.NewInt64(tableName, "ProductId")
+	_cartItem.UserId = field.NewUint(tableName, "UserId")
 	_cartItem.Quantity = field.NewInt64(tableName, "Quantity")
-	_cartItem.Users = cartItemBelongsToUsers{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("Users", "model.Users"),
-		CartItems: struct {
-			field.RelationField
-			Users struct {
-				field.RelationField
-			}
-			Product struct {
-				field.RelationField
-				CartItems struct {
-					field.RelationField
-				}
-			}
-		}{
-			RelationField: field.NewRelation("Users.CartItems", "model.CartItem"),
-			Users: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Users.CartItems.Users", "model.Users"),
-			},
-			Product: struct {
-				field.RelationField
-				CartItems struct {
-					field.RelationField
-				}
-			}{
-				RelationField: field.NewRelation("Users.CartItems.Product", "model.Product"),
-				CartItems: struct {
-					field.RelationField
-				}{
-					RelationField: field.NewRelation("Users.CartItems.Product.CartItems", "model.CartItem"),
-				},
-			},
-		},
-	}
-
-	_cartItem.Product = cartItemBelongsToProduct{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("Product", "model.Product"),
-	}
 
 	_cartItem.fillFieldMap()
 
@@ -83,13 +40,10 @@ type cartItem struct {
 	cartItemDo
 
 	ALL       field.Asterisk
-	ID        field.Uint
-	ProductID field.Int64
-	UserID    field.Uint
+	Id        field.Uint
+	ProductId field.Int64
+	UserId    field.Uint
 	Quantity  field.Int64
-	Users     cartItemBelongsToUsers
-
-	Product cartItemBelongsToProduct
 
 	fieldMap map[string]field.Expr
 }
@@ -106,9 +60,9 @@ func (c cartItem) As(alias string) *cartItem {
 
 func (c *cartItem) updateTableName(table string) *cartItem {
 	c.ALL = field.NewAsterisk(table)
-	c.ID = field.NewUint(table, "id")
-	c.ProductID = field.NewInt64(table, "ProductID")
-	c.UserID = field.NewUint(table, "UserID")
+	c.Id = field.NewUint(table, "id")
+	c.ProductId = field.NewInt64(table, "ProductId")
+	c.UserId = field.NewUint(table, "UserId")
 	c.Quantity = field.NewInt64(table, "Quantity")
 
 	c.fillFieldMap()
@@ -126,12 +80,11 @@ func (c *cartItem) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *cartItem) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 6)
-	c.fieldMap["id"] = c.ID
-	c.fieldMap["ProductID"] = c.ProductID
-	c.fieldMap["UserID"] = c.UserID
+	c.fieldMap = make(map[string]field.Expr, 4)
+	c.fieldMap["id"] = c.Id
+	c.fieldMap["ProductId"] = c.ProductId
+	c.fieldMap["UserId"] = c.UserId
 	c.fieldMap["Quantity"] = c.Quantity
-
 }
 
 func (c cartItem) clone(db *gorm.DB) cartItem {
@@ -142,161 +95,6 @@ func (c cartItem) clone(db *gorm.DB) cartItem {
 func (c cartItem) replaceDB(db *gorm.DB) cartItem {
 	c.cartItemDo.ReplaceDB(db)
 	return c
-}
-
-type cartItemBelongsToUsers struct {
-	db *gorm.DB
-
-	field.RelationField
-
-	CartItems struct {
-		field.RelationField
-		Users struct {
-			field.RelationField
-		}
-		Product struct {
-			field.RelationField
-			CartItems struct {
-				field.RelationField
-			}
-		}
-	}
-}
-
-func (a cartItemBelongsToUsers) Where(conds ...field.Expr) *cartItemBelongsToUsers {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a cartItemBelongsToUsers) WithContext(ctx context.Context) *cartItemBelongsToUsers {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a cartItemBelongsToUsers) Session(session *gorm.Session) *cartItemBelongsToUsers {
-	a.db = a.db.Session(session)
-	return &a
-}
-
-func (a cartItemBelongsToUsers) Model(m *model.CartItem) *cartItemBelongsToUsersTx {
-	return &cartItemBelongsToUsersTx{a.db.Model(m).Association(a.Name())}
-}
-
-type cartItemBelongsToUsersTx struct{ tx *gorm.Association }
-
-func (a cartItemBelongsToUsersTx) Find() (result *model.Users, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a cartItemBelongsToUsersTx) Append(values ...*model.Users) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a cartItemBelongsToUsersTx) Replace(values ...*model.Users) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a cartItemBelongsToUsersTx) Delete(values ...*model.Users) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a cartItemBelongsToUsersTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a cartItemBelongsToUsersTx) Count() int64 {
-	return a.tx.Count()
-}
-
-type cartItemBelongsToProduct struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a cartItemBelongsToProduct) Where(conds ...field.Expr) *cartItemBelongsToProduct {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a cartItemBelongsToProduct) WithContext(ctx context.Context) *cartItemBelongsToProduct {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a cartItemBelongsToProduct) Session(session *gorm.Session) *cartItemBelongsToProduct {
-	a.db = a.db.Session(session)
-	return &a
-}
-
-func (a cartItemBelongsToProduct) Model(m *model.CartItem) *cartItemBelongsToProductTx {
-	return &cartItemBelongsToProductTx{a.db.Model(m).Association(a.Name())}
-}
-
-type cartItemBelongsToProductTx struct{ tx *gorm.Association }
-
-func (a cartItemBelongsToProductTx) Find() (result *model.Product, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a cartItemBelongsToProductTx) Append(values ...*model.Product) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a cartItemBelongsToProductTx) Replace(values ...*model.Product) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a cartItemBelongsToProductTx) Delete(values ...*model.Product) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a cartItemBelongsToProductTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a cartItemBelongsToProductTx) Count() int64 {
-	return a.tx.Count()
 }
 
 type cartItemDo struct{ gen.DO }
