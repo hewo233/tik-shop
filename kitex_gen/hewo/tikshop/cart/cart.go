@@ -11,8 +11,8 @@ import (
 )
 
 type CartItem struct {
-	ProductId int64 `thrift:"productId,1" frugal:"1,default,i64" json:"productId"`
-	Quantity  int64 `thrift:"quantity,2" frugal:"2,default,i64" json:"quantity"`
+	ProductId int64 `copier:"ProductId" thrift:"productId,1" frugal:"1,default,i64" json:"productId"`
+	Quantity  int64 `copier:"Quantity"  thrift:"quantity,2"  frugal:"2,default,i64" json:"quantity"`
 }
 
 func NewCartItem() *CartItem {

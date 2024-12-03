@@ -342,10 +342,10 @@ func (p *OrderItem) Field3DeepEqual(src float64) bool {
 }
 
 type Address struct {
-	Street     string `thrift:"street,1" frugal:"1,default,string" json:"street"`
-	City       string `thrift:"city,2" frugal:"2,default,string" json:"city"`
-	PostalCode string `thrift:"postalCode,3" frugal:"3,default,string" json:"postalCode"`
-	Country    string `thrift:"country,4" frugal:"4,default,string" json:"country"`
+	Street     string `copier:"Street" thrift:"street,1" frugal:"1,default,string" json:"street"`
+	City       string `copier:"City" thrift:"city,2" frugal:"2,default,string" json:"city"`
+	PostalCode string `copier:"PostalCode" thrift:"postalCode,3" frugal:"3,default,string" json:"postalCode"`
+	Country    string `copier:"Country" thrift:"country,4" frugal:"4,default,string" json:"country"`
 }
 
 func NewAddress() *Address {
@@ -3031,10 +3031,10 @@ func (p *GetOrderByIdResponse) Field1DeepEqual(src *Order) bool {
 }
 
 type Order struct {
-	OrderId     int64        `thrift:"orderId,1" frugal:"1,default,i64" json:"orderId"`
-	Status      OrderStatus  `thrift:"status,2" frugal:"2,default,OrderStatus" json:"status"`
+	OrderId     int64        `copier:"Id" thrift:"orderId,1" frugal:"1,default,i64" json:"orderId"`
+	Status      OrderStatus  `copier:"-" thrift:"status,2" frugal:"2,default,OrderStatus" json:"status"`
 	TotalAmount float64      `thrift:"totalAmount,3" frugal:"3,default,double" json:"totalAmount"`
-	CreatedAt   string       `thrift:"createdAt,4" frugal:"4,default,string" json:"createdAt"`
+	CreatedAt   string       `copier:"-" thrift:"createdAt,4" frugal:"4,default,string" json:"createdAt"`
 	Items       []*OrderItem `thrift:"items,5" frugal:"5,default,list<OrderItem>" json:"items"`
 }
 

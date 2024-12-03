@@ -9,6 +9,7 @@ require (
 	github.com/cloudwego/gopkg v0.1.2
 	github.com/cloudwego/hertz v0.9.3
 	github.com/cloudwego/kitex v0.11.3
+	github.com/jinzhu/copier v0.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kitex-contrib/registry-etcd v0.2.5
 	gorm.io/driver/postgres v1.5.10
