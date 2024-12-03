@@ -26,7 +26,8 @@ func newAddress(db *gorm.DB, opts ...gen.DOOption) address {
 
 	tableName := _address.addressDo.TableName()
 	_address.ALL = field.NewAsterisk(tableName)
-	_address.ID = field.NewInt64(tableName, "Id")
+	_address.Id = field.NewInt64(tableName, "Id")
+	_address.OrderId = field.NewUint(tableName, "OrderId")
 	_address.Street = field.NewString(tableName, "Street")
 	_address.City = field.NewString(tableName, "City")
 	_address.PostalCode = field.NewString(tableName, "PostalCode")
@@ -41,7 +42,8 @@ type address struct {
 	addressDo
 
 	ALL        field.Asterisk
-	ID         field.Int64
+	Id         field.Int64
+	OrderId    field.Uint
 	Street     field.String
 	City       field.String
 	PostalCode field.String
@@ -62,7 +64,8 @@ func (a address) As(alias string) *address {
 
 func (a *address) updateTableName(table string) *address {
 	a.ALL = field.NewAsterisk(table)
-	a.ID = field.NewInt64(table, "Id")
+	a.Id = field.NewInt64(table, "Id")
+	a.OrderId = field.NewUint(table, "OrderId")
 	a.Street = field.NewString(table, "Street")
 	a.City = field.NewString(table, "City")
 	a.PostalCode = field.NewString(table, "PostalCode")
@@ -83,8 +86,9 @@ func (a *address) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (a *address) fillFieldMap() {
-	a.fieldMap = make(map[string]field.Expr, 5)
-	a.fieldMap["Id"] = a.ID
+	a.fieldMap = make(map[string]field.Expr, 6)
+	a.fieldMap["Id"] = a.Id
+	a.fieldMap["OrderId"] = a.OrderId
 	a.fieldMap["Street"] = a.Street
 	a.fieldMap["City"] = a.City
 	a.fieldMap["PostalCode"] = a.PostalCode

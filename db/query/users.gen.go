@@ -35,31 +35,26 @@ func newUsers(db *gorm.DB, opts ...gen.DOOption) users {
 		db: db.Session(&gorm.Session{}),
 
 		RelationField: field.NewRelation("CartItems", "model.CartItem"),
-		Users: struct {
+	}
+
+	_users.Orders = usersHasManyOrders{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Orders", "model.Order"),
+		Address: struct {
 			field.RelationField
-			CartItems struct {
-				field.RelationField
-			}
 		}{
-			RelationField: field.NewRelation("CartItems.Users", "model.Users"),
-			CartItems: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("CartItems.Users.CartItems", "model.CartItem"),
-			},
+			RelationField: field.NewRelation("Orders.Address", "model.Address"),
 		},
-		Product: struct {
+		PaymentDetails: struct {
 			field.RelationField
-			CartItems struct {
-				field.RelationField
-			}
 		}{
-			RelationField: field.NewRelation("CartItems.Product", "model.Product"),
-			CartItems: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("CartItems.Product.CartItems", "model.CartItem"),
-			},
+			RelationField: field.NewRelation("Orders.PaymentDetails", "model.PaymentDetails"),
+		},
+		Items: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Orders.Items", "model.OrderItem"),
 		},
 	}
 
@@ -78,6 +73,8 @@ type users struct {
 	Role      field.String
 	CreatedAt field.Time
 	CartItems usersHasManyCartItems
+
+	Orders usersHasManyOrders
 
 	fieldMap map[string]field.Expr
 }
@@ -115,7 +112,7 @@ func (u *users) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *users) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 6)
+	u.fieldMap = make(map[string]field.Expr, 7)
 	u.fieldMap["Id"] = u.Id
 	u.fieldMap["Username"] = u.Username
 	u.fieldMap["Email"] = u.Email
@@ -138,19 +135,6 @@ type usersHasManyCartItems struct {
 	db *gorm.DB
 
 	field.RelationField
-
-	Users struct {
-		field.RelationField
-		CartItems struct {
-			field.RelationField
-		}
-	}
-	Product struct {
-		field.RelationField
-		CartItems struct {
-			field.RelationField
-		}
-	}
 }
 
 func (a usersHasManyCartItems) Where(conds ...field.Expr) *usersHasManyCartItems {
@@ -215,6 +199,87 @@ func (a usersHasManyCartItemsTx) Clear() error {
 }
 
 func (a usersHasManyCartItemsTx) Count() int64 {
+	return a.tx.Count()
+}
+
+type usersHasManyOrders struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	Address struct {
+		field.RelationField
+	}
+	PaymentDetails struct {
+		field.RelationField
+	}
+	Items struct {
+		field.RelationField
+	}
+}
+
+func (a usersHasManyOrders) Where(conds ...field.Expr) *usersHasManyOrders {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a usersHasManyOrders) WithContext(ctx context.Context) *usersHasManyOrders {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a usersHasManyOrders) Session(session *gorm.Session) *usersHasManyOrders {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a usersHasManyOrders) Model(m *model.Users) *usersHasManyOrdersTx {
+	return &usersHasManyOrdersTx{a.db.Model(m).Association(a.Name())}
+}
+
+type usersHasManyOrdersTx struct{ tx *gorm.Association }
+
+func (a usersHasManyOrdersTx) Find() (result []*model.Order, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a usersHasManyOrdersTx) Append(values ...*model.Order) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a usersHasManyOrdersTx) Replace(values ...*model.Order) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a usersHasManyOrdersTx) Delete(values ...*model.Order) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a usersHasManyOrdersTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a usersHasManyOrdersTx) Count() int64 {
 	return a.tx.Count()
 }
 

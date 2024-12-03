@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/hewo/tik-shop/db/connectDB"
+	"github.com/hewo/tik-shop/db/query"
 	"log"
 	"net"
 
@@ -12,6 +14,10 @@ import (
 )
 
 func main() {
+	database, err := connectDB.ConnectDB()
+	if err != nil {
+	}
+	query.SetDefault(database)
 	r, err := etcd.NewEtcdRegistry([]string{"127.0.0.1:2379"})
 	if err != nil {
 		log.Fatal(err)

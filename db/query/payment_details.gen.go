@@ -26,7 +26,8 @@ func newPaymentDetails(db *gorm.DB, opts ...gen.DOOption) paymentDetails {
 
 	tableName := _paymentDetails.paymentDetailsDo.TableName()
 	_paymentDetails.ALL = field.NewAsterisk(tableName)
-	_paymentDetails.ID = field.NewInt64(tableName, "Id")
+	_paymentDetails.Id = field.NewInt64(tableName, "Id")
+	_paymentDetails.OrderId = field.NewUint(tableName, "OrderId")
 	_paymentDetails.CardNumber = field.NewString(tableName, "CardNumber")
 	_paymentDetails.ExpiryDate = field.NewString(tableName, "ExpiryDate")
 	_paymentDetails.Cvv = field.NewString(tableName, "Cvv")
@@ -40,7 +41,8 @@ type paymentDetails struct {
 	paymentDetailsDo
 
 	ALL        field.Asterisk
-	ID         field.Int64
+	Id         field.Int64
+	OrderId    field.Uint
 	CardNumber field.String
 	ExpiryDate field.String
 	Cvv        field.String
@@ -60,7 +62,8 @@ func (p paymentDetails) As(alias string) *paymentDetails {
 
 func (p *paymentDetails) updateTableName(table string) *paymentDetails {
 	p.ALL = field.NewAsterisk(table)
-	p.ID = field.NewInt64(table, "Id")
+	p.Id = field.NewInt64(table, "Id")
+	p.OrderId = field.NewUint(table, "OrderId")
 	p.CardNumber = field.NewString(table, "CardNumber")
 	p.ExpiryDate = field.NewString(table, "ExpiryDate")
 	p.Cvv = field.NewString(table, "Cvv")
@@ -80,8 +83,9 @@ func (p *paymentDetails) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (p *paymentDetails) fillFieldMap() {
-	p.fieldMap = make(map[string]field.Expr, 4)
-	p.fieldMap["Id"] = p.ID
+	p.fieldMap = make(map[string]field.Expr, 5)
+	p.fieldMap["Id"] = p.Id
+	p.fieldMap["OrderId"] = p.OrderId
 	p.fieldMap["CardNumber"] = p.CardNumber
 	p.fieldMap["ExpiryDate"] = p.ExpiryDate
 	p.fieldMap["Cvv"] = p.Cvv

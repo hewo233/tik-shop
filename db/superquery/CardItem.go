@@ -14,7 +14,7 @@ var c = query.Q.CartItem
 
 func GetCart(request *cart.GetCartRequest) ([]*cart.CartItem, error) {
 
-	cartItems, err := c.Where(c.UserID.Eq(uint(request.UserId))).Find()
+	cartItems, err := c.Where(c.UserId.Eq(uint(request.UserId))).Find()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get cart items: %w", err)
 	}
@@ -22,7 +22,7 @@ func GetCart(request *cart.GetCartRequest) ([]*cart.CartItem, error) {
 	for i, cartItem := range cartItems {
 		// 将 dbmodel.CartItem 类型转换为 cart.CartItem 类型
 		items[i] = &cart.CartItem{
-			cartItem.ProductID,
+			cartItem.ProductId,
 			cartItem.Quantity,
 		}
 	}
@@ -50,13 +50,13 @@ func AddToCart(request *cart.AddToCartRequest) (*cart.AddToCartResponse, error) 
 	}
 
 	// 查询用户购物车中是否已经有这个商品
-	_, err = c.Where(c.UserID.Eq(userID), c.ProductID.Eq(productID)).First()
+	_, err = c.Where(c.UserId.Eq(userID), c.ProductId.Eq(productID)).First()
 	if err != nil {
 		// 如果没有找到，说明购物车中没有该商品，插入新商品
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			newCartItem := &model.CartItem{
-				UserID:    userID,
-				ProductID: productID,
+				UserId:    userID,
+				ProductId: productID,
 				Quantity:  quantity,
 			}
 			err := c.Create(newCartItem)
@@ -73,7 +73,7 @@ func AddToCart(request *cart.AddToCartRequest) (*cart.AddToCartResponse, error) 
 		return nil, fmt.Errorf("failed to check cart item: %w", err)
 	}
 
-	_, err = c.Where(c.UserID.Eq(userID), c.ProductID.Eq(productID)).Update(c.Quantity, quantity)
+	_, err = c.Where(c.UserId.Eq(userID), c.ProductId.Eq(productID)).Update(c.Quantity, quantity)
 	if err != nil {
 		log.Println("Error updating cart item:", err)
 		return nil, fmt.Errorf("failed to update cart item: %w", err)
@@ -90,7 +90,7 @@ func UpdateCart(request *cart.UpdateCartRequest) (resp *cart.UpdateCartResponse,
 	productID := request.ProductId
 	quantity := request.Quantity
 
-	_, err = c.Where(c.UserID.Eq(userID), c.ProductID.Eq(productID)).First()
+	_, err = c.Where(c.UserId.Eq(userID), c.ProductId.Eq(productID)).First()
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("cart item not found for user %d and product %d", userID, productID)
@@ -99,7 +99,7 @@ func UpdateCart(request *cart.UpdateCartRequest) (resp *cart.UpdateCartResponse,
 		return nil, fmt.Errorf("failed to query cart item: %w", err)
 	}
 
-	_, err = c.Where(c.UserID.Eq(userID), c.ProductID.Eq(productID)).Update(c.Quantity, quantity)
+	_, err = c.Where(c.UserId.Eq(userID), c.ProductId.Eq(productID)).Update(c.Quantity, quantity)
 	if err != nil {
 		// 如果保存失败，返回错误
 		return nil, fmt.Errorf("failed to update cart item: %w", err)
@@ -116,7 +116,7 @@ func RemoveFromCart(request *cart.RemoveFromCartRequest) (resp *cart.RemoveFromC
 	userID := uint(request.UserId)
 	productID := request.ProductId
 
-	_, err = c.Where(c.UserID.Eq(userID), c.ProductID.Eq(productID)).First()
+	_, err = c.Where(c.UserId.Eq(userID), c.ProductId.Eq(productID)).First()
 	if err != nil {
 		// 如果购物车项不存在，返回错误
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -127,7 +127,7 @@ func RemoveFromCart(request *cart.RemoveFromCartRequest) (resp *cart.RemoveFromC
 	}
 
 	// 执行删除操作
-	_, err = c.Where(c.UserID.Eq(userID), c.ProductID.Eq(productID)).Delete()
+	_, err = c.Where(c.UserId.Eq(userID), c.ProductId.Eq(productID)).Delete()
 	if err != nil {
 		// 如果删除失败，返回错误
 		return nil, fmt.Errorf("failed to remove product from cart: %w", err)
@@ -144,7 +144,7 @@ func ClearCart(request *cart.ClearCartRequest) (resp *cart.ClearCartResponse, er
 	// 从请求中提取用户 ID
 	userID := uint(request.UserId)
 
-	cartItems, err := c.Where(c.UserID.Eq(userID)).Delete()
+	cartItems, err := c.Where(c.UserId.Eq(userID)).Delete()
 	// 错误处理
 	if err != nil {
 		// 如果发生删除错误，返回错误信息
