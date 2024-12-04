@@ -3,6 +3,7 @@ package superquery
 import (
 	"errors"
 	"fmt"
+
 	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/order"
@@ -52,8 +53,8 @@ func SubmitOrder(request *order.SubmitOrderRequest) (*order.SubmitOrderResponse,
 		return nil, fmt.Errorf("o.Create: %w", err)
 	}
 	return &order.SubmitOrderResponse{
-		ORDER.Id,
-		"Submit order successfully",
+		OrderId: ORDER.Id,
+		Message: "Submit order successfully",
 	}, nil
 }
 
@@ -101,7 +102,7 @@ func PayOrder(request *order.PayOrderRequest) (*order.PayOrderResponse, error) {
 		}
 	}
 	return &order.PayOrderResponse{
-		"pay order successfully",
+		Message: "pay order successfully",
 	}, nil
 }
 
@@ -128,7 +129,7 @@ func CancelOrder(request *order.CancelOrderRequest) (*order.CancelOrderResponse,
 		return nil, fmt.Errorf("failed to cancel order: %v", err)
 	}
 	return &order.CancelOrderResponse{
-		"cancel order successfully",
+		Message: "cancel order successfully",
 	}, nil
 }
 
@@ -152,7 +153,7 @@ func GetOrders(request *order.GetOrdersRequest) (*order.GetOrdersResponse, error
 	}
 
 	return &order.GetOrdersResponse{
-		orders, // 返回查询到的订单
+		Orders: orders, // 返回查询到的订单
 	}, nil
 }
 
@@ -169,9 +170,8 @@ func GetOrderById(request *order.GetOrderByIdRequest) (*order.GetOrderByIdRespon
 	err = copier.CopyWithOption(&orderById, ORDER, copier.Option{DeepCopy: true})
 	if err != nil {
 		return nil, fmt.Errorf("copier.Copy OrderById: %w", err)
-
 	}
 	return &order.GetOrderByIdResponse{
-		orderById,
+		Order: orderById,
 	}, nil
 }
