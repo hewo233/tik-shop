@@ -2,9 +2,13 @@ package main
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/hewo/tik-shop/db/model"
+	"github.com/hewo/tik-shop/db/superquery"
+	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	product "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/product"
+	"github.com/jinzhu/copier"
 )
 
 // ProductServiceImpl implements the last service interface defined in the IDL.
@@ -12,56 +16,57 @@ type ProductServiceImpl struct{}
 
 // GetProducts implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) GetProducts(ctx context.Context, request *product.GetProductsRequest) (resp *product.GetProductsReqsponse, err error) {
-	// TODO: Your code here...
+	products, err := superquery.GetProducts(request.Page, request.Limit)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
 	resp = &product.GetProductsReqsponse{
-		Products: []*product.Product{
-			{
-				Id:          1,
-				Name:        "Product 1",
-				Price:       9999,
-				Stock:       100,
-				Description: "This is product 1",
-			},
-			{
-				Id:          2,
-				Name:        "Product 2",
-				Price:       19999,
-				Stock:       200,
-				Description: "This is product 2",
-			},
-		},
+		Products: products,
 	}
 	return resp, nil
 }
 
 // GetProductById implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) GetProductById(ctx context.Context, request *product.GetProductByIdRequest) (resp *product.GetProductByIdResponse, err error) {
-	// TODO: Your code here...
+	p, err := superquery.GetProductById(request.Id)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
 	resp = &product.GetProductByIdResponse{
-		Product: &product.Product{
-			Id:          request.Id,
-			Name:        "Product " + fmt.Sprint(request.Id),
-			Price:       12345,
-			Stock:       50,
-			Description: "This is the product with ID " + fmt.Sprint(request.Id),
-		},
+		Product: p,
 	}
 	return resp, nil
 }
 
 // CreateProduct implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) CreateProduct(ctx context.Context, request *product.CreateProductRequest) (resp *product.CreateProductResponse, err error) {
-	// TODO: Your code here...
+	p := &model.Product{}
+	err = copier.Copy(&p, request)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
+	err = superquery.CreateProduct(p)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
 	resp = &product.CreateProductResponse{
 		Message:   "Product created successfully",
-		ProductId: 123, // Fake ID for the new product
+		ProductId: -1, // I mean, maybe we dont need to return id?
 	}
 	return
 }
 
 // UpdateProduct implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) UpdateProduct(ctx context.Context, request *product.UpdateProductRequest) (resp *product.UpdateProductResponse, err error) {
-	// TODO: Your code here...
+	p := &model.Product{}
+	err = copier.Copy(&p, request)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
+	err = superquery.UpdateProduct(p)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
 	resp = &product.UpdateProductResponse{
 		Message: "Product updated successfully",
 	}
@@ -70,7 +75,10 @@ func (s *ProductServiceImpl) UpdateProduct(ctx context.Context, request *product
 
 // DeleteProduct implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) DeleteProduct(ctx context.Context, request *product.DeleteProductRequest) (resp *product.DeleteProductResponse, err error) {
-	// TODO: Your code here...
+	err = superquery.DeleteProduct(request.Id)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
 	resp = &product.DeleteProductResponse{
 		Message: "Product deleted successfully",
 	}
