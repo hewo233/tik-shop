@@ -118,5 +118,5 @@ go.work.sum
 db/.env
 
 # config and key
-key
+./key
 route/config.yaml
