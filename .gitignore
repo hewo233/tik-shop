@@ -116,3 +116,7 @@ go.work.sum
 
 # .env file
 db/.env
+
+# config and key
+key
+route/config.yaml
