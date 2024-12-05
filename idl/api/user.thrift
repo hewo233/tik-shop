@@ -1,4 +1,4 @@
-namespace go hewo.tikshop.route.user
+amespace go hewo.tikshop.route.user
 
 include "./base.thrift"
 
