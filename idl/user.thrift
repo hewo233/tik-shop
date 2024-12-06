@@ -19,14 +19,14 @@ struct GetUserInfoResponse {
     1: User user;
 }
 
-// 定义鉴权模块的请求和响应结构
-struct AuthRequest {
+// Login
+struct LoginRequest {
     1: string username; // 用户名
     2: string password; // 密码
 }
 
-struct AuthResponse {
-    1: string token; // 是否通过验证
+struct LoginResponse {
+    1: string token; // 分发 token
 }
 
 // 定义用户模块的请求和响应结构
@@ -63,8 +63,8 @@ struct UpdatePasswordResponse {
 // 定义 UserService 接口
 service UserService {
     // 鉴权模块
-    AuthResponse Auth(1: AuthRequest request) throws (1: base.ErrorResponse err);
-    AuthResponse AdminAuth(1: AuthRequest request) throws (1: base.ErrorResponse err);
+    LoginResponse Auth(1: LoginRequest request) throws (1: base.ErrorResponse err);
+    LoginResponse AdminAuth(1: LoginRequest request) throws (1: base.ErrorResponse err);
 
     // 用户模块
     GetUserInfoResponse GetUserInfo(1: GetUserInfoRequest request) throws (1: base.ErrorResponse err);
