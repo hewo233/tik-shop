@@ -23,9 +23,9 @@ type OrderItem struct {
 type Order struct {
 	Id             int64          `gorm:"primaryKey;autoIncrement;column:Id" thrift:"orderId,1" frugal:"1,default,i64" json:"orderId"`
 	UserId         int64          `gorm:"column:UserId;not null"`
-	Status         OrderStatus    `gorm:"column:Status;not null" thrift:"status,2" frugal:"2,default,OrderStatus" json:"status"`
+	Status         OrderStatus    `copier:"-" gorm:"column:Status;not null" thrift:"status,2" frugal:"2,default,OrderStatus" json:"status"`
 	TotalAmount    float64        `gorm:"column:TotalAmount;not null" thrift:"totalAmount,3" frugal:"3,default,double" json:"totalAmount"`
-	CreatedAt      time.Time      `gorm:"column:CreatedAt;autoCreateTime" thrift:"createdAt,4" frugal:"4,default,string" json:"createdAt"`
+	CreatedAt      time.Time      `copier:"-" gorm:"column:CreatedAt;autoCreateTime" thrift:"createdAt,4" frugal:"4,default,string" json:"createdAt"`
 	PaymentMethod  string         `gorm:"column:PaymentMethod;not null"`
 	Items          []OrderItem    `gorm:"foreignKey:OrderId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" thrift:"items,5" frugal:"5,default,list<OrderItem>" json:"items"`
 	Address        Address        `gorm:"foreignKey:OrderId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`

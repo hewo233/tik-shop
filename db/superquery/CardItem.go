@@ -6,6 +6,7 @@ import (
 	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
 	cart "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/cart"
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 	"log"
 )
@@ -20,10 +21,9 @@ func GetCart(request *cart.GetCartRequest) ([]*cart.CartItem, error) {
 	}
 	items := make([]*cart.CartItem, len(cartItems))
 	for i, cartItem := range cartItems {
-		// 将 dbmodel.CartItem 类型转换为 cart.CartItem 类型
-		items[i] = &cart.CartItem{
-			cartItem.ProductId,
-			cartItem.Quantity,
+		err := copier.Copy(&items[i], &cartItem)
+		if err != nil {
+			return nil, fmt.Errorf("failed to copy cart item: %w", err)
 		}
 	}
 	return items, nil

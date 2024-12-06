@@ -3,9 +3,11 @@ package superquery
 import (
 	"errors"
 	"fmt"
+
 	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/order"
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 )
 
@@ -23,12 +25,10 @@ func SubmitOrder(request *order.SubmitOrderRequest) (*order.SubmitOrderResponse,
 		// 假设每个 item 有 Price 字段
 		totalAmount += item.Price * float64(item.Quantity)
 	}
-	ADDRESS := model.Address{
-		OrderId:    0,
-		Street:     Address.Street,
-		City:       Address.City,
-		PostalCode: Address.PostalCode,
-		Country:    Address.Country,
+	ADDRESS := model.Address{OrderId: 0}
+	err := copier.Copy(&ADDRESS, &Address)
+	if err != nil {
+		return nil, fmt.Errorf("copier.Copy Address: %w", err)
 	}
 	ORDER := model.Order{
 		UserId:        UserId,
@@ -42,20 +42,19 @@ func SubmitOrder(request *order.SubmitOrderRequest) (*order.SubmitOrderResponse,
 
 	// 转换 Items 数据到 OrderItem 结构体
 	for i, item := range Items {
-		ORDER.Items[i] = model.OrderItem{
-			ProductId: item.ProductId,
-			Quantity:  item.Quantity,
-			Price:     item.Price,
-			OrderId:   ORDER.Id, // 后续会填充的订单 ID
+		ORDER.Items[i].OrderId = ORDER.Id
+		err = copier.Copy(&ORDER.Items[i], &item)
+		if err != nil {
+			return nil, fmt.Errorf("copier.Copy OrderItems: %w", err)
 		}
 	}
-	err := o.Create(&ORDER)
+	err = o.Create(&ORDER)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("o.Create: %w", err)
 	}
 	return &order.SubmitOrderResponse{
-		ORDER.Id,
-		"Submit order successfully",
+		OrderId: ORDER.Id,
+		Message: "Submit order successfully",
 	}, nil
 }
 
@@ -90,19 +89,20 @@ func PayOrder(request *order.PayOrderRequest) (*order.PayOrderResponse, error) {
 
 	// 记录支付详情（如果有的话）
 	if request.PaymentDetails != nil {
-		paymentDetails := model.PaymentDetails{
-			OrderId:    uint(orderId),
-			CardNumber: PaymentDetails.CardNumber,
-			ExpiryDate: PaymentDetails.ExpiryDate,
-			Cvv:        PaymentDetails.Cvv,
+		paymentDetails := model.PaymentDetails{OrderId: uint(orderId)}
+
+		err = copier.Copy(&paymentDetails, &PaymentDetails)
+		if err != nil {
+			return nil, fmt.Errorf("copier.Copy PaymentDetails: %w", err)
 		}
+
 		err = query.Q.PaymentDetails.Create(&paymentDetails)
 		if err != nil {
 			return nil, fmt.Errorf("create payment details fail")
 		}
 	}
 	return &order.PayOrderResponse{
-		"pay order successfully",
+		Message: "pay order successfully",
 	}, nil
 }
 
@@ -129,7 +129,7 @@ func CancelOrder(request *order.CancelOrderRequest) (*order.CancelOrderResponse,
 		return nil, fmt.Errorf("failed to cancel order: %v", err)
 	}
 	return &order.CancelOrderResponse{
-		"cancel order successfully",
+		Message: "cancel order successfully",
 	}, nil
 }
 
@@ -143,23 +143,17 @@ func GetOrders(request *order.GetOrdersRequest) (*order.GetOrdersResponse, error
 	var orders = make([]*order.Order, len(ORDERS))
 	for i, ORDER := range ORDERS {
 		orders[i] = &order.Order{
-			OrderId:     ORDER.Id,
-			Status:      order.OrderStatus(ORDER.Status),
-			TotalAmount: ORDER.TotalAmount,
-			CreatedAt:   ORDER.CreatedAt.Format("2006-01-02 15:04:05"),
-			Items:       make([]*order.OrderItem, len(ORDER.Items)),
+			Status:    order.OrderStatus(ORDER.Status),
+			CreatedAt: ORDER.CreatedAt.Format("2006-01-02 15:04:05"),
 		}
-		for j, item := range ORDER.Items {
-			orders[i].Items[j] = &order.OrderItem{
-				ProductId: item.ProductId,
-				Quantity:  item.Quantity,
-				Price:     item.Price,
-			}
-		}
+	}
+	err = copier.CopyWithOption(&orders, ORDERS, copier.Option{DeepCopy: true})
+	if err != nil {
+		return nil, fmt.Errorf("copier.Copy Orders: %w", err)
 	}
 
 	return &order.GetOrdersResponse{
-		orders, // 返回查询到的订单
+		Orders: orders, // 返回查询到的订单
 	}, nil
 }
 
@@ -170,22 +164,14 @@ func GetOrderById(request *order.GetOrderByIdRequest) (*order.GetOrderByIdRespon
 		return nil, fmt.Errorf("failed to find order: %v", err)
 	}
 	orderById := &order.Order{
-		OrderId:     ORDER.Id,
-		Status:      order.OrderStatus(ORDER.Status),
-		TotalAmount: ORDER.TotalAmount,
-		CreatedAt:   ORDER.CreatedAt.Format("2006-01-02 15:04:05"),
-		Items:       make([]*order.OrderItem, len(ORDER.Items)),
+		Status:    order.OrderStatus(ORDER.Status),
+		CreatedAt: ORDER.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
-	for j, item := range ORDER.Items {
-		orderById.Items[j] = &order.OrderItem{
-			ProductId: item.ProductId,
-			Quantity:  item.Quantity,
-			Price:     item.Price,
-		}
-
+	err = copier.CopyWithOption(&orderById, ORDER, copier.Option{DeepCopy: true})
+	if err != nil {
+		return nil, fmt.Errorf("copier.Copy OrderById: %w", err)
 	}
-
 	return &order.GetOrderByIdResponse{
-		orderById,
+		Order: orderById,
 	}, nil
 }
