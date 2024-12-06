@@ -8,6 +8,8 @@ import (
 )
 
 func InitConfig() {
+	log.Println("Init Config")
+
 	v := viper.New()
 	v.SetConfigFile(consts.ApiConfigPath)
 

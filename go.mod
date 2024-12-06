@@ -5,12 +5,16 @@ go 1.22.9
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
+	aidanwoods.dev/go-paseto v1.5.2
 	github.com/apache/thrift v0.16.0
 	github.com/cloudwego/gopkg v0.1.2
 	github.com/cloudwego/hertz v0.9.3
 	github.com/cloudwego/kitex v0.11.3
+	github.com/hertz-contrib/gzip v0.0.3
+	github.com/hertz-contrib/paseto v0.0.0-20230508023022-71af6635a26c
 	github.com/joho/godotenv v1.5.1
 	github.com/kitex-contrib/registry-etcd v0.2.5
+	github.com/spf13/viper v1.19.0
 	gorm.io/driver/postgres v1.5.10
 	gorm.io/gen v0.3.26
 	gorm.io/gorm v1.25.12
@@ -18,7 +22,6 @@ require (
 )
 
 require (
-	aidanwoods.dev/go-paseto v1.5.2 // indirect
 	aidanwoods.dev/go-result v0.1.0 // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.2 // indirect
 	github.com/bytedance/gopkg v0.1.1 // indirect
@@ -41,13 +44,11 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/henrylee2cn/ameda v1.4.10 // indirect
 	github.com/henrylee2cn/goutil v0.0.0-20210127050712-89660552f6f8 // indirect
-	github.com/hertz-contrib/gzip v0.0.3 // indirect
-	github.com/hertz-contrib/paseto v0.0.0-20230508023022-71af6635a26c // indirect
 	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
@@ -73,7 +74,6 @@ require (
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.19.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tidwall/gjson v1.17.3 // indirect
