@@ -34,7 +34,7 @@ Authorization: Bearer {{userLoginToken}}
 
 # Test 5: User Registration (POST /api/user/register)
 POST http://localhost:8080/api/user/register
-Content-Type: application/json
+Contecnt-Type: application/json
 
 {
   "username": "newUser",

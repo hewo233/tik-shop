@@ -45,3 +45,28 @@ func _registerMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _authMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _loginMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _verifyMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _adminMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _adminloginMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

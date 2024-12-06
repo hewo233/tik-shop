@@ -744,38 +744,38 @@ func (p *GetUserInfoResponse) Field1DeepEqual(src *User) bool {
 	return true
 }
 
-type AuthRequest struct {
+type LoginRequest struct {
 	Username string `thrift:"username,1" frugal:"1,default,string" json:"username"`
 	Password string `thrift:"password,2" frugal:"2,default,string" json:"password"`
 }
 
-func NewAuthRequest() *AuthRequest {
-	return &AuthRequest{}
+func NewLoginRequest() *LoginRequest {
+	return &LoginRequest{}
 }
 
-func (p *AuthRequest) InitDefault() {
+func (p *LoginRequest) InitDefault() {
 }
 
-func (p *AuthRequest) GetUsername() (v string) {
+func (p *LoginRequest) GetUsername() (v string) {
 	return p.Username
 }
 
-func (p *AuthRequest) GetPassword() (v string) {
+func (p *LoginRequest) GetPassword() (v string) {
 	return p.Password
 }
-func (p *AuthRequest) SetUsername(val string) {
+func (p *LoginRequest) SetUsername(val string) {
 	p.Username = val
 }
-func (p *AuthRequest) SetPassword(val string) {
+func (p *LoginRequest) SetPassword(val string) {
 	p.Password = val
 }
 
-var fieldIDToName_AuthRequest = map[int16]string{
+var fieldIDToName_LoginRequest = map[int16]string{
 	1: "username",
 	2: "password",
 }
 
-func (p *AuthRequest) Read(iprot thrift.TProtocol) (err error) {
+func (p *LoginRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -829,7 +829,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AuthRequest[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_LoginRequest[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -839,7 +839,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *AuthRequest) ReadField1(iprot thrift.TProtocol) error {
+func (p *LoginRequest) ReadField1(iprot thrift.TProtocol) error {
 
 	var _field string
 	if v, err := iprot.ReadString(); err != nil {
@@ -850,7 +850,7 @@ func (p *AuthRequest) ReadField1(iprot thrift.TProtocol) error {
 	p.Username = _field
 	return nil
 }
-func (p *AuthRequest) ReadField2(iprot thrift.TProtocol) error {
+func (p *LoginRequest) ReadField2(iprot thrift.TProtocol) error {
 
 	var _field string
 	if v, err := iprot.ReadString(); err != nil {
@@ -862,10 +862,10 @@ func (p *AuthRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *AuthRequest) Write(oprot thrift.TProtocol) (err error) {
+func (p *LoginRequest) Write(oprot thrift.TProtocol) (err error) {
 
 	var fieldId int16
-	if err = oprot.WriteStructBegin("AuthRequest"); err != nil {
+	if err = oprot.WriteStructBegin("LoginRequest"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -895,7 +895,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *AuthRequest) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *LoginRequest) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("username", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -912,7 +912,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *AuthRequest) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *LoginRequest) writeField2(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("password", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -929,15 +929,15 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *AuthRequest) String() string {
+func (p *LoginRequest) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("AuthRequest(%+v)", *p)
+	return fmt.Sprintf("LoginRequest(%+v)", *p)
 
 }
 
-func (p *AuthRequest) DeepEqual(ano *AuthRequest) bool {
+func (p *LoginRequest) DeepEqual(ano *LoginRequest) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -952,14 +952,14 @@ func (p *AuthRequest) DeepEqual(ano *AuthRequest) bool {
 	return true
 }
 
-func (p *AuthRequest) Field1DeepEqual(src string) bool {
+func (p *LoginRequest) Field1DeepEqual(src string) bool {
 
 	if strings.Compare(p.Username, src) != 0 {
 		return false
 	}
 	return true
 }
-func (p *AuthRequest) Field2DeepEqual(src string) bool {
+func (p *LoginRequest) Field2DeepEqual(src string) bool {
 
 	if strings.Compare(p.Password, src) != 0 {
 		return false
@@ -967,29 +967,29 @@ func (p *AuthRequest) Field2DeepEqual(src string) bool {
 	return true
 }
 
-type AuthResponse struct {
-	Authorized bool `thrift:"authorized,1" frugal:"1,default,bool" json:"authorized"`
+type LoginResponse struct {
+	Token string `thrift:"token,1" frugal:"1,default,string" json:"token"`
 }
 
-func NewAuthResponse() *AuthResponse {
-	return &AuthResponse{}
+func NewLoginResponse() *LoginResponse {
+	return &LoginResponse{}
 }
 
-func (p *AuthResponse) InitDefault() {
+func (p *LoginResponse) InitDefault() {
 }
 
-func (p *AuthResponse) GetAuthorized() (v bool) {
-	return p.Authorized
+func (p *LoginResponse) GetToken() (v string) {
+	return p.Token
 }
-func (p *AuthResponse) SetAuthorized(val bool) {
-	p.Authorized = val
-}
-
-var fieldIDToName_AuthResponse = map[int16]string{
-	1: "authorized",
+func (p *LoginResponse) SetToken(val string) {
+	p.Token = val
 }
 
-func (p *AuthResponse) Read(iprot thrift.TProtocol) (err error) {
+var fieldIDToName_LoginResponse = map[int16]string{
+	1: "token",
+}
+
+func (p *LoginResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -1009,7 +1009,7 @@ func (p *AuthResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1035,7 +1035,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AuthResponse[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_LoginResponse[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -1045,22 +1045,22 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *AuthResponse) ReadField1(iprot thrift.TProtocol) error {
+func (p *LoginResponse) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field bool
-	if v, err := iprot.ReadBool(); err != nil {
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
 		_field = v
 	}
-	p.Authorized = _field
+	p.Token = _field
 	return nil
 }
 
-func (p *AuthResponse) Write(oprot thrift.TProtocol) (err error) {
+func (p *LoginResponse) Write(oprot thrift.TProtocol) (err error) {
 
 	var fieldId int16
-	if err = oprot.WriteStructBegin("AuthResponse"); err != nil {
+	if err = oprot.WriteStructBegin("LoginResponse"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -1086,11 +1086,11 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *AuthResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("authorized", thrift.BOOL, 1); err != nil {
+func (p *LoginResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("token", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBool(p.Authorized); err != nil {
+	if err := oprot.WriteString(p.Token); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1103,29 +1103,29 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *AuthResponse) String() string {
+func (p *LoginResponse) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("AuthResponse(%+v)", *p)
+	return fmt.Sprintf("LoginResponse(%+v)", *p)
 
 }
 
-func (p *AuthResponse) DeepEqual(ano *AuthResponse) bool {
+func (p *LoginResponse) DeepEqual(ano *LoginResponse) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Authorized) {
+	if !p.Field1DeepEqual(ano.Token) {
 		return false
 	}
 	return true
 }
 
-func (p *AuthResponse) Field1DeepEqual(src bool) bool {
+func (p *LoginResponse) Field1DeepEqual(src string) bool {
 
-	if p.Authorized != src {
+	if strings.Compare(p.Token, src) != 0 {
 		return false
 	}
 	return true
@@ -2312,7 +2312,7 @@ func (p *UpdatePasswordRequest) Field3DeepEqual(src string) bool {
 }
 
 type UpdatePasswordResponse struct {
-	Message string `thrift:"message,1" frugal:"1,default,string" json:"message"`
+	ChangedFlag bool `thrift:"changedFlag,1" frugal:"1,default,bool" json:"changedFlag"`
 }
 
 func NewUpdatePasswordResponse() *UpdatePasswordResponse {
@@ -2322,15 +2322,15 @@ func NewUpdatePasswordResponse() *UpdatePasswordResponse {
 func (p *UpdatePasswordResponse) InitDefault() {
 }
 
-func (p *UpdatePasswordResponse) GetMessage() (v string) {
-	return p.Message
+func (p *UpdatePasswordResponse) GetChangedFlag() (v bool) {
+	return p.ChangedFlag
 }
-func (p *UpdatePasswordResponse) SetMessage(val string) {
-	p.Message = val
+func (p *UpdatePasswordResponse) SetChangedFlag(val bool) {
+	p.ChangedFlag = val
 }
 
 var fieldIDToName_UpdatePasswordResponse = map[int16]string{
-	1: "message",
+	1: "changedFlag",
 }
 
 func (p *UpdatePasswordResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -2353,7 +2353,7 @@ func (p *UpdatePasswordResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.BOOL {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2391,13 +2391,13 @@ ReadStructEndError:
 
 func (p *UpdatePasswordResponse) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field bool
+	if v, err := iprot.ReadBool(); err != nil {
 		return err
 	} else {
 		_field = v
 	}
-	p.Message = _field
+	p.ChangedFlag = _field
 	return nil
 }
 
@@ -2431,10 +2431,10 @@ WriteStructEndError:
 }
 
 func (p *UpdatePasswordResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("message", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("changedFlag", thrift.BOOL, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Message); err != nil {
+	if err := oprot.WriteBool(p.ChangedFlag); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2461,24 +2461,24 @@ func (p *UpdatePasswordResponse) DeepEqual(ano *UpdatePasswordResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Message) {
+	if !p.Field1DeepEqual(ano.ChangedFlag) {
 		return false
 	}
 	return true
 }
 
-func (p *UpdatePasswordResponse) Field1DeepEqual(src string) bool {
+func (p *UpdatePasswordResponse) Field1DeepEqual(src bool) bool {
 
-	if strings.Compare(p.Message, src) != 0 {
+	if p.ChangedFlag != src {
 		return false
 	}
 	return true
 }
 
 type UserService interface {
-	Auth(ctx context.Context, request *AuthRequest) (r *AuthResponse, err error)
+	Auth(ctx context.Context, request *LoginRequest) (r *LoginResponse, err error)
 
-	AdminAuth(ctx context.Context, request *AuthRequest) (r *AuthResponse, err error)
+	AdminAuth(ctx context.Context, request *LoginRequest) (r *LoginResponse, err error)
 
 	GetUserInfo(ctx context.Context, request *GetUserInfoRequest) (r *GetUserInfoResponse, err error)
 
@@ -2490,7 +2490,7 @@ type UserService interface {
 }
 
 type UserServiceAuthArgs struct {
-	Request *AuthRequest `thrift:"request,1" frugal:"1,default,AuthRequest" json:"request"`
+	Request *LoginRequest `thrift:"request,1" frugal:"1,default,LoginRequest" json:"request"`
 }
 
 func NewUserServiceAuthArgs() *UserServiceAuthArgs {
@@ -2500,15 +2500,15 @@ func NewUserServiceAuthArgs() *UserServiceAuthArgs {
 func (p *UserServiceAuthArgs) InitDefault() {
 }
 
-var UserServiceAuthArgs_Request_DEFAULT *AuthRequest
+var UserServiceAuthArgs_Request_DEFAULT *LoginRequest
 
-func (p *UserServiceAuthArgs) GetRequest() (v *AuthRequest) {
+func (p *UserServiceAuthArgs) GetRequest() (v *LoginRequest) {
 	if !p.IsSetRequest() {
 		return UserServiceAuthArgs_Request_DEFAULT
 	}
 	return p.Request
 }
-func (p *UserServiceAuthArgs) SetRequest(val *AuthRequest) {
+func (p *UserServiceAuthArgs) SetRequest(val *LoginRequest) {
 	p.Request = val
 }
 
@@ -2577,7 +2577,7 @@ ReadStructEndError:
 }
 
 func (p *UserServiceAuthArgs) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewAuthRequest()
+	_field := NewLoginRequest()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -2651,7 +2651,7 @@ func (p *UserServiceAuthArgs) DeepEqual(ano *UserServiceAuthArgs) bool {
 	return true
 }
 
-func (p *UserServiceAuthArgs) Field1DeepEqual(src *AuthRequest) bool {
+func (p *UserServiceAuthArgs) Field1DeepEqual(src *LoginRequest) bool {
 
 	if !p.Request.DeepEqual(src) {
 		return false
@@ -2660,7 +2660,7 @@ func (p *UserServiceAuthArgs) Field1DeepEqual(src *AuthRequest) bool {
 }
 
 type UserServiceAuthResult struct {
-	Success *AuthResponse       `thrift:"success,0,optional" frugal:"0,optional,AuthResponse" json:"success,omitempty"`
+	Success *LoginResponse      `thrift:"success,0,optional" frugal:"0,optional,LoginResponse" json:"success,omitempty"`
 	Err     *base.ErrorResponse `thrift:"err,1,optional" frugal:"1,optional,base.ErrorResponse" json:"err,omitempty"`
 }
 
@@ -2671,9 +2671,9 @@ func NewUserServiceAuthResult() *UserServiceAuthResult {
 func (p *UserServiceAuthResult) InitDefault() {
 }
 
-var UserServiceAuthResult_Success_DEFAULT *AuthResponse
+var UserServiceAuthResult_Success_DEFAULT *LoginResponse
 
-func (p *UserServiceAuthResult) GetSuccess() (v *AuthResponse) {
+func (p *UserServiceAuthResult) GetSuccess() (v *LoginResponse) {
 	if !p.IsSetSuccess() {
 		return UserServiceAuthResult_Success_DEFAULT
 	}
@@ -2689,7 +2689,7 @@ func (p *UserServiceAuthResult) GetErr() (v *base.ErrorResponse) {
 	return p.Err
 }
 func (p *UserServiceAuthResult) SetSuccess(x interface{}) {
-	p.Success = x.(*AuthResponse)
+	p.Success = x.(*LoginResponse)
 }
 func (p *UserServiceAuthResult) SetErr(val *base.ErrorResponse) {
 	p.Err = val
@@ -2773,7 +2773,7 @@ ReadStructEndError:
 }
 
 func (p *UserServiceAuthResult) ReadField0(iprot thrift.TProtocol) error {
-	_field := NewAuthResponse()
+	_field := NewLoginResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -2883,7 +2883,7 @@ func (p *UserServiceAuthResult) DeepEqual(ano *UserServiceAuthResult) bool {
 	return true
 }
 
-func (p *UserServiceAuthResult) Field0DeepEqual(src *AuthResponse) bool {
+func (p *UserServiceAuthResult) Field0DeepEqual(src *LoginResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false
@@ -2899,7 +2899,7 @@ func (p *UserServiceAuthResult) Field1DeepEqual(src *base.ErrorResponse) bool {
 }
 
 type UserServiceAdminAuthArgs struct {
-	Request *AuthRequest `thrift:"request,1" frugal:"1,default,AuthRequest" json:"request"`
+	Request *LoginRequest `thrift:"request,1" frugal:"1,default,LoginRequest" json:"request"`
 }
 
 func NewUserServiceAdminAuthArgs() *UserServiceAdminAuthArgs {
@@ -2909,15 +2909,15 @@ func NewUserServiceAdminAuthArgs() *UserServiceAdminAuthArgs {
 func (p *UserServiceAdminAuthArgs) InitDefault() {
 }
 
-var UserServiceAdminAuthArgs_Request_DEFAULT *AuthRequest
+var UserServiceAdminAuthArgs_Request_DEFAULT *LoginRequest
 
-func (p *UserServiceAdminAuthArgs) GetRequest() (v *AuthRequest) {
+func (p *UserServiceAdminAuthArgs) GetRequest() (v *LoginRequest) {
 	if !p.IsSetRequest() {
 		return UserServiceAdminAuthArgs_Request_DEFAULT
 	}
 	return p.Request
 }
-func (p *UserServiceAdminAuthArgs) SetRequest(val *AuthRequest) {
+func (p *UserServiceAdminAuthArgs) SetRequest(val *LoginRequest) {
 	p.Request = val
 }
 
@@ -2986,7 +2986,7 @@ ReadStructEndError:
 }
 
 func (p *UserServiceAdminAuthArgs) ReadField1(iprot thrift.TProtocol) error {
-	_field := NewAuthRequest()
+	_field := NewLoginRequest()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -3060,7 +3060,7 @@ func (p *UserServiceAdminAuthArgs) DeepEqual(ano *UserServiceAdminAuthArgs) bool
 	return true
 }
 
-func (p *UserServiceAdminAuthArgs) Field1DeepEqual(src *AuthRequest) bool {
+func (p *UserServiceAdminAuthArgs) Field1DeepEqual(src *LoginRequest) bool {
 
 	if !p.Request.DeepEqual(src) {
 		return false
@@ -3069,7 +3069,7 @@ func (p *UserServiceAdminAuthArgs) Field1DeepEqual(src *AuthRequest) bool {
 }
 
 type UserServiceAdminAuthResult struct {
-	Success *AuthResponse       `thrift:"success,0,optional" frugal:"0,optional,AuthResponse" json:"success,omitempty"`
+	Success *LoginResponse      `thrift:"success,0,optional" frugal:"0,optional,LoginResponse" json:"success,omitempty"`
 	Err     *base.ErrorResponse `thrift:"err,1,optional" frugal:"1,optional,base.ErrorResponse" json:"err,omitempty"`
 }
 
@@ -3080,9 +3080,9 @@ func NewUserServiceAdminAuthResult() *UserServiceAdminAuthResult {
 func (p *UserServiceAdminAuthResult) InitDefault() {
 }
 
-var UserServiceAdminAuthResult_Success_DEFAULT *AuthResponse
+var UserServiceAdminAuthResult_Success_DEFAULT *LoginResponse
 
-func (p *UserServiceAdminAuthResult) GetSuccess() (v *AuthResponse) {
+func (p *UserServiceAdminAuthResult) GetSuccess() (v *LoginResponse) {
 	if !p.IsSetSuccess() {
 		return UserServiceAdminAuthResult_Success_DEFAULT
 	}
@@ -3098,7 +3098,7 @@ func (p *UserServiceAdminAuthResult) GetErr() (v *base.ErrorResponse) {
 	return p.Err
 }
 func (p *UserServiceAdminAuthResult) SetSuccess(x interface{}) {
-	p.Success = x.(*AuthResponse)
+	p.Success = x.(*LoginResponse)
 }
 func (p *UserServiceAdminAuthResult) SetErr(val *base.ErrorResponse) {
 	p.Err = val
@@ -3182,7 +3182,7 @@ ReadStructEndError:
 }
 
 func (p *UserServiceAdminAuthResult) ReadField0(iprot thrift.TProtocol) error {
-	_field := NewAuthResponse()
+	_field := NewLoginResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -3292,7 +3292,7 @@ func (p *UserServiceAdminAuthResult) DeepEqual(ano *UserServiceAdminAuthResult) 
 	return true
 }
 
-func (p *UserServiceAdminAuthResult) Field0DeepEqual(src *AuthResponse) bool {
+func (p *UserServiceAdminAuthResult) Field0DeepEqual(src *LoginResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false

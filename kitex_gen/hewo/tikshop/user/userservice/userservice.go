@@ -276,7 +276,7 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) Auth(ctx context.Context, request *user.AuthRequest) (r *user.AuthResponse, err error) {
+func (p *kClient) Auth(ctx context.Context, request *user.LoginRequest) (r *user.LoginResponse, err error) {
 	var _args user.UserServiceAuthArgs
 	_args.Request = request
 	var _result user.UserServiceAuthResult
@@ -290,7 +290,7 @@ func (p *kClient) Auth(ctx context.Context, request *user.AuthRequest) (r *user.
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) AdminAuth(ctx context.Context, request *user.AuthRequest) (r *user.AuthResponse, err error) {
+func (p *kClient) AdminAuth(ctx context.Context, request *user.LoginRequest) (r *user.LoginResponse, err error) {
 	var _args user.UserServiceAdminAuthArgs
 	_args.Request = request
 	var _result user.UserServiceAdminAuthResult

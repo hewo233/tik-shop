@@ -11,8 +11,8 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	Auth(ctx context.Context, request *user.AuthRequest, callOptions ...callopt.Option) (r *user.AuthResponse, err error)
-	AdminAuth(ctx context.Context, request *user.AuthRequest, callOptions ...callopt.Option) (r *user.AuthResponse, err error)
+	Auth(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error)
+	AdminAuth(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error)
 	GetUserInfo(ctx context.Context, request *user.GetUserInfoRequest, callOptions ...callopt.Option) (r *user.GetUserInfoResponse, err error)
 	UpdateUser(ctx context.Context, request *user.UpdateUserRequest, callOptions ...callopt.Option) (r *user.UpdateUserResponse, err error)
 	Register(ctx context.Context, request *user.RegisterRequest, callOptions ...callopt.Option) (r *user.RegisterResponse, err error)
@@ -48,12 +48,12 @@ type kUserServiceClient struct {
 	*kClient
 }
 
-func (p *kUserServiceClient) Auth(ctx context.Context, request *user.AuthRequest, callOptions ...callopt.Option) (r *user.AuthResponse, err error) {
+func (p *kUserServiceClient) Auth(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Auth(ctx, request)
 }
 
-func (p *kUserServiceClient) AdminAuth(ctx context.Context, request *user.AuthRequest, callOptions ...callopt.Option) (r *user.AuthResponse, err error) {
+func (p *kUserServiceClient) AdminAuth(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.AdminAuth(ctx, request)
 }

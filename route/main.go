@@ -4,10 +4,13 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
+	cinit "github.com/hewo/tik-shop/route/init"
 	"github.com/hewo/tik-shop/route/init/rpc"
 )
 
 func main() {
+
+	cinit.InitConfig()
 
 	rpc.InitAll()
 	h := server.Default()

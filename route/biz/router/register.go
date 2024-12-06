@@ -4,7 +4,6 @@ package router
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	hewo_tikshop_route_auth "github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/auth"
 	hewo_tikshop_route_cart "github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/cart"
 	hewo_tikshop_route_order "github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/order"
 	hewo_tikshop_route_product "github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/product"
@@ -22,5 +21,4 @@ func GeneratedRegister(r *server.Hertz) {
 
 	hewo_tikshop_route_cart.Register(r)
 
-	hewo_tikshop_route_auth.Register(r)
 }

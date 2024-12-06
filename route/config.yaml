@@ -1,0 +1,9 @@
+# config.yaml
+
+name: "tik-shop"        # ServerConfig.Name
+host: "127.0.0.1"               # ServerConfig.Host
+port: 8888                      # ServerConfig.Port
+
+paseto:                         # ServerConfig.PasetoInfo
+  pub_key: "D9K8nApUUvGl0SN3iuPWHPHOJZQbslgZLR/e7pTSJEA="    # PasetoConfig.PubKey
+  implicit: "XwvoojhXQ0hieNc91ephHQ4UujpWvCBigNpBZSqfwFA="  # PasetoConfig.Implicit

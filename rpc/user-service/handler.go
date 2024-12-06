@@ -12,23 +12,23 @@ import (
 // UserServiceImpl implements the last service interface defined in the IDL.
 type UserServiceImpl struct{}
 
-// Auth implements the UserServiceImpl interface.
-func (s *UserServiceImpl) Auth(ctx context.Context, request *user.AuthRequest) (resp *user.AuthResponse, err error) {
+// Login implements the UserServiceImpl interface.
+func (s *UserServiceImpl) Login(ctx context.Context, request *user.LoginRequest) (resp *user.LoginResponse, err error) {
 	err = superquery.Auth(request.Username, request.Password)
 	if err != nil {
 		return nil, err
 	}
-	resp = &user.AuthResponse{Authorized: true}
+	// TODO
 	return resp, err
 }
 
-// AdminAuth implements the UserServiceImpl interface.
-func (s *UserServiceImpl) AdminAuth(ctx context.Context, request *user.AuthRequest) (resp *user.AuthResponse, err error) {
+// AdminLogin implements the UserServiceImpl interface.
+func (s *UserServiceImpl) AdminLogin(ctx context.Context, request *user.LoginRequest) (resp *user.LoginResponse, err error) {
 	err = superquery.AdminAuth(request.Username, request.Password)
 	if err != nil {
 		return nil, err
 	}
-	resp = &user.AuthResponse{Authorized: true}
+	// TODO
 	return resp, err
 }
 
@@ -80,6 +80,6 @@ func (s *UserServiceImpl) UpdatePassword(ctx context.Context, request *user.Upda
 	if err != nil {
 		return nil, err
 	}
-	resp = &user.UpdatePasswordResponse{Message: "Password updated successfully"}
+	// TODO
 	return resp, nil
 }

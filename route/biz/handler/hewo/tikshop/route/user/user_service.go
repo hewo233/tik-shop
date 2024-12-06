@@ -74,3 +74,51 @@ func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// Login .
+// @router /api/auth/login [POST]
+func Login(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.LoginRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.LoginResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// AdminLogin .
+// @router /api/auth/admin/login [POST]
+func AdminLogin(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.LoginRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.LoginResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// Verify .
+// @router /api/auth/verify [GET]
+func Verify(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.VerifyRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.VerifyResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
