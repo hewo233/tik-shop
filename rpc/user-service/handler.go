@@ -18,7 +18,7 @@ func (s *UserServiceImpl) Auth(ctx context.Context, request *user.AuthRequest) (
 	if err != nil {
 		return nil, err
 	}
-	resp = &user.AuthResponse{Authorized: true}
+	// TODO
 	return resp, err
 }
 
@@ -28,7 +28,7 @@ func (s *UserServiceImpl) AdminAuth(ctx context.Context, request *user.AuthReque
 	if err != nil {
 		return nil, err
 	}
-	resp = &user.AuthResponse{Authorized: true}
+	// TODO
 	return resp, err
 }
 
@@ -80,6 +80,6 @@ func (s *UserServiceImpl) UpdatePassword(ctx context.Context, request *user.Upda
 	if err != nil {
 		return nil, err
 	}
-	resp = &user.UpdatePasswordResponse{Message: "Password updated successfully"}
+	// TODO
 	return resp, nil
 }

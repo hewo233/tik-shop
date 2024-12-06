@@ -968,7 +968,7 @@ func (p *AuthRequest) Field2DeepEqual(src string) bool {
 }
 
 type AuthResponse struct {
-	Authorized bool `thrift:"authorized,1" frugal:"1,default,bool" json:"authorized"`
+	Token string `thrift:"token,1" frugal:"1,default,string" json:"token"`
 }
 
 func NewAuthResponse() *AuthResponse {
@@ -978,15 +978,15 @@ func NewAuthResponse() *AuthResponse {
 func (p *AuthResponse) InitDefault() {
 }
 
-func (p *AuthResponse) GetAuthorized() (v bool) {
-	return p.Authorized
+func (p *AuthResponse) GetToken() (v string) {
+	return p.Token
 }
-func (p *AuthResponse) SetAuthorized(val bool) {
-	p.Authorized = val
+func (p *AuthResponse) SetToken(val string) {
+	p.Token = val
 }
 
 var fieldIDToName_AuthResponse = map[int16]string{
-	1: "authorized",
+	1: "token",
 }
 
 func (p *AuthResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -1009,7 +1009,7 @@ func (p *AuthResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1047,13 +1047,13 @@ ReadStructEndError:
 
 func (p *AuthResponse) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field bool
-	if v, err := iprot.ReadBool(); err != nil {
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
 		_field = v
 	}
-	p.Authorized = _field
+	p.Token = _field
 	return nil
 }
 
@@ -1087,10 +1087,10 @@ WriteStructEndError:
 }
 
 func (p *AuthResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("authorized", thrift.BOOL, 1); err != nil {
+	if err = oprot.WriteFieldBegin("token", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBool(p.Authorized); err != nil {
+	if err := oprot.WriteString(p.Token); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1117,15 +1117,15 @@ func (p *AuthResponse) DeepEqual(ano *AuthResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Authorized) {
+	if !p.Field1DeepEqual(ano.Token) {
 		return false
 	}
 	return true
 }
 
-func (p *AuthResponse) Field1DeepEqual(src bool) bool {
+func (p *AuthResponse) Field1DeepEqual(src string) bool {
 
-	if p.Authorized != src {
+	if strings.Compare(p.Token, src) != 0 {
 		return false
 	}
 	return true
@@ -2312,7 +2312,7 @@ func (p *UpdatePasswordRequest) Field3DeepEqual(src string) bool {
 }
 
 type UpdatePasswordResponse struct {
-	Message string `thrift:"message,1" frugal:"1,default,string" json:"message"`
+	ChangedFlag bool `thrift:"changedFlag,1" frugal:"1,default,bool" json:"changedFlag"`
 }
 
 func NewUpdatePasswordResponse() *UpdatePasswordResponse {
@@ -2322,15 +2322,15 @@ func NewUpdatePasswordResponse() *UpdatePasswordResponse {
 func (p *UpdatePasswordResponse) InitDefault() {
 }
 
-func (p *UpdatePasswordResponse) GetMessage() (v string) {
-	return p.Message
+func (p *UpdatePasswordResponse) GetChangedFlag() (v bool) {
+	return p.ChangedFlag
 }
-func (p *UpdatePasswordResponse) SetMessage(val string) {
-	p.Message = val
+func (p *UpdatePasswordResponse) SetChangedFlag(val bool) {
+	p.ChangedFlag = val
 }
 
 var fieldIDToName_UpdatePasswordResponse = map[int16]string{
-	1: "message",
+	1: "changedFlag",
 }
 
 func (p *UpdatePasswordResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -2353,7 +2353,7 @@ func (p *UpdatePasswordResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.BOOL {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2391,13 +2391,13 @@ ReadStructEndError:
 
 func (p *UpdatePasswordResponse) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field bool
+	if v, err := iprot.ReadBool(); err != nil {
 		return err
 	} else {
 		_field = v
 	}
-	p.Message = _field
+	p.ChangedFlag = _field
 	return nil
 }
 
@@ -2431,10 +2431,10 @@ WriteStructEndError:
 }
 
 func (p *UpdatePasswordResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("message", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("changedFlag", thrift.BOOL, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Message); err != nil {
+	if err := oprot.WriteBool(p.ChangedFlag); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2461,15 +2461,15 @@ func (p *UpdatePasswordResponse) DeepEqual(ano *UpdatePasswordResponse) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Message) {
+	if !p.Field1DeepEqual(ano.ChangedFlag) {
 		return false
 	}
 	return true
 }
 
-func (p *UpdatePasswordResponse) Field1DeepEqual(src string) bool {
+func (p *UpdatePasswordResponse) Field1DeepEqual(src bool) bool {
 
-	if strings.Compare(p.Message, src) != 0 {
+	if p.ChangedFlag != src {
 		return false
 	}
 	return true

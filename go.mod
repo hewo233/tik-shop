@@ -10,9 +10,9 @@ require (
 	github.com/cloudwego/gopkg v0.1.2
 	github.com/cloudwego/hertz v0.9.3
 	github.com/cloudwego/kitex v0.11.3
-	github.com/jinzhu/copier v0.4.0
 	github.com/hertz-contrib/gzip v0.0.3
 	github.com/hertz-contrib/paseto v0.0.0-20230508023022-71af6635a26c
+	github.com/jinzhu/copier v0.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kitex-contrib/registry-etcd v0.2.5
 	github.com/spf13/viper v1.19.0

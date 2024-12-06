@@ -26,7 +26,7 @@ struct AuthRequest {
 }
 
 struct AuthResponse {
-    1: bool authorized; // 是否通过验证
+    1: string token; // 是否通过验证
 }
 
 // 定义用户模块的请求和响应结构
@@ -57,7 +57,7 @@ struct UpdatePasswordRequest {
 }
 
 struct UpdatePasswordResponse {
-    1: string message; // 密码修改成功提示信息
+    1: bool changedFlag; // 密码修改成功标志
 }
 
 // 定义 UserService 接口
