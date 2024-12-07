@@ -18,15 +18,17 @@ func (e Errno) WithMessage(msg string) Errno {
 }
 
 const (
-	SuccessCode    = 0
-	NoRouteCode    = 1
-	NoMethodCode   = 2
-	BadRequestCode = 10000
+	SuccessCode                   = 0
+	NoRouteCode                   = 1
+	NoMethodCode                  = 2
+	BadRequestCode                = 10000
+	StatusInternalServerErrorCode = 50000
 )
 
 var (
-	Success    = NewErrno(SuccessCode, "success")
-	NoRoute    = NewErrno(NoRouteCode, "no route")
-	NoMethod   = NewErrno(NoMethodCode, "no method")
-	BadRequest = NewErrno(BadRequestCode, "bad request")
+	Success                   = NewErrno(SuccessCode, "success")
+	NoRoute                   = NewErrno(NoRouteCode, "no route")
+	NoMethod                  = NewErrno(NoMethodCode, "no method")
+	BadRequest                = NewErrno(BadRequestCode, "bad request")
+	StatusInternalServerError = NewErrno(StatusInternalServerErrorCode, "internal server error")
 )

@@ -14,17 +14,17 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"Auth": kitex.NewMethodInfo(
-		authHandler,
-		newUserServiceAuthArgs,
-		newUserServiceAuthResult,
+	"Login": kitex.NewMethodInfo(
+		loginHandler,
+		newUserServiceLoginArgs,
+		newUserServiceLoginResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"AdminAuth": kitex.NewMethodInfo(
-		adminAuthHandler,
-		newUserServiceAdminAuthArgs,
-		newUserServiceAdminAuthResult,
+	"AdminLogin": kitex.NewMethodInfo(
+		adminLoginHandler,
+		newUserServiceAdminLoginArgs,
+		newUserServiceAdminLoginResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -122,10 +122,10 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 	return svcInfo
 }
 
-func authHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*user.UserServiceAuthArgs)
-	realResult := result.(*user.UserServiceAuthResult)
-	success, err := handler.(user.UserService).Auth(ctx, realArg.Request)
+func loginHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceLoginArgs)
+	realResult := result.(*user.UserServiceLoginResult)
+	success, err := handler.(user.UserService).Login(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -138,18 +138,18 @@ func authHandler(ctx context.Context, handler interface{}, arg, result interface
 	}
 	return nil
 }
-func newUserServiceAuthArgs() interface{} {
-	return user.NewUserServiceAuthArgs()
+func newUserServiceLoginArgs() interface{} {
+	return user.NewUserServiceLoginArgs()
 }
 
-func newUserServiceAuthResult() interface{} {
-	return user.NewUserServiceAuthResult()
+func newUserServiceLoginResult() interface{} {
+	return user.NewUserServiceLoginResult()
 }
 
-func adminAuthHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*user.UserServiceAdminAuthArgs)
-	realResult := result.(*user.UserServiceAdminAuthResult)
-	success, err := handler.(user.UserService).AdminAuth(ctx, realArg.Request)
+func adminLoginHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceAdminLoginArgs)
+	realResult := result.(*user.UserServiceAdminLoginResult)
+	success, err := handler.(user.UserService).AdminLogin(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -162,12 +162,12 @@ func adminAuthHandler(ctx context.Context, handler interface{}, arg, result inte
 	}
 	return nil
 }
-func newUserServiceAdminAuthArgs() interface{} {
-	return user.NewUserServiceAdminAuthArgs()
+func newUserServiceAdminLoginArgs() interface{} {
+	return user.NewUserServiceAdminLoginArgs()
 }
 
-func newUserServiceAdminAuthResult() interface{} {
-	return user.NewUserServiceAdminAuthResult()
+func newUserServiceAdminLoginResult() interface{} {
+	return user.NewUserServiceAdminLoginResult()
 }
 
 func getUserInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -276,11 +276,11 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) Auth(ctx context.Context, request *user.LoginRequest) (r *user.LoginResponse, err error) {
-	var _args user.UserServiceAuthArgs
+func (p *kClient) Login(ctx context.Context, request *user.LoginRequest) (r *user.LoginResponse, err error) {
+	var _args user.UserServiceLoginArgs
 	_args.Request = request
-	var _result user.UserServiceAuthResult
-	if err = p.c.Call(ctx, "Auth", &_args, &_result); err != nil {
+	var _result user.UserServiceLoginResult
+	if err = p.c.Call(ctx, "Login", &_args, &_result); err != nil {
 		return
 	}
 	switch {
@@ -290,11 +290,11 @@ func (p *kClient) Auth(ctx context.Context, request *user.LoginRequest) (r *user
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) AdminAuth(ctx context.Context, request *user.LoginRequest) (r *user.LoginResponse, err error) {
-	var _args user.UserServiceAdminAuthArgs
+func (p *kClient) AdminLogin(ctx context.Context, request *user.LoginRequest) (r *user.LoginResponse, err error) {
+	var _args user.UserServiceAdminLoginArgs
 	_args.Request = request
-	var _result user.UserServiceAdminAuthResult
-	if err = p.c.Call(ctx, "AdminAuth", &_args, &_result); err != nil {
+	var _result user.UserServiceAdminLoginResult
+	if err = p.c.Call(ctx, "AdminLogin", &_args, &_result); err != nil {
 		return
 	}
 	switch {

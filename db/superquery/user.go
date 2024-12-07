@@ -7,12 +7,13 @@ import (
 	"github.com/hewo/tik-shop/db/superquery/utils"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/user"
+	"github.com/hewo/tik-shop/shared/errno"
 	"github.com/jinzhu/copier"
 )
 
 var u = query.Q.Users
 
-func Auth(username, password string) (err error) {
+func Login(username, password string) (err error) {
 	usr, err := u.Where(u.Username.Eq(username)).First()
 	if err != nil {
 		return &base.ErrorResponse{Code: consts.StatusNotFound, Message: err.Error()}
@@ -57,19 +58,24 @@ func GetUserInfo(id int64) (usrRet *user.User, err error) {
 	return
 }
 
-func Register(username, email, password string) error {
+func Register(username, email, password, role string) error {
 	hash, err := utils.HashPassword(password)
 	if err != nil {
-		return &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
-	usr := &model.Users{}
-	usr.Username = username
-	usr.Email = email
-	usr.HashedPassword = *hash
+
+	usr := &model.Users{
+		Username:       username,
+		Email:          email,
+		HashedPassword: hash,
+		Role:           role,
+	}
+
 	err = u.Create(usr)
 	if err != nil {
-		return &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
+
 	return nil
 }
 

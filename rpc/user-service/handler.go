@@ -14,7 +14,7 @@ type UserServiceImpl struct{}
 
 // Login implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Login(ctx context.Context, request *user.LoginRequest) (resp *user.LoginResponse, err error) {
-	err = superquery.Auth(request.Username, request.Password)
+	err = superquery.Login(request.Username, request.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (s *UserServiceImpl) UpdateUser(ctx context.Context, request *user.UpdateUs
 
 // Register implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Register(ctx context.Context, request *user.RegisterRequest) (resp *user.RegisterResponse, err error) {
-	err = superquery.Register(request.Username, request.Email, request.Password)
+	err = superquery.Register(request.Username, request.Email, request.Password, request.Role)
 	if err != nil {
 		return nil, err
 	}

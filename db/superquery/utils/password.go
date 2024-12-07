@@ -1,18 +1,23 @@
 package utils
 
 import (
+	"errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // HashPassword hashes the password using bcrypt.
-func HashPassword(password string) (hashed *string, err error) {
+func HashPassword(password string) (hashed string, err error) {
+
+	if len(password) <= 0 {
+		return "", errors.New("password cannot be empty")
+	}
+
 	h, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	t := string(h)
-	hashed = &t
-	return hashed, nil
+
+	return string(h), nil
 }
 
 // CheckPassword compares the provided password with the stored hashed password.

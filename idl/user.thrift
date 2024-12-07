@@ -44,6 +44,7 @@ struct RegisterRequest {
     1: string username; // 注册用户名
     2: string email; // 注册邮箱
     3: string password; // 注册密码
+    4: string role;
 }
 
 struct RegisterResponse {
@@ -63,8 +64,8 @@ struct UpdatePasswordResponse {
 // 定义 UserService 接口
 service UserService {
     // 鉴权模块
-    LoginResponse Auth(1: LoginRequest request) throws (1: base.ErrorResponse err);
-    LoginResponse AdminAuth(1: LoginRequest request) throws (1: base.ErrorResponse err);
+    LoginResponse Login(1: LoginRequest request) throws (1: base.ErrorResponse err);
+    LoginResponse AdminLogin(1: LoginRequest request) throws (1: base.ErrorResponse err);
 
     // 用户模块
     GetUserInfoResponse GetUserInfo(1: GetUserInfoRequest request) throws (1: base.ErrorResponse err);
