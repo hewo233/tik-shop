@@ -122,3 +122,19 @@ func Verify(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// GetUserByID .
+// @router /api/user/:id [GET]
+func GetUserByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.GetUserByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.UserResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}

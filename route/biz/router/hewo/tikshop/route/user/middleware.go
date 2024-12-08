@@ -70,3 +70,8 @@ func _adminloginMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _getuserbyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

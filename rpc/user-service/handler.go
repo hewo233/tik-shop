@@ -67,14 +67,14 @@ func (s *UserServiceImpl) AdminLogin(ctx context.Context, request *user.LoginReq
 	return resp, err
 }
 
-// GetUserInfo implements the UserServiceImpl interface.
-func (s *UserServiceImpl) GetUserInfo(ctx context.Context, request *user.GetUserInfoRequest) (resp *user.GetUserInfoResponse, err error) {
+// GetUserInfoByID implements the UserServiceImpl interface.
+func (s *UserServiceImpl) GetUserInfoByID(ctx context.Context, request *user.GetUserInfoByIDRequest) (resp *user.GetUserInfoByIDResponse, err error) {
 	// TODO: Your code here...
-	usr, err := superquery.GetUserInfo(request.Id)
+	usr, err := superquery.GetUserInfoByID(request.Id)
 	if err != nil {
 		return nil, err
 	}
-	resp = &user.GetUserInfoResponse{
+	resp = &user.GetUserInfoByIDResponse{
 		User: usr,
 	}
 	return resp, nil
@@ -91,7 +91,7 @@ func (s *UserServiceImpl) UpdateUser(ctx context.Context, request *user.UpdateUs
 	if err != nil {
 		return nil, err
 	}
-	usr, err := superquery.GetUserInfo(request.Id)
+	usr, err := superquery.GetUserInfoByID(request.Id)
 	if err != nil {
 		return nil, err
 	}

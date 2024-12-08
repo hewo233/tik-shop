@@ -304,7 +304,7 @@ func (p *kClient) AdminLogin(ctx context.Context, request *user.LoginRequest) (r
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUserInfo(ctx context.Context, request *user.GetUserInfoRequest) (r *user.GetUserInfoResponse, err error) {
+func (p *kClient) GetUserInfo(ctx context.Context, request *user.GetUserInfoByIDRequest) (r *user.GetUserInfoByIDResponse, err error) {
 	var _args user.UserServiceGetUserInfoArgs
 	_args.Request = request
 	var _result user.UserServiceGetUserInfoResult

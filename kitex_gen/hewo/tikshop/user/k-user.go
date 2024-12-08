@@ -301,7 +301,7 @@ func (p *User) field5Length() int {
 	return l
 }
 
-func (p *GetUserInfoRequest) FastRead(buf []byte) (int, error) {
+func (p *GetUserInfoByIDRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -344,12 +344,12 @@ func (p *GetUserInfoRequest) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetUserInfoRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetUserInfoByIDRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *GetUserInfoRequest) FastReadField1(buf []byte) (int, error) {
+func (p *GetUserInfoByIDRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -364,11 +364,11 @@ func (p *GetUserInfoRequest) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *GetUserInfoRequest) FastWrite(buf []byte) int {
+func (p *GetUserInfoByIDRequest) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *GetUserInfoRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *GetUserInfoByIDRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -377,7 +377,7 @@ func (p *GetUserInfoRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) 
 	return offset
 }
 
-func (p *GetUserInfoRequest) BLength() int {
+func (p *GetUserInfoByIDRequest) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -386,21 +386,21 @@ func (p *GetUserInfoRequest) BLength() int {
 	return l
 }
 
-func (p *GetUserInfoRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *GetUserInfoByIDRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
 	offset += thrift.Binary.WriteI64(buf[offset:], p.Id)
 	return offset
 }
 
-func (p *GetUserInfoRequest) field1Length() int {
+func (p *GetUserInfoByIDRequest) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *GetUserInfoResponse) FastRead(buf []byte) (int, error) {
+func (p *GetUserInfoByIDResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -443,12 +443,12 @@ func (p *GetUserInfoResponse) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetUserInfoResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetUserInfoByIDResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *GetUserInfoResponse) FastReadField1(buf []byte) (int, error) {
+func (p *GetUserInfoByIDResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 	_field := NewUser()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -461,11 +461,11 @@ func (p *GetUserInfoResponse) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *GetUserInfoResponse) FastWrite(buf []byte) int {
+func (p *GetUserInfoByIDResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *GetUserInfoResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *GetUserInfoByIDResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -474,7 +474,7 @@ func (p *GetUserInfoResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter)
 	return offset
 }
 
-func (p *GetUserInfoResponse) BLength() int {
+func (p *GetUserInfoByIDResponse) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -483,14 +483,14 @@ func (p *GetUserInfoResponse) BLength() int {
 	return l
 }
 
-func (p *GetUserInfoResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *GetUserInfoByIDResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
 	offset += p.User.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
-func (p *GetUserInfoResponse) field1Length() int {
+func (p *GetUserInfoByIDResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += p.User.BLength()
@@ -2177,7 +2177,7 @@ SkipFieldError:
 
 func (p *UserServiceGetUserInfoArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
-	_field := NewGetUserInfoRequest()
+	_field := NewGetUserInfoByIDRequest()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2288,7 +2288,7 @@ SkipFieldError:
 
 func (p *UserServiceGetUserInfoResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
-	_field := NewGetUserInfoResponse()
+	_field := NewGetUserInfoByIDResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {

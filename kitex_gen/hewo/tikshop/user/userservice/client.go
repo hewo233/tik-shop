@@ -13,7 +13,7 @@ import (
 type Client interface {
 	Login(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error)
 	AdminLogin(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error)
-	GetUserInfo(ctx context.Context, request *user.GetUserInfoRequest, callOptions ...callopt.Option) (r *user.GetUserInfoResponse, err error)
+	GetUserInfo(ctx context.Context, request *user.GetUserInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetUserInfoByIDResponse, err error)
 	UpdateUser(ctx context.Context, request *user.UpdateUserRequest, callOptions ...callopt.Option) (r *user.UpdateUserResponse, err error)
 	Register(ctx context.Context, request *user.RegisterRequest, callOptions ...callopt.Option) (r *user.RegisterResponse, err error)
 	UpdatePassword(ctx context.Context, request *user.UpdatePasswordRequest, callOptions ...callopt.Option) (r *user.UpdatePasswordResponse, err error)
@@ -58,7 +58,7 @@ func (p *kUserServiceClient) AdminLogin(ctx context.Context, request *user.Login
 	return p.kClient.AdminLogin(ctx, request)
 }
 
-func (p *kUserServiceClient) GetUserInfo(ctx context.Context, request *user.GetUserInfoRequest, callOptions ...callopt.Option) (r *user.GetUserInfoResponse, err error) {
+func (p *kUserServiceClient) GetUserInfo(ctx context.Context, request *user.GetUserInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetUserInfoByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetUserInfo(ctx, request)
 }

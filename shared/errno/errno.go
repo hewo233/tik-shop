@@ -25,6 +25,7 @@ const (
 	StatusUnauthorizedCode        = 40100
 	ForbiddenCode                 = 40300
 	StatusNotFoundCode            = 40400
+	StatusNotAcceptableCode       = 40600
 	StatusConflictCode            = 40900
 	StatusInternalServerErrorCode = 50000
 )
@@ -37,6 +38,7 @@ var (
 	StatusUnauthorized        = NewErrno(StatusUnauthorizedCode, "unauthorized")
 	Forbidden                 = NewErrno(ForbiddenCode, "forbidden")
 	StatusNotFound            = NewErrno(StatusNotFoundCode, "not found")
+	StatusNotAcceptable       = NewErrno(StatusNotAcceptableCode, "not acceptable")
 	StatusConflict            = NewErrno(StatusConflictCode, "conflict")
 	StatusInternalServerError = NewErrno(StatusInternalServerErrorCode, "internal server error")
 )

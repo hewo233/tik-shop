@@ -1,12 +1,12 @@
 package superquery
 
 import (
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
 	"github.com/hewo/tik-shop/db/superquery/utils"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/user"
+	"github.com/hewo/tik-shop/shared/consts"
 	"github.com/hewo/tik-shop/shared/errno"
 	"github.com/jinzhu/copier"
 )
@@ -25,7 +25,7 @@ func (m *LoginSqlManageImpl) Login(username, password string) (authed bool, id s
 		return false, "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
 
-	if usr.Role == "admin" {
+	if usr.Role == consts.Admin {
 		return false, "", &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
 	}
 
@@ -39,31 +39,35 @@ func (m *LoginSqlManageImpl) Login(username, password string) (authed bool, id s
 	return true, usr.Username, nil
 }
 
-func AdminAuth(username, password string) error {
+func AdminAuth(username, password string) (authed bool, id string, err error) {
 	usr, err := u.Where(u.Username.Eq(username)).First()
 	if err != nil {
-		return &base.ErrorResponse{Code: consts.StatusNotFound, Message: err.Error()}
+		return false, "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
-	if usr.Role != "admin" {
-		return &base.ErrorResponse{Code: consts.StatusBadGateway, Message: "Can't login as normal user"}
+
+	if usr.Role != consts.Admin {
+		return false, "", &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
 	}
+
 	hash := usr.HashedPassword
 	checked := utils.CheckPassword(hash, password)
+
 	if !checked {
-		return &base.ErrorResponse{Code: consts.StatusUnauthorized, Message: "Incorrect Password"}
+		return false, "", &base.ErrorResponse{Code: errno.StatusUnauthorizedCode, Message: "Incorrect Password"}
 	}
-	return nil
+
+	return true, usr.Username, nil
 
 }
 
-func GetUserInfo(id int64) (usrRet *user.User, err error) {
+func GetUserInfoByID(id int64) (usrRet *user.User, err error) {
 	usr, err := u.Where(u.Id.Eq(id)).First()
 	if err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusNotFound, Message: err.Error()}
+		return nil, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
 	err = copier.Copy(&usrRet, usr)
 	if err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		return nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 	return
 }
@@ -98,7 +102,7 @@ func Register(username, email, password, role string) error {
 func UpdateUser(usr *model.Users) error {
 	err := u.Save(usr)
 	if err != nil {
-		return &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 	return nil
 }
@@ -106,24 +110,24 @@ func UpdateUser(usr *model.Users) error {
 func UpdatePassword(id int64, oldPassword, newPassword string) error {
 	us, err := u.Where(u.Id.Eq(id)).First()
 	if err != nil {
-		return &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 	ok := utils.CheckPassword(us.HashedPassword, oldPassword)
 	if !ok {
-		return &base.ErrorResponse{Code: consts.StatusNotAcceptable, Message: "old pass not match"}
+		return &base.ErrorResponse{Code: errno.StatusNotAcceptableCode, Message: "old pass not match"}
 	}
 
 	hashnew, err := utils.HashPassword(oldPassword)
 	if err != nil {
-		return &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 
 	usr := &model.Users{}
 	usr.Id = id
-	usr.HashedPassword = *hashnew
+	usr.HashedPassword = hashnew
 	err = u.Save(usr)
 	if err != nil {
-		return &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 	return nil
 }

@@ -11,11 +11,11 @@ struct User {
 }
 
 // Get User
-struct GetUserInfoRequest {
+struct GetUserInfoByIDRequest {
     1: i64 id;
 }
 
-struct GetUserInfoResponse {
+struct GetUserInfoByIDResponse {
     1: User user;
 }
 
@@ -68,7 +68,7 @@ service UserService {
     LoginResponse AdminLogin(1: LoginRequest request) throws (1: base.ErrorResponse err);
 
     // 用户模块
-    GetUserInfoResponse GetUserInfo(1: GetUserInfoRequest request) throws (1: base.ErrorResponse err);
+    GetUserInfoByIDResponse GetUserInfo(1: GetUserInfoByIDRequest request) throws (1: base.ErrorResponse err);
     UpdateUserResponse UpdateUser(1: UpdateUserRequest request) throws (1: base.ErrorResponse err);
     RegisterResponse Register(1: RegisterRequest request) throws (1: base.ErrorResponse err);
     UpdatePasswordResponse UpdatePassword(1: UpdatePasswordRequest request) throws (1: base.ErrorResponse err);

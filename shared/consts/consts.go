@@ -10,6 +10,7 @@ const (
 	Issuer         = "tik-shop"
 	User           = "user"
 	ID             = "id"
+	Admin          = "admin"
 	SevenDays      = time.Hour * 24 * 7
 	ApiConfigPath  = "./config.yaml"
 	UserConfigPath = "./rpc/user-service/config.yaml"

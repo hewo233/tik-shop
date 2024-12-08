@@ -1,4 +1,4 @@
-amespace go hewo.tikshop.route.user
+namespace go hewo.tikshop.route.user
 
 include "./base.thrift"
 
@@ -9,7 +9,7 @@ struct UserResponse {
   4: string createdAt
 }
 
-struct GetUserRequest {
+struct GetUserByIDRequest {
   1: i64 id (api.path = "id", api.vd = "$>0")
 }
 
@@ -47,7 +47,7 @@ struct VerifyResponse {
 }
 
 service UserService {
-  UserResponse getUser(1: GetUserRequest req) (api.get="/api/user/:id")
+  UserResponse getUserByID(1: GetUserByIDRequest req) (api.get="/api/user/:id")
   UserResponse updateUser(1: UpdateUserRequest req) (api.put="/api/user/:id")
   base.MessageResponse register(1: RegisterRequest req) (api.post="/api/user/register")
   base.MessageResponse updatePassword(1: UpdatePasswordRequest req) (api.put="/api/user/:id/password")
