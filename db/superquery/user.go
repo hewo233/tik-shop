@@ -13,20 +13,30 @@ import (
 
 var u = query.Q.Users
 
-func Login(username, password string) (err error) {
+type LoginSqlManageImpl struct{}
+
+func NewLoginSqlManageImpl() *LoginSqlManageImpl {
+	return &LoginSqlManageImpl{}
+}
+
+func (m *LoginSqlManageImpl) Login(username, password string) (token string, err error) {
 	usr, err := u.Where(u.Username.Eq(username)).First()
 	if err != nil {
-		return &base.ErrorResponse{Code: consts.StatusNotFound, Message: err.Error()}
+		return "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
+
 	if usr.Role == "admin" {
-		return &base.ErrorResponse{Code: consts.StatusBadGateway, Message: "Can't login as admin"}
+		return "", &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
 	}
+
 	hash := usr.HashedPassword
 	checked := utils.CheckPassword(hash, password)
+
 	if !checked {
-		return &base.ErrorResponse{Code: consts.StatusUnauthorized, Message: "Incorrect Password"}
+		return "", &base.ErrorResponse{Code: errno.StatusUnauthorizedCode, Message: "Incorrect Password"}
 	}
-	return nil
+
+	return "", nil
 }
 
 func AdminAuth(username, password string) error {
@@ -59,6 +69,12 @@ func GetUserInfo(id int64) (usrRet *user.User, err error) {
 }
 
 func Register(username, email, password, role string) error {
+	tmpUsr, err := u.Where(u.Username.Eq(username)).First()
+	if tmpUsr != nil {
+		// 不重名
+		return &base.ErrorResponse{Code: errno.StatusConflictCode, Message: "Username already exists"}
+	}
+
 	hash, err := utils.HashPassword(password)
 	if err != nil {
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}

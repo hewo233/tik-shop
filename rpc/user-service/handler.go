@@ -10,11 +10,20 @@ import (
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.
-type UserServiceImpl struct{}
+type UserServiceImpl struct {
+	LoginSqlManage
+}
+
+type LoginSqlManage interface {
+	Login(username, password string) (token string, err error)
+}
 
 // Login implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Login(ctx context.Context, request *user.LoginRequest) (resp *user.LoginResponse, err error) {
-	err = superquery.Login(request.Username, request.Password)
+	token, err := s.LoginSqlManage.Login(request.Username, request.Password)
+
+	resp.Token = token
+
 	if err != nil {
 		return nil, err
 	}

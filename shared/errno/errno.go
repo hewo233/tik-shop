@@ -22,6 +22,10 @@ const (
 	NoRouteCode                   = 1
 	NoMethodCode                  = 2
 	BadRequestCode                = 10000
+	StatusUnauthorizedCode        = 40100
+	ForbiddenCode                 = 40300
+	StatusNotFoundCode            = 40400
+	StatusConflictCode            = 40900
 	StatusInternalServerErrorCode = 50000
 )
 
@@ -30,5 +34,9 @@ var (
 	NoRoute                   = NewErrno(NoRouteCode, "no route")
 	NoMethod                  = NewErrno(NoMethodCode, "no method")
 	BadRequest                = NewErrno(BadRequestCode, "bad request")
+	StatusUnauthorized        = NewErrno(StatusUnauthorizedCode, "unauthorized")
+	Forbidden                 = NewErrno(ForbiddenCode, "forbidden")
+	StatusNotFound            = NewErrno(StatusNotFoundCode, "not found")
+	StatusConflict            = NewErrno(StatusConflictCode, "conflict")
 	StatusInternalServerError = NewErrno(StatusInternalServerErrorCode, "internal server error")
 )
