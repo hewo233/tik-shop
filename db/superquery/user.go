@@ -19,24 +19,24 @@ func NewLoginSqlManageImpl() *LoginSqlManageImpl {
 	return &LoginSqlManageImpl{}
 }
 
-func (m *LoginSqlManageImpl) Login(username, password string) (token string, err error) {
+func (m *LoginSqlManageImpl) Login(username, password string) (authed bool, id string, err error) {
 	usr, err := u.Where(u.Username.Eq(username)).First()
 	if err != nil {
-		return "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
+		return false, "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
 
 	if usr.Role == "admin" {
-		return "", &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
+		return false, "", &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
 	}
 
 	hash := usr.HashedPassword
 	checked := utils.CheckPassword(hash, password)
 
 	if !checked {
-		return "", &base.ErrorResponse{Code: errno.StatusUnauthorizedCode, Message: "Incorrect Password"}
+		return false, "", &base.ErrorResponse{Code: errno.StatusUnauthorizedCode, Message: "Incorrect Password"}
 	}
 
-	return "", nil
+	return true, usr.Username, nil
 }
 
 func AdminAuth(username, password string) error {

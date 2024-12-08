@@ -13,7 +13,7 @@ import (
 	"net/http"
 )
 
-func CommonMiddleWare() []app.HandlerFunc {
+func ComMiddleWare() []app.HandlerFunc {
 	return []app.HandlerFunc{
 		Cors(),
 		Recovery(),

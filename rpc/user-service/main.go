@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/hewo/tik-shop/db/superquery"
+	"github.com/hewo/tik-shop/rpc/user-service/config"
+	"github.com/hewo/tik-shop/rpc/user-service/pkg/paseto"
 	"log"
 	"net"
 
@@ -18,8 +20,18 @@ func main() {
 	}
 
 	addr, _ := net.ResolveTCPAddr("tcp", "127.0.0.1:8893")
+
+	tg, err := paseto.NewTokenGenerator(
+		config.GlobalUserServerConfig.PasetoInfo.PrivateKey,
+		[]byte(config.GlobalUserServerConfig.PasetoInfo.Implicit),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	svr := user.NewServer(&(UserServiceImpl{
 		LoginSqlManage: superquery.NewLoginSqlManageImpl(),
+		TokenGenerator: tg,
 	}),
 		server.WithServiceAddr(addr),
 		// 指定 Registry 与服务基本信息

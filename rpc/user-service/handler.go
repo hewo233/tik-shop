@@ -2,6 +2,10 @@ package main
 
 import (
 	"context"
+	"github.com/hertz-contrib/paseto"
+	"github.com/hewo/tik-shop/shared/consts"
+	"log"
+	"time"
 
 	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/superquery"
@@ -12,23 +16,45 @@ import (
 // UserServiceImpl implements the last service interface defined in the IDL.
 type UserServiceImpl struct {
 	LoginSqlManage
+	TokenGenerator
 }
 
 type LoginSqlManage interface {
-	Login(username, password string) (token string, err error)
+	Login(username, password string) (authed bool, id string, err error)
+}
+
+type TokenGenerator interface {
+	CreateToken(claims *paseto.StandardClaims) (token string, err error)
 }
 
 // Login implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Login(ctx context.Context, request *user.LoginRequest) (resp *user.LoginResponse, err error) {
-	token, err := s.LoginSqlManage.Login(request.Username, request.Password)
-
-	resp.Token = token
+	authed, id, err := s.LoginSqlManage.Login(request.Username, request.Password)
 
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
+
+	if authed == true {
+
+		nowTime := time.Now()
+		resp.Token, err = s.TokenGenerator.CreateToken(&paseto.StandardClaims{
+			ID:        id,
+			Issuer:    "tik-shop",
+			Audience:  "user",
+			IssuedAt:  nowTime,
+			NotBefore: nowTime,
+			ExpiredAt: nowTime.Add(consts.SevenDays),
+		})
+		if err != nil {
+			log.Fatal(err)
+			return nil, err
+		}
+	}
+
 	// TODO
-	return resp, err
+	return resp, nil
 }
 
 // AdminLogin implements the UserServiceImpl interface.
