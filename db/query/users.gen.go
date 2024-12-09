@@ -28,6 +28,7 @@ func newUsers(db *gorm.DB, opts ...gen.DOOption) users {
 	_users.ALL = field.NewAsterisk(tableName)
 	_users.Id = field.NewInt64(tableName, "Id")
 	_users.Username = field.NewString(tableName, "Username")
+	_users.HashedPassword = field.NewString(tableName, "HashedPassword")
 	_users.Email = field.NewString(tableName, "Email")
 	_users.Role = field.NewString(tableName, "Role")
 	_users.CreatedAt = field.NewTime(tableName, "CreatedAt")
@@ -66,13 +67,14 @@ func newUsers(db *gorm.DB, opts ...gen.DOOption) users {
 type users struct {
 	usersDo
 
-	ALL       field.Asterisk
-	Id        field.Int64
-	Username  field.String
-	Email     field.String
-	Role      field.String
-	CreatedAt field.Time
-	CartItems usersHasManyCartItems
+	ALL            field.Asterisk
+	Id             field.Int64
+	Username       field.String
+	HashedPassword field.String
+	Email          field.String
+	Role           field.String
+	CreatedAt      field.Time
+	CartItems      usersHasManyCartItems
 
 	Orders usersHasManyOrders
 
@@ -93,6 +95,7 @@ func (u *users) updateTableName(table string) *users {
 	u.ALL = field.NewAsterisk(table)
 	u.Id = field.NewInt64(table, "Id")
 	u.Username = field.NewString(table, "Username")
+	u.HashedPassword = field.NewString(table, "HashedPassword")
 	u.Email = field.NewString(table, "Email")
 	u.Role = field.NewString(table, "Role")
 	u.CreatedAt = field.NewTime(table, "CreatedAt")
@@ -112,9 +115,10 @@ func (u *users) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *users) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 7)
+	u.fieldMap = make(map[string]field.Expr, 8)
 	u.fieldMap["Id"] = u.Id
 	u.fieldMap["Username"] = u.Username
+	u.fieldMap["HashedPassword"] = u.HashedPassword
 	u.fieldMap["Email"] = u.Email
 	u.fieldMap["Role"] = u.Role
 	u.fieldMap["CreatedAt"] = u.CreatedAt
