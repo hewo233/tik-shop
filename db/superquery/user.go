@@ -39,7 +39,7 @@ func (m *LoginSqlManageImpl) Login(username, password string) (authed bool, id s
 	return true, usr.Username, nil
 }
 
-func AdminAuth(username, password string) (authed bool, id string, err error) {
+func (m *LoginSqlManageImpl) AdminLogin(username, password string) (authed bool, id string, err error) {
 	usr, err := u.Where(u.Username.Eq(username)).First()
 	if err != nil {
 		return false, "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
@@ -60,7 +60,7 @@ func AdminAuth(username, password string) (authed bool, id string, err error) {
 
 }
 
-func GetUserInfoByID(id int64) (usrRet *user.User, err error) {
+func (m *LoginSqlManageImpl) GetUserInfoByID(id int64) (usrRet *user.User, err error) {
 	usr, err := u.Where(u.Id.Eq(id)).First()
 	if err != nil {
 		return nil, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
@@ -69,19 +69,19 @@ func GetUserInfoByID(id int64) (usrRet *user.User, err error) {
 	if err != nil {
 		return nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
-	return
+	return usrRet, nil
 }
 
-func Register(username, email, password, role string) error {
+func (m *LoginSqlManageImpl) Register(username, email, password, role string) (usrRet *user.User, err error) {
 	tmpUsr, err := u.Where(u.Username.Eq(username)).First()
 	if tmpUsr != nil {
 		// 不重名
-		return &base.ErrorResponse{Code: errno.StatusConflictCode, Message: "Username already exists"}
+		return nil, &base.ErrorResponse{Code: errno.StatusConflictCode, Message: "Username already exists"}
 	}
 
 	hash, err := utils.HashPassword(password)
 	if err != nil {
-		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+		return nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 
 	usr := &model.Users{
@@ -93,13 +93,15 @@ func Register(username, email, password, role string) error {
 
 	err = u.Create(usr)
 	if err != nil {
-		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+		return nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 
-	return nil
+	err = copier.Copy(&usrRet, usr)
+
+	return usrRet, nil
 }
 
-func UpdateUser(usr *model.Users) error {
+func (m *LoginSqlManageImpl) UpdateUser(usr *model.Users) error {
 	err := u.Save(usr)
 	if err != nil {
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
@@ -107,25 +109,23 @@ func UpdateUser(usr *model.Users) error {
 	return nil
 }
 
-func UpdatePassword(id int64, oldPassword, newPassword string) error {
-	us, err := u.Where(u.Id.Eq(id)).First()
+func (m *LoginSqlManageImpl) UpdatePasswordByID(id int64, oldPassword, newPassword string) error {
+	temUsr, err := u.Where(u.Id.Eq(id)).First()
 	if err != nil {
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
-	ok := utils.CheckPassword(us.HashedPassword, oldPassword)
+
+	ok := utils.CheckPassword(temUsr.HashedPassword, oldPassword)
 	if !ok {
 		return &base.ErrorResponse{Code: errno.StatusNotAcceptableCode, Message: "old pass not match"}
 	}
 
-	hashnew, err := utils.HashPassword(oldPassword)
+	hashNew, err := utils.HashPassword(newPassword)
 	if err != nil {
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 
-	usr := &model.Users{}
-	usr.Id = id
-	usr.HashedPassword = hashnew
-	err = u.Save(usr)
+	err = u.Where(u.Id.Eq(id)).Update()
 	if err != nil {
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}

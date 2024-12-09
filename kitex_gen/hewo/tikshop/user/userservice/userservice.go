@@ -49,10 +49,10 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"UpdatePassword": kitex.NewMethodInfo(
-		updatePasswordHandler,
-		newUserServiceUpdatePasswordArgs,
-		newUserServiceUpdatePasswordResult,
+	"UpdatePasswordByID": kitex.NewMethodInfo(
+		updatePasswordByIDHandler,
+		newUserServiceUpdatePasswordByIDArgs,
+		newUserServiceUpdatePasswordByIDResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -242,10 +242,10 @@ func newUserServiceRegisterResult() interface{} {
 	return user.NewUserServiceRegisterResult()
 }
 
-func updatePasswordHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*user.UserServiceUpdatePasswordArgs)
-	realResult := result.(*user.UserServiceUpdatePasswordResult)
-	success, err := handler.(user.UserService).UpdatePassword(ctx, realArg.Request)
+func updatePasswordByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceUpdatePasswordByIDArgs)
+	realResult := result.(*user.UserServiceUpdatePasswordByIDResult)
+	success, err := handler.(user.UserService).UpdatePasswordByID(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -258,12 +258,12 @@ func updatePasswordHandler(ctx context.Context, handler interface{}, arg, result
 	}
 	return nil
 }
-func newUserServiceUpdatePasswordArgs() interface{} {
-	return user.NewUserServiceUpdatePasswordArgs()
+func newUserServiceUpdatePasswordByIDArgs() interface{} {
+	return user.NewUserServiceUpdatePasswordByIDArgs()
 }
 
-func newUserServiceUpdatePasswordResult() interface{} {
-	return user.NewUserServiceUpdatePasswordResult()
+func newUserServiceUpdatePasswordByIDResult() interface{} {
+	return user.NewUserServiceUpdatePasswordByIDResult()
 }
 
 type kClient struct {
@@ -346,11 +346,11 @@ func (p *kClient) Register(ctx context.Context, request *user.RegisterRequest) (
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdatePassword(ctx context.Context, request *user.UpdatePasswordRequest) (r *user.UpdatePasswordResponse, err error) {
-	var _args user.UserServiceUpdatePasswordArgs
+func (p *kClient) UpdatePasswordByID(ctx context.Context, request *user.UpdatePasswordByIDRequest) (r *user.UpdatePasswordByIDResponse, err error) {
+	var _args user.UserServiceUpdatePasswordByIDArgs
 	_args.Request = request
-	var _result user.UserServiceUpdatePasswordResult
-	if err = p.c.Call(ctx, "UpdatePassword", &_args, &_result); err != nil {
+	var _result user.UserServiceUpdatePasswordByIDResult
+	if err = p.c.Call(ctx, "UpdatePasswordByID", &_args, &_result); err != nil {
 		return
 	}
 	switch {

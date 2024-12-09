@@ -16,7 +16,7 @@ type Client interface {
 	GetUserInfo(ctx context.Context, request *user.GetUserInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetUserInfoByIDResponse, err error)
 	UpdateUser(ctx context.Context, request *user.UpdateUserRequest, callOptions ...callopt.Option) (r *user.UpdateUserResponse, err error)
 	Register(ctx context.Context, request *user.RegisterRequest, callOptions ...callopt.Option) (r *user.RegisterResponse, err error)
-	UpdatePassword(ctx context.Context, request *user.UpdatePasswordRequest, callOptions ...callopt.Option) (r *user.UpdatePasswordResponse, err error)
+	UpdatePasswordByID(ctx context.Context, request *user.UpdatePasswordByIDRequest, callOptions ...callopt.Option) (r *user.UpdatePasswordByIDResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -73,7 +73,7 @@ func (p *kUserServiceClient) Register(ctx context.Context, request *user.Registe
 	return p.kClient.Register(ctx, request)
 }
 
-func (p *kUserServiceClient) UpdatePassword(ctx context.Context, request *user.UpdatePasswordRequest, callOptions ...callopt.Option) (r *user.UpdatePasswordResponse, err error) {
+func (p *kUserServiceClient) UpdatePasswordByID(ctx context.Context, request *user.UpdatePasswordByIDRequest, callOptions ...callopt.Option) (r *user.UpdatePasswordByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdatePassword(ctx, request)
+	return p.kClient.UpdatePasswordByID(ctx, request)
 }

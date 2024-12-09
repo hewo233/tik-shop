@@ -31,9 +31,7 @@ struct LoginResponse {
 
 // 定义用户模块的请求和响应结构
 struct UpdateUserRequest {
-    1: i64    id;
-    2: string username; // 新的用户名
-    3: string email; // 新的邮箱
+    1: User user;
 }
 
 struct UpdateUserResponse {
@@ -48,16 +46,16 @@ struct RegisterRequest {
 }
 
 struct RegisterResponse {
-    1: string message; // 注册成功提示信息
+    1: User user;
 }
 
-struct UpdatePasswordRequest {
+struct UpdatePasswordByIDRequest {
     1: i64    id;
     2: string oldPassword; // 旧密码
     3: string newPassword; // 新密码
 }
 
-struct UpdatePasswordResponse {
+struct UpdatePasswordByIDResponse {
     1: bool changedFlag; // 密码修改成功标志
 }
 
@@ -71,5 +69,5 @@ service UserService {
     GetUserInfoByIDResponse GetUserInfo(1: GetUserInfoByIDRequest request) throws (1: base.ErrorResponse err);
     UpdateUserResponse UpdateUser(1: UpdateUserRequest request) throws (1: base.ErrorResponse err);
     RegisterResponse Register(1: RegisterRequest request) throws (1: base.ErrorResponse err);
-    UpdatePasswordResponse UpdatePassword(1: UpdatePasswordRequest request) throws (1: base.ErrorResponse err);
+    UpdatePasswordByIDResponse UpdatePasswordByID(1: UpdatePasswordByIDRequest request) throws (1: base.ErrorResponse err);
 }

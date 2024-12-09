@@ -12,6 +12,7 @@ const (
 	ID             = "id"
 	Admin          = "admin"
 	SevenDays      = time.Hour * 24 * 7
+	ThirtyDays     = time.Hour * 24 * 30
 	ApiConfigPath  = "./config.yaml"
 	UserConfigPath = "./rpc/user-service/config.yaml"
 )
