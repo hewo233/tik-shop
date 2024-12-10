@@ -102,10 +102,11 @@ func (m *LoginSqlManageImpl) Register(username, email, password, role string) (u
 }
 
 func (m *LoginSqlManageImpl) UpdateUser(usr *model.Users) error {
-	err := u.Save(usr)
+	_, err := u.Where(u.Id.Eq(usr.Id)).Updates(usr)
 	if err != nil {
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
+
 	return nil
 }
 
@@ -125,7 +126,7 @@ func (m *LoginSqlManageImpl) UpdatePasswordByID(id int64, oldPassword, newPasswo
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 
-	err = u.Where(u.Id.Eq(id)).Update()
+	_, err = u.Where(u.Id.Eq(id)).Update(u.HashedPassword, hashNew)
 	if err != nil {
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
