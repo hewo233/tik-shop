@@ -30,6 +30,7 @@ func SubmitOrder(request *order.SubmitOrderRequest) (*order.SubmitOrderResponse,
 	if err != nil {
 		return nil, fmt.Errorf("copier.Copy Address: %w", err)
 	}
+
 	ORDER := model.Order{
 		UserId:        UserId,
 		Status:        model.OrderStatus_PENDING, // 假设默认状态为 "Pending"
