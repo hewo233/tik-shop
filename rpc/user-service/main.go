@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/hewo/tik-shop/db/superquery"
 	"github.com/hewo/tik-shop/rpc/user-service/config"
+	"github.com/hewo/tik-shop/rpc/user-service/init"
 	"github.com/hewo/tik-shop/rpc/user-service/pkg/paseto"
 	"log"
 	"net"
@@ -14,6 +15,9 @@ import (
 )
 
 func main() {
+
+	init.InitConfig()
+
 	r, err := etcd.NewEtcdRegistry([]string{"127.0.0.1:2379"})
 	if err != nil {
 		log.Fatal(err)

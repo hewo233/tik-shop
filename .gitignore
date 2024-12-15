@@ -120,3 +120,4 @@ db/.env
 # config and key
 key
 route/config.yaml
+rpc/user-service/config.yaml
