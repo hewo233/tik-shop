@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/hewo/tik-shop/db/connectDB"
+	"github.com/hewo/tik-shop/db/query"
 	"github.com/hewo/tik-shop/db/superquery"
 	"github.com/hewo/tik-shop/rpc/user-service/config"
 	usinit "github.com/hewo/tik-shop/rpc/user-service/init"
@@ -15,6 +17,12 @@ import (
 )
 
 func main() {
+
+	database, err := connectDB.ConnectDB()
+	if err != nil {
+		log.Println(err)
+	}
+	query.SetDefault(database)
 
 	usinit.InitConfig()
 

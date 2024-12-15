@@ -9,6 +9,7 @@ import (
 	"github.com/hewo/tik-shop/shared/consts"
 	"github.com/hewo/tik-shop/shared/errno"
 	"github.com/jinzhu/copier"
+	"log"
 )
 
 var u = query.Q.Users
@@ -20,6 +21,7 @@ func NewLoginSqlManageImpl() *LoginSqlManageImpl {
 }
 
 func (m *LoginSqlManageImpl) Login(username, password string) (authed bool, id string, err error) {
+
 	usr, err := u.Where(u.Username.Eq(username)).First()
 	if err != nil {
 		return false, "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
@@ -73,7 +75,16 @@ func (m *LoginSqlManageImpl) GetUserInfoByID(id int64) (usrRet *user.User, err e
 }
 
 func (m *LoginSqlManageImpl) Register(username, email, password, role string) (usrRet *user.User, err error) {
+
+	log.Println("superQuery u: ", u)
+
+	log.Println("superQuery Register: ", username, email, password, role)
+
 	tmpUsr, err := u.Where(u.Username.Eq(username)).First()
+	if err != nil {
+		log.Println("superQuery Register temUsr: ", err)
+		return nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+	}
 	if tmpUsr != nil {
 		// 不重名
 		return nil, &base.ErrorResponse{Code: errno.StatusConflictCode, Message: "Username already exists"}
@@ -90,6 +101,8 @@ func (m *LoginSqlManageImpl) Register(username, email, password, role string) (u
 		HashedPassword: hash,
 		Role:           role,
 	}
+
+	log.Println("superQuery usr: ", usr)
 
 	err = u.Create(usr)
 	if err != nil {

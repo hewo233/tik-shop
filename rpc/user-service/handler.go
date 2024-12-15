@@ -140,6 +140,8 @@ func (s *UserServiceImpl) Register(ctx context.Context, request *user.RegisterRe
 
 	resp = new(user.RegisterResponse)
 
+	log.Println("Register request: ", request)
+
 	usr, err := s.LoginSqlManage.Register(request.Username, request.Email, request.Password, request.Role)
 	if err != nil {
 		return nil, err

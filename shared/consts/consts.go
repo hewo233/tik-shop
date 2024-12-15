@@ -14,5 +14,5 @@ const (
 	SevenDays      = time.Hour * 24 * 7
 	ThirtyDays     = time.Hour * 24 * 30
 	ApiConfigPath  = "./config.yaml"
-	UserConfigPath = "./config.yaml"
+	UserConfigPath = "./rpc/user-service/config.yaml"
 )
