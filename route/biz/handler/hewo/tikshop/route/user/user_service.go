@@ -4,9 +4,11 @@ package user
 
 import (
 	"context"
+	"github.com/hewo/tik-shop/route/init/rpc"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	userrpc "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/user"
 	base "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/base"
 	user "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/user"
 )
@@ -15,7 +17,7 @@ import (
 // @router /api/user/:id [GET]
 func GetUser(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.GetUserRequest
+	var req user.GetUserByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
@@ -54,8 +56,12 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(base.MessageResponse)
-
+	rpcreq := userrpc.NewRegisterRequest()
+	rpcreq.Username = req.Username
+	rpcreq.Password = req.Password
+	rpcreq.Email = req.Email
+	rpcreq.Role = req.Role
+	resp, err := rpc.UserClient.Register(ctx, userrpc.NewRegisterRequest())
 	c.JSON(consts.StatusOK, resp)
 }
 

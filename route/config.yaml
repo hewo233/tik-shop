@@ -5,5 +5,5 @@ host: "127.0.0.1"               # ServerConfig.Host
 port: 8888                      # ServerConfig.Port
 
 paseto:                         # ServerConfig.PasetoInfo
-  pub_key: "D9K8nApUUvGl0SN3iuPWHPHOJZQbslgZLR/e7pTSJEA="    # PasetoConfig.PubKey
-  implicit: "XwvoojhXQ0hieNc91ephHQ4UujpWvCBigNpBZSqfwFA="  # PasetoConfig.Implicit
+  pub_key: "1eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2"    # PasetoConfig.PubKey
+  implicit: "paseto-implicit"  # PasetoConfig.Implicit

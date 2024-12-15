@@ -17,6 +17,7 @@ struct RegisterRequest {
   1: string username (api.body = "name", api.form = "name", api.vd = "(len($) > 0 && len($) < 128)")
   2: string email (api.body = "email", api.form = "email", api.vd = "(len($) > 0 && len($) < 512)")
   3: string password (api.body = "password", api.form = "password", api.vd = "(len($) > 0 && len($) < 128)")
+  4: string role (api.body = "role", api.form = "role", api.vd = "(len($) > 0 && len($) < 128)")
 }
 struct UpdatePasswordRequest {
   1: i64 id (api.path = "id", api.vd = "$>0")

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/hewo/tik-shop/db/model"
-	"github.com/hewo/tik-shop/db/superquery"
 	user "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/user"
 	"github.com/jinzhu/copier"
 )
@@ -25,6 +24,7 @@ type LoginSqlManage interface {
 	GetUserInfoByID(id int64) (usrRet *user.User, err error)
 	UpdateUser(usr *model.Users) error
 	Register(username, email, password, role string) (usrRet *user.User, err error)
+	UpdatePasswordByID(id int64, oldPassword, newPassword string) error
 }
 
 type TokenGenerator interface {
@@ -150,9 +150,9 @@ func (s *UserServiceImpl) Register(ctx context.Context, request *user.RegisterRe
 	return resp, nil
 }
 
-// UpdatePassword implements the UserServiceImpl interface.
-func (s *UserServiceImpl) UpdatePassword(ctx context.Context, request *user.UpdatePasswordRequest) (resp *user.UpdatePasswordResponse, err error) {
-	err = superquery.UpdatePassword(request.Id, request.OldPassword, request.NewPassword_)
+// UpdatePasswordByID implements the UserServiceImpl interface.
+func (s *UserServiceImpl) UpdatePasswordByID(ctx context.Context, request *user.UpdatePasswordByIDRequest) (resp *user.UpdatePasswordByIDResponse, err error) {
+	err = s.LoginSqlManage.UpdatePasswordByID(request.Id, request.OldPassword, request.NewPassword_)
 	if err != nil {
 		return nil, err
 	}
@@ -162,12 +162,6 @@ func (s *UserServiceImpl) UpdatePassword(ctx context.Context, request *user.Upda
 
 // GetUserInfo implements the UserServiceImpl interface.
 func (s *UserServiceImpl) GetUserInfo(ctx context.Context, request *user.GetUserInfoByIDRequest) (resp *user.GetUserInfoByIDResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
-// UpdatePasswordByID implements the UserServiceImpl interface.
-func (s *UserServiceImpl) UpdatePasswordByID(ctx context.Context, request *user.UpdatePasswordByIDRequest) (resp *user.UpdatePasswordByIDResponse, err error) {
 	// TODO: Your code here...
 	return
 }
