@@ -430,9 +430,10 @@ func (p *GetUserByIDRequest) String() string {
 }
 
 type RegisterRequest struct {
-	Username string `thrift:"username,1" form:"name" json:"name" vd:"(len($) > 0 && len($) < 128)"`
-	Email    string `thrift:"email,2" form:"email" form:"email" json:"email" vd:"(len($) > 0 && len($) < 512)"`
-	Password string `thrift:"password,3" form:"password" json:"password" vd:"(len($) > 0 && len($) < 128)"`
+	Username string `thrift:"username,1" form:"username" json:"username" vd:"(len($) > 0 && len($) < 128)"`
+	Email    string `thrift:"email,2" form:"email" json:"email" vd:"(len($) > 0 && len($) < 512)"`
+	Password string `thrift:"password,3" form:"password" form:"password" json:"password" vd:"(len($) > 0 && len($) < 128)"`
+	Role     string `thrift:"role,4" form:"role" json:"role" vd:"(len($) > 0 && len($) < 128)"`
 }
 
 func NewRegisterRequest() *RegisterRequest {
@@ -454,10 +455,15 @@ func (p *RegisterRequest) GetPassword() (v string) {
 	return p.Password
 }
 
+func (p *RegisterRequest) GetRole() (v string) {
+	return p.Role
+}
+
 var fieldIDToName_RegisterRequest = map[int16]string{
 	1: "username",
 	2: "email",
 	3: "password",
+	4: "role",
 }
 
 func (p *RegisterRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -498,6 +504,14 @@ func (p *RegisterRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -565,6 +579,17 @@ func (p *RegisterRequest) ReadField3(iprot thrift.TProtocol) error {
 	p.Password = _field
 	return nil
 }
+func (p *RegisterRequest) ReadField4(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Role = _field
+	return nil
+}
 
 func (p *RegisterRequest) Write(oprot thrift.TProtocol) (err error) {
 
@@ -583,6 +608,10 @@ func (p *RegisterRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 	}
@@ -652,6 +681,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *RegisterRequest) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("role", thrift.STRING, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Role); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *RegisterRequest) String() string {
@@ -898,7 +944,7 @@ func (p *UpdatePasswordRequest) String() string {
 type UpdateUserRequest struct {
 	ID    int64  `thrift:"id,1" json:"id" path:"id" vd:"$>0"`
 	Name  string `thrift:"name,2" form:"name" json:"name" vd:"(len($) > 0 && len($) < 128)"`
-	Email string `thrift:"email,3" form:"email" json:"email" vd:"(len($) > 0 && len($) < 512)"`
+	Email string `thrift:"email,3" form:"email" form:"email" json:"email" vd:"(len($) > 0 && len($) < 512)"`
 }
 
 func NewUpdateUserRequest() *UpdateUserRequest {
@@ -1130,7 +1176,7 @@ func (p *UpdateUserRequest) String() string {
 
 type LoginRequest struct {
 	Username string `thrift:"username,1" form:"name" json:"name" vd:"(len($) > 0 && len($) < 128)"`
-	Password string `thrift:"password,2" form:"password" json:"password" vd:"(len($) > 0 && len($) < 128)"`
+	Password string `thrift:"password,2" form:"password" form:"password" json:"password" vd:"(len($) > 0 && len($) < 128)"`
 }
 
 func NewLoginRequest() *LoginRequest {

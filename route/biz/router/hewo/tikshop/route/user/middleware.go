@@ -4,11 +4,12 @@ package user
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/common"
 )
 
 func rootMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return common.ComMiddleWare()
 }
 
 func _apiMw() []app.HandlerFunc {
@@ -42,7 +43,6 @@ func _updateuserMw() []app.HandlerFunc {
 }
 
 func _registerMw() []app.HandlerFunc {
-	// your code...
 	return nil
 }
 
