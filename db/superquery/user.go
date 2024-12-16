@@ -12,7 +12,7 @@ import (
 	"log"
 )
 
-var u = query.Q.Users
+var u = &query.Q.Users
 
 type LoginSqlManageImpl struct{}
 

@@ -24,3 +24,12 @@ init:
 	make product
 	make order
 # then shall manually delete go.mod go.sum and .gitignore and run go mod tidy at project root after init
+
+build:
+	sh ./build.sh
+
+run:
+	make build
+	sh ./output/bootstrap.sh
+
+.PHONY: update user cart product order auth all init

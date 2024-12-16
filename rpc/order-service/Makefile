@@ -19,8 +19,6 @@ GEN_DIR := github.com/hewo/tik-shop/kitex_gen
 MODULE_OPTIONS := -module $(MODULE)
 KITEX_OPTIONS := $(MODULE_OPTIONS) -service $(SERVICE_NAME) -use $(GEN_DIR) -verbose
 
-.PHONY: init update clean
-
 # 初始化生成代码（初次生成）
 init:
 	cd $(ROOT_DIR) && kitex $(MODULE_OPTIONS) $(IDL_FILE)
@@ -39,3 +37,12 @@ clean-force:
 	rm -rf $(GEN_DIR)
 	rm -rf ./script
 	rm -f ./build.sh ./go.mod ./kitex_info.yaml ./go.sum
+
+build:
+	sh ./build.sh
+
+run:
+	make build
+	cd ../.. && sh ./rpc/$(SERVICE_NAME)-service/output/bootstrap.sh
+
+.PHONY: init update clean build run
