@@ -12,24 +12,10 @@ import (
 	base "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/base"
 	user "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/user"
 	"github.com/hewo/tik-shop/route/init/rpc"
+	myconsts "github.com/hewo/tik-shop/shared/consts"
 	"log"
+	"strconv"
 )
-
-// GetUser .
-// @router /api/user/:id [GET]
-func GetUser(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req user.GetUserByIDRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(user.UserResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
 
 // UpdateUser .
 // @router /api/user/:id [PUT]
@@ -58,18 +44,20 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	rpcreq := userrpc.NewRegisterRequest()
-	rpcreq.Username = req.Username
-	rpcreq.Password = req.Password
-	rpcreq.Email = req.Email
-	rpcreq.Role = req.Role
+	rpcReq := userrpc.NewRegisterRequest()
+	rpcReq.Username = req.Username
+	rpcReq.Password = req.Password
+	rpcReq.Email = req.Email
+	rpcReq.Role = req.Role
 
-	log.Println("rpcReq: ", rpcreq)
+	//log.Println("rpcReq: ", rpcReq)
 
-	resp, err := rpc.UserClient.Register(ctx, rpcreq)
+	resp, err := rpc.UserClient.Register(ctx, rpcReq)
 
 	if err != nil {
 		var errResp *baserpc.ErrorResponse
+		log.Println("rpc error: ", err)
+		// TODO: handle error
 		if errors.As(err, &errResp) {
 			c.String(int(errResp.Code), errResp.Message)
 		}
@@ -105,7 +93,15 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(user.LoginResponse)
+	rpcReq := userrpc.NewLoginRequest()
+	rpcReq.Username = req.Username
+	rpcReq.Password = req.Password
+
+	resp, err := rpc.UserClient.Login(ctx, rpcReq)
+
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, err)
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -142,18 +138,37 @@ func Verify(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// GetUserByID .
+// GetUserInfoByID .
 // @router /api/user/:id [GET]
-func GetUserByID(ctx context.Context, c *app.RequestContext) {
+func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.GetUserByIDRequest
+	var req user.GetUserInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.UserResponse)
+	idStr := strconv.FormatInt(req.ID, 10)
+	idCtx, exi := c.Get(myconsts.AccountID)
+	if !exi {
+		c.String(consts.StatusBadRequest, "account id not found")
+		return
+	}
+
+	if idStr != idCtx {
+		c.String(consts.StatusBadRequest, "account id not match")
+		return
+	}
+
+	rpcReq := userrpc.NewGetUserInfoByIDRequest()
+	rpcReq.Id = req.ID
+
+	resp, err := rpc.UserClient.GetUserInfoByID(ctx, rpcReq)
+
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, err)
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }

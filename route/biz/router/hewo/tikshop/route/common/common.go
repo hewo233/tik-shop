@@ -37,16 +37,16 @@ func PasetoAuth(audience string) app.HandlerFunc {
 	successHandler := func(ctx context.Context, c *app.RequestContext, token *agp.Token) {
 		accountID, err := token.GetString("id")
 		if err != nil {
-			errHere := errno.BadRequest.WithMessage("bad request: missing accountID in token")
+			errHere := errno.StatusBadRequest.WithMessage("bad request: missing accountID in token")
 			c.JSON(http.StatusUnauthorized, errHere)
 			c.Abort()
 			return
 		}
-		c.Set(consts.AccountId, accountID)
+		c.Set(consts.AccountID, accountID)
 	}
 
 	failHandler := func(ctx context.Context, c *app.RequestContext) {
-		errHere := errno.BadRequest.WithMessage("bad request: invalid token")
+		errHere := errno.StatusBadRequest.WithMessage("bad request: invalid token")
 		c.JSON(http.StatusUnauthorized, errHere)
 		c.Abort()
 	}

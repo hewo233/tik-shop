@@ -35,7 +35,7 @@ func Recovery() app.HandlerFunc {
 		func(ctx context.Context, c *app.RequestContext, err interface{}, stack []byte) {
 			hlog.SystemLogger().CtxErrorf(ctx, "[Recovery] err=%v\nstack=%s", err, stack)
 			c.JSON(http.StatusInternalServerError, utils.H{
-				"code":    errno.BadRequest,
+				"code":    errno.StatusBadRequest,
 				"message": fmt.Sprintf("[Recovery] Panic"),
 			})
 		},
