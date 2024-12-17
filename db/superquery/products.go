@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-var p = query.Q.Product
+var p = &query.Q.Product
 
 func GetProducts(page, limit int64) (products []*product.Product, err error) {
 	ps, err := p.Limit(int(limit)).Offset(int(limit) * int(page)).Find()

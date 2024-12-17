@@ -11,13 +11,14 @@ import (
 	"gorm.io/gorm"
 )
 
-var o = query.Q.Order
+var o = &query.Q.Order
 
-func SubmitOrder(request *order.SubmitOrderRequest) (*order.SubmitOrderResponse, error) {
-	UserId := request.UserId
-	Items := request.Items
-	Address := request.Address
-	PaymentMethod := request.PaymentMethod
+type OrderSqlManageImpl struct{}
+
+func NewOrderSqlManageImpl() *OrderSqlManageImpl {
+	return &OrderSqlManageImpl{}
+}
+func (m *OrderSqlManageImpl) SubmitOrder(UserId int64, Items []*order.OrderItem, Address *order.Address, PaymentMethod string) (*order.SubmitOrderResponse, error) {
 
 	// 计算总金额，这里假设每个商品的价格存储在 Items 中
 	var totalAmount float64
@@ -59,10 +60,7 @@ func SubmitOrder(request *order.SubmitOrderRequest) (*order.SubmitOrderResponse,
 	}, nil
 }
 
-func PayOrder(request *order.PayOrderRequest) (*order.PayOrderResponse, error) {
-	orderId := request.OrderId
-	PaymentMethod := request.PaymentMethod
-	PaymentDetails := request.PaymentDetails
+func (m *OrderSqlManageImpl) PayOrder(orderId int64, PaymentMethod string, PaymentDetails *order.PaymentDetails) (*order.PayOrderResponse, error) {
 	//查找有没有相应的orderId
 	_, err := o.Where(o.Id.Eq(orderId)).First()
 	if err != nil {
@@ -89,7 +87,7 @@ func PayOrder(request *order.PayOrderRequest) (*order.PayOrderResponse, error) {
 	}
 
 	// 记录支付详情（如果有的话）
-	if request.PaymentDetails != nil {
+	if PaymentDetails != nil {
 		paymentDetails := model.PaymentDetails{OrderId: uint(orderId)}
 
 		err = copier.Copy(&paymentDetails, &PaymentDetails)
@@ -107,23 +105,20 @@ func PayOrder(request *order.PayOrderRequest) (*order.PayOrderResponse, error) {
 	}, nil
 }
 
-func CancelOrder(request *order.CancelOrderRequest) (*order.CancelOrderResponse, error) {
-	// 1. 获取请求中的订单 ID
-	orderId := request.OrderId
-
-	// 2. 查找数据库中的订单
+func (m *OrderSqlManageImpl) CancelOrder(orderId int64) (*order.CancelOrderResponse, error) {
+	// 1. 查找数据库中的订单
 	if _, err := o.Where(o.Id.Eq(orderId)).First(); err != nil {
 		// 如果未找到订单，返回错误
 		return nil, fmt.Errorf("order not found: %v", err)
 	}
 
-	// 3. 检查订单状态是否为可取消（假设只有 "PENDING" 状态可以取消）
+	// 2. 检查订单状态是否为可取消（假设只有 "PENDING" 状态可以取消）
 	_, err := o.Where(o.Id.Eq(orderId), o.Status.Eq(0)).First()
 	if err != nil {
 		return nil, fmt.Errorf("order status is not cancelable")
 	}
 
-	// 4. 更新订单状态为已取消
+	// 3. 更新订单状态为已取消
 	_, err = o.Where(o.Id.Eq(orderId)).Delete()
 	if err != nil {
 		// 如果更新失败，返回错误
@@ -134,9 +129,7 @@ func CancelOrder(request *order.CancelOrderRequest) (*order.CancelOrderResponse,
 	}, nil
 }
 
-func GetOrders(request *order.GetOrdersRequest) (*order.GetOrdersResponse, error) {
-	userId := request.UserId
-
+func (m *OrderSqlManageImpl) GetOrders(userId int64) (*order.GetOrdersResponse, error) {
 	ORDERS, err := o.Where(o.UserId.Eq(userId)).Find()
 	if err != nil {
 		return nil, fmt.Errorf("failed to find orders: %v", err)
@@ -158,8 +151,7 @@ func GetOrders(request *order.GetOrdersRequest) (*order.GetOrdersResponse, error
 	}, nil
 }
 
-func GetOrderById(request *order.GetOrderByIdRequest) (*order.GetOrderByIdResponse, error) {
-	orderId := request.OrderId
+func (m *OrderSqlManageImpl) GetOrderById(orderId int64) (*order.GetOrderByIdResponse, error) {
 	ORDER, err := o.Where(o.Id.Eq(orderId)).First()
 	if err != nil {
 		return nil, fmt.Errorf("failed to find order: %v", err)

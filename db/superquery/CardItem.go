@@ -11,7 +11,7 @@ import (
 	"log"
 )
 
-var c = query.Q.CartItem
+var c = &query.Q.CartItem
 
 func GetCart(request *cart.GetCartRequest) ([]*cart.CartItem, error) {
 
