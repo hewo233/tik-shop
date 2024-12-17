@@ -5,7 +5,7 @@ import "time"
 const (
 	CorsAddress = "localhost:8080"
 
-	AccountId = "accountID"
+	AccountID = "accountID"
 
 	Issuer         = "tik-shop"
 	User           = "user"

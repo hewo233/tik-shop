@@ -28,10 +28,10 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"GetUserInfo": kitex.NewMethodInfo(
-		getUserInfoHandler,
-		newUserServiceGetUserInfoArgs,
-		newUserServiceGetUserInfoResult,
+	"GetUserInfoByID": kitex.NewMethodInfo(
+		getUserInfoByIDHandler,
+		newUserServiceGetUserInfoByIDArgs,
+		newUserServiceGetUserInfoByIDResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -170,10 +170,10 @@ func newUserServiceAdminLoginResult() interface{} {
 	return user.NewUserServiceAdminLoginResult()
 }
 
-func getUserInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*user.UserServiceGetUserInfoArgs)
-	realResult := result.(*user.UserServiceGetUserInfoResult)
-	success, err := handler.(user.UserService).GetUserInfo(ctx, realArg.Request)
+func getUserInfoByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceGetUserInfoByIDArgs)
+	realResult := result.(*user.UserServiceGetUserInfoByIDResult)
+	success, err := handler.(user.UserService).GetUserInfoByID(ctx, realArg.Request)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -186,12 +186,12 @@ func getUserInfoHandler(ctx context.Context, handler interface{}, arg, result in
 	}
 	return nil
 }
-func newUserServiceGetUserInfoArgs() interface{} {
-	return user.NewUserServiceGetUserInfoArgs()
+func newUserServiceGetUserInfoByIDArgs() interface{} {
+	return user.NewUserServiceGetUserInfoByIDArgs()
 }
 
-func newUserServiceGetUserInfoResult() interface{} {
-	return user.NewUserServiceGetUserInfoResult()
+func newUserServiceGetUserInfoByIDResult() interface{} {
+	return user.NewUserServiceGetUserInfoByIDResult()
 }
 
 func updateUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -304,11 +304,11 @@ func (p *kClient) AdminLogin(ctx context.Context, request *user.LoginRequest) (r
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUserInfo(ctx context.Context, request *user.GetUserInfoByIDRequest) (r *user.GetUserInfoByIDResponse, err error) {
-	var _args user.UserServiceGetUserInfoArgs
+func (p *kClient) GetUserInfoByID(ctx context.Context, request *user.GetUserInfoByIDRequest) (r *user.GetUserInfoByIDResponse, err error) {
+	var _args user.UserServiceGetUserInfoByIDArgs
 	_args.Request = request
-	var _result user.UserServiceGetUserInfoResult
-	if err = p.c.Call(ctx, "GetUserInfo", &_args, &_result); err != nil {
+	var _result user.UserServiceGetUserInfoByIDResult
+	if err = p.c.Call(ctx, "GetUserInfoByID", &_args, &_result); err != nil {
 		return
 	}
 	switch {

@@ -1,6 +1,7 @@
 package superquery
 
 import (
+	"errors"
 	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
 	"github.com/hewo/tik-shop/db/superquery/utils"
@@ -9,6 +10,7 @@ import (
 	"github.com/hewo/tik-shop/shared/consts"
 	"github.com/hewo/tik-shop/shared/errno"
 	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 	"log"
 )
 
@@ -20,45 +22,45 @@ func NewLoginSqlManageImpl() *LoginSqlManageImpl {
 	return &LoginSqlManageImpl{}
 }
 
-func (m *LoginSqlManageImpl) Login(username, password string) (authed bool, id string, err error) {
+func (m *LoginSqlManageImpl) Login(username, password string) (authed bool, id int64, err error) {
 
 	usr, err := u.Where(u.Username.Eq(username)).First()
 	if err != nil {
-		return false, "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
+		return false, -1, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
 
 	if usr.Role == consts.Admin {
-		return false, "", &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
+		return false, -1, &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
 	}
 
 	hash := usr.HashedPassword
 	checked := utils.CheckPassword(hash, password)
 
 	if !checked {
-		return false, "", &base.ErrorResponse{Code: errno.StatusUnauthorizedCode, Message: "Incorrect Password"}
+		return false, -1, &base.ErrorResponse{Code: errno.StatusUnauthorizedCode, Message: "Incorrect Password"}
 	}
 
-	return true, usr.Username, nil
+	return true, usr.Id, nil
 }
 
-func (m *LoginSqlManageImpl) AdminLogin(username, password string) (authed bool, id string, err error) {
+func (m *LoginSqlManageImpl) AdminLogin(username, password string) (authed bool, id int64, err error) {
 	usr, err := u.Where(u.Username.Eq(username)).First()
 	if err != nil {
-		return false, "", &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
+		return false, -1, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
 
 	if usr.Role != consts.Admin {
-		return false, "", &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
+		return false, -1, &base.ErrorResponse{Code: errno.ForbiddenCode, Message: "Can't login as admin"}
 	}
 
 	hash := usr.HashedPassword
 	checked := utils.CheckPassword(hash, password)
 
 	if !checked {
-		return false, "", &base.ErrorResponse{Code: errno.StatusUnauthorizedCode, Message: "Incorrect Password"}
+		return false, -1, &base.ErrorResponse{Code: errno.StatusUnauthorizedCode, Message: "Incorrect Password"}
 	}
 
-	return true, usr.Username, nil
+	return true, usr.Id, nil
 
 }
 
@@ -67,27 +69,28 @@ func (m *LoginSqlManageImpl) GetUserInfoByID(id int64) (usrRet *user.User, err e
 	if err != nil {
 		return nil, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
-	err = copier.Copy(&usrRet, usr)
+
+	log.Println("GetUSerInfoByID superQuery usr: ", usr)
+
+	usrRet = &user.User{}
+
+	err = copier.Copy(&usrRet, &usr)
 	if err != nil {
 		return nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
+
 	return usrRet, nil
 }
 
 func (m *LoginSqlManageImpl) Register(username, email, password, role string) (usrRet *user.User, err error) {
 
-	log.Println("superQuery u: ", u)
-
 	log.Println("superQuery Register: ", username, email, password, role)
 
-	tmpUsr, err := u.Where(u.Username.Eq(username)).First()
+	_, err = u.Where(u.Username.Eq(username)).First()
 	if err != nil {
-		log.Println("superQuery Register temUsr: ", err)
-		return nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
-	}
-	if tmpUsr != nil {
-		// 不重名
-		return nil, &base.ErrorResponse{Code: errno.StatusConflictCode, Message: "Username already exists"}
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, &base.ErrorResponse{Code: errno.StatusBadRequestCode, Message: "username already exists"}
+		}
 	}
 
 	hash, err := utils.HashPassword(password)
@@ -109,7 +112,9 @@ func (m *LoginSqlManageImpl) Register(username, email, password, role string) (u
 		return nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 
-	err = copier.Copy(&usrRet, usr)
+	usrRet = &user.User{}
+
+	err = copier.Copy(&usrRet, &usr)
 
 	return usrRet, nil
 }

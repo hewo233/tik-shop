@@ -66,7 +66,7 @@ service UserService {
     LoginResponse AdminLogin(1: LoginRequest request) throws (1: base.ErrorResponse err);
 
     // 用户模块
-    GetUserInfoByIDResponse GetUserInfo(1: GetUserInfoByIDRequest request) throws (1: base.ErrorResponse err);
+    GetUserInfoByIDResponse GetUserInfoByID(1: GetUserInfoByIDRequest request) throws (1: base.ErrorResponse err);
     UpdateUserResponse UpdateUser(1: UpdateUserRequest request) throws (1: base.ErrorResponse err);
     RegisterResponse Register(1: RegisterRequest request) throws (1: base.ErrorResponse err);
     UpdatePasswordByIDResponse UpdatePasswordByID(1: UpdatePasswordByIDRequest request) throws (1: base.ErrorResponse err);

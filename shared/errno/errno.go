@@ -21,7 +21,8 @@ const (
 	SuccessCode                   = 0
 	NoRouteCode                   = 1
 	NoMethodCode                  = 2
-	BadRequestCode                = 10000
+	StatusOKCode                  = 20000
+	StatusBadRequestCode          = 40000
 	StatusUnauthorizedCode        = 40100
 	ForbiddenCode                 = 40300
 	StatusNotFoundCode            = 40400
@@ -34,7 +35,8 @@ var (
 	Success                   = NewErrno(SuccessCode, "success")
 	NoRoute                   = NewErrno(NoRouteCode, "no route")
 	NoMethod                  = NewErrno(NoMethodCode, "no method")
-	BadRequest                = NewErrno(BadRequestCode, "bad request")
+	StatusOK                  = NewErrno(StatusOKCode, "ok")
+	StatusBadRequest          = NewErrno(StatusBadRequestCode, "bad request")
 	StatusUnauthorized        = NewErrno(StatusUnauthorizedCode, "unauthorized")
 	Forbidden                 = NewErrno(ForbiddenCode, "forbidden")
 	StatusNotFound            = NewErrno(StatusNotFoundCode, "not found")

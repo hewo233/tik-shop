@@ -5,6 +5,7 @@ import (
 	"github.com/hertz-contrib/paseto"
 	"github.com/hewo/tik-shop/shared/consts"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/hewo/tik-shop/db/model"
@@ -19,8 +20,8 @@ type UserServiceImpl struct {
 }
 
 type LoginSqlManage interface {
-	Login(username, password string) (authed bool, id string, err error)
-	AdminLogin(username, password string) (authed bool, id string, err error)
+	Login(username, password string) (authed bool, id int64, err error)
+	AdminLogin(username, password string) (authed bool, id int64, err error)
 	GetUserInfoByID(id int64) (usrRet *user.User, err error)
 	UpdateUser(usr *model.Users) error
 	Register(username, email, password, role string) (usrRet *user.User, err error)
@@ -35,6 +36,8 @@ type TokenGenerator interface {
 func (s *UserServiceImpl) Login(ctx context.Context, request *user.LoginRequest) (resp *user.LoginResponse, err error) {
 
 	resp = new(user.LoginResponse)
+
+	//id here is Id
 	authed, id, err := s.LoginSqlManage.Login(request.Username, request.Password)
 
 	if err != nil {
@@ -42,17 +45,20 @@ func (s *UserServiceImpl) Login(ctx context.Context, request *user.LoginRequest)
 		return nil, err
 	}
 
+	idStr := strconv.FormatInt(id, 10)
+
 	if authed == true {
 
 		nowTime := time.Now()
 		resp.Token, err = s.TokenGenerator.CreateToken(&paseto.StandardClaims{
-			ID:        id,
+			ID:        idStr,
 			Issuer:    consts.Issuer,
 			Audience:  consts.User,
 			IssuedAt:  nowTime,
 			NotBefore: nowTime,
 			ExpiredAt: nowTime.Add(consts.SevenDays),
 		})
+
 		if err != nil {
 			log.Fatal(err)
 			return nil, err
@@ -73,11 +79,13 @@ func (s *UserServiceImpl) AdminLogin(ctx context.Context, request *user.LoginReq
 		return nil, err
 	}
 
+	idStr := strconv.FormatInt(id, 10)
+
 	if authed == true {
 
 		nowTime := time.Now()
 		resp.Token, err = s.TokenGenerator.CreateToken(&paseto.StandardClaims{
-			ID:        id,
+			ID:        idStr,
 			Issuer:    consts.Issuer,
 			Audience:  consts.Admin,
 			IssuedAt:  nowTime,
@@ -100,8 +108,10 @@ func (s *UserServiceImpl) GetUserInfoByID(ctx context.Context, request *user.Get
 
 	usr, err := s.LoginSqlManage.GetUserInfoByID(request.Id)
 	if err != nil {
+		log.Println("GetUserInfoByID error: ", err)
 		return nil, err
 	}
+
 	resp = &user.GetUserInfoByIDResponse{
 		User: usr,
 	}
@@ -160,10 +170,4 @@ func (s *UserServiceImpl) UpdatePasswordByID(ctx context.Context, request *user.
 	}
 	// TODO
 	return resp, nil
-}
-
-// GetUserInfo implements the UserServiceImpl interface.
-func (s *UserServiceImpl) GetUserInfo(ctx context.Context, request *user.GetUserInfoByIDRequest) (resp *user.GetUserInfoByIDResponse, err error) {
-	// TODO: Your code here...
-	return
 }
