@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var o = query.Q.Order
+var o = &query.Q.Order
 
 type OrderSqlManageImpl struct{}
 
