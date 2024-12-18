@@ -1,0 +1,89 @@
+basePath: /
+host: localhost:8888
+info:
+  contact:
+    name: TikShop 开发团队
+    url: https://github.com/hewo/tik-shop
+  description: TikShop 的 API 服务，用于处理相关业务逻辑。
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: TikShop API
+  version: "1.0"
+paths:
+  /api/auth/admin/login:
+    post:
+      responses: {}
+  /api/auth/login:
+    post:
+      responses: {}
+  /api/auth/verify:
+    get:
+      responses: {}
+  /api/cart:
+    delete:
+      responses: {}
+    get:
+      responses: {}
+    post:
+      responses: {}
+  /api/cart/:productId:
+    delete:
+      responses: {}
+    put:
+      responses: {}
+  /api/order:
+    post:
+      responses: {}
+  /api/order/:orderId:
+    get:
+      responses: {}
+  /api/order/:orderId/pay:
+    post:
+      responses: {}
+  /api/orders:
+    get:
+      responses: {}
+  /api/orders/:orderId/cancel:
+    post:
+      responses: {}
+  /api/product/:id:
+    delete:
+      responses: {}
+    get:
+      responses: {}
+    put:
+      responses: {}
+  /api/products:
+    get:
+      responses: {}
+    post:
+      responses: {}
+  /api/user/:id:
+    get:
+      responses: {}
+    put:
+      responses: {}
+  /api/user/:id/password:
+    put:
+      responses: {}
+  /api/user/register:
+    post:
+      responses: {}
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: 用于测试服务器是否正常响应，返回 "pong" 消息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '返回 message: pong 的 JSON 响应'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 测试接口
+schemes:
+- http
+swagger: "2.0"
