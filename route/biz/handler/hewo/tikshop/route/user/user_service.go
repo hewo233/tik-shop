@@ -17,7 +17,16 @@ import (
 	"strconv"
 )
 
-// UpdateUser .
+// UpdateUser
+// @Summary user UpdateUser
+// @Description 根据用户 ID 更新用户的详细信息
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body user.UpdateUserRequest true "Update user request"
+// @Success 200 {object} user.UserResponse "User information updated successfully"
+// @Failure 400 {string} string "Invalid request or validation failed"
 // @router /api/user/:id [PUT]
 func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -33,7 +42,15 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// Register .
+// Register
+// @Summary user Register
+// @Description 注册新用户，返回用户基本信息
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body user.RegisterRequest true "Register user request"
+// @Success 200 {string} string "User registered successfully"
+// @Failure 400 {string} string "Invalid request or validation failed"
 // @router /api/user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -66,7 +83,16 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// UpdatePassword .
+// UpdatePassword
+// @Summary user UpdatePassword
+// @Description 根据用户 ID 更新用户的密码
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body user.UpdatePasswordRequest true "Password update request"
+// @Success 200 {object} base.MessageResponse "Password updated successfully"
+// @Failure 400 {string} string "Invalid request or validation failed"
 // @router /api/user/:id/password [PUT]
 func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -82,8 +108,16 @@ func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// Login .
-// @router /api/auth/login [POST]
+// Login 用户登录
+// @Summary user log
+// @Description 通过用户名和密码进行用户登录，返回登录成功的用户信息。
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body user.LoginRequest true "Login request"
+// @Success 200 {string} string "Login successful"
+// @Failure 400 {string} string "Invalid request or login failed"
+// @Router /api/auth/login [post]
 func Login(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.LoginRequest
@@ -106,8 +140,16 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// AdminLogin .
-// @router /api/auth/admin/login [POST]
+// AdminLogin 管理员登录
+// @Summary user AdminLogin
+// @Description 管理员通过用户名和密码进行登录，返回登录成功的管理员信息。
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body user.LoginRequest true "Login request"
+// @Success 200 {object} user.LoginResponse "Login successful"
+// @Failure 400 {string} string "Invalid request or login failed"
+// @Router /api/auth/admin/login [post]
 func AdminLogin(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.LoginRequest
@@ -123,7 +165,14 @@ func AdminLogin(ctx context.Context, c *app.RequestContext) {
 }
 
 // Verify .
-// @router /api/auth/verify [GET]
+// @Summary user verify
+// @Description 验证用户的身份信息，返回验证结果。
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param request body user.VerifyRequest true "Verify request"
+// @Success 200 {object} user.VerifyResponse "Verification successful"
+// @Failure 400 {string} string "Invalid request or verification failed"
 func Verify(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.VerifyRequest
@@ -138,8 +187,16 @@ func Verify(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// GetUserInfoByID .
-// @router /api/user/:id [GET]
+// GetUserInfoByID 根据用户 ID 获取用户信息
+// @Summary user GetUserInfoByID
+// @Description 根据用户 ID 获取详细的用户信息
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {string} string "User information retrieved successfully"
+// @Failure 400 {string} string "Invalid request or user ID not found"
+// @Router /api/user/{id} [get]
 func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.GetUserInfoByIDRequest

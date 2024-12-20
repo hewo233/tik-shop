@@ -1,4 +1,68 @@
 basePath: /
+definitions:
+  base.MessageResponse:
+    properties:
+      message:
+        description: Return status description
+        type: string
+    type: object
+  user.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  user.LoginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  user.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  user.UpdatePasswordRequest:
+    properties:
+      id:
+        type: integer
+      password:
+        type: string
+    type: object
+  user.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+  user.UserResponse:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      username:
+        type: string
+    type: object
+  user.VerifyRequest:
+    type: object
+  user.VerifyResponse:
+    properties:
+      authorized:
+        type: boolean
+    type: object
 host: localhost:8888
 info:
   contact:
@@ -13,13 +77,56 @@ info:
 paths:
   /api/auth/admin/login:
     post:
-      responses: {}
+      consumes:
+      - application/json
+      description: 管理员通过用户名和密码进行登录，返回登录成功的管理员信息。
+      parameters:
+      - description: Login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            $ref: '#/definitions/user.LoginResponse'
+        "400":
+          description: Invalid request or login failed
+          schema:
+            type: string
+      summary: user AdminLogin
+      tags:
+      - user
   /api/auth/login:
     post:
-      responses: {}
-  /api/auth/verify:
-    get:
-      responses: {}
+      consumes:
+      - application/json
+      description: 通过用户名和密码进行用户登录，返回登录成功的用户信息。
+      parameters:
+      - description: Login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            type: string
+        "400":
+          description: Invalid request or login failed
+          schema:
+            type: string
+      summary: user log
+      tags:
+      - user
   /api/cart:
     delete:
       responses: {}
@@ -60,16 +167,118 @@ paths:
     post:
       responses: {}
   /api/user/:id:
-    get:
-      responses: {}
     put:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据用户 ID 更新用户的详细信息
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User information updated successfully
+          schema:
+            $ref: '#/definitions/user.UserResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            type: string
+      summary: user UpdateUser
+      tags:
+      - user
   /api/user/:id/password:
     put:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据用户 ID 更新用户的密码
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Password update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdatePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password updated successfully
+          schema:
+            $ref: '#/definitions/base.MessageResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            type: string
+      summary: user UpdatePassword
+      tags:
+      - user
+  /api/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据用户 ID 获取详细的用户信息
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User information retrieved successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid request or user ID not found
+          schema:
+            type: string
+      summary: user GetUserInfoByID
+      tags:
+      - user
   /api/user/register:
     post:
-      responses: {}
+      consumes:
+      - application/json
+      description: 注册新用户，返回用户基本信息
+      parameters:
+      - description: Register user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User registered successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            type: string
+      summary: user Register
+      tags:
+      - user
   /ping:
     get:
       consumes:
