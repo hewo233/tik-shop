@@ -18,7 +18,7 @@ import (
 )
 
 // UpdateUser
-// @Summary user UpdateUser
+// @Summary UpdateUser
 // @Description 根据用户 ID 更新用户的详细信息
 // @Tags user
 // @Accept json
@@ -43,7 +43,7 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 }
 
 // Register
-// @Summary user Register
+// @Summary Register
 // @Description 注册新用户，返回用户基本信息
 // @Tags user
 // @Accept json
@@ -84,7 +84,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdatePassword
-// @Summary user UpdatePassword
+// @Summary UpdatePassword
 // @Description 根据用户 ID 更新用户的密码
 // @Tags user
 // @Accept json
@@ -109,7 +109,7 @@ func UpdatePassword(ctx context.Context, c *app.RequestContext) {
 }
 
 // Login 用户登录
-// @Summary user log
+// @Summary Login
 // @Description 通过用户名和密码进行用户登录，返回登录成功的用户信息。
 // @Tags user
 // @Accept json
@@ -141,7 +141,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 }
 
 // AdminLogin 管理员登录
-// @Summary user AdminLogin
+// @Summary AdminLogin
 // @Description 管理员通过用户名和密码进行登录，返回登录成功的管理员信息。
 // @Tags user
 // @Accept json
@@ -165,7 +165,7 @@ func AdminLogin(ctx context.Context, c *app.RequestContext) {
 }
 
 // Verify .
-// @Summary user verify
+// @Summary Verify
 // @Description 验证用户的身份信息，返回验证结果。
 // @Tags user
 // @Accept json
@@ -189,7 +189,7 @@ func Verify(ctx context.Context, c *app.RequestContext) {
 }
 
 // GetUserInfoByID 根据用户 ID 获取用户信息
-// @Summary user GetUserInfoByID
+// @Summary GetUserInfoByID
 // @Description 根据用户 ID 获取详细的用户信息
 // @Tags user
 // @Accept json

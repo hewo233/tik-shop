@@ -1,10 +1,179 @@
 basePath: /
 definitions:
+  base.Address:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      postalCode:
+        type: string
+      street:
+        type: string
+    type: object
+  base.CartItem:
+    properties:
+      productId:
+        type: integer
+      quantity:
+        type: integer
+    type: object
   base.MessageResponse:
     properties:
       message:
         description: Return status description
         type: string
+    type: object
+  base.Order:
+    properties:
+      createdAt:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/base.OrderItem'
+        type: array
+      orderId:
+        type: integer
+      status:
+        type: string
+      totalAmount:
+        type: integer
+      userId:
+        type: integer
+    type: object
+  base.OrderItem:
+    properties:
+      price:
+        type: integer
+      productId:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  base.PaymentDetails:
+    properties:
+      cardNumber:
+        type: string
+      cvv:
+        type: string
+      expiryDate:
+        type: string
+    type: object
+  base.Product:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      productId:
+        type: integer
+      stock:
+        type: integer
+    type: object
+  cart.AddToCartRequest:
+    properties:
+      productId:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  cart.DeleteCartItemRequest:
+    properties:
+      productId:
+        type: integer
+    type: object
+  cart.DeleteCartRequest:
+    type: object
+  cart.UpdateCartItemRequest:
+    properties:
+      productId:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  order.CancelOrderRequest:
+    properties:
+      orderId:
+        type: integer
+    type: object
+  order.PayOrderRequest:
+    properties:
+      orderId:
+        type: integer
+      paymentDetails:
+        $ref: '#/definitions/base.PaymentDetails'
+      paymentMethod:
+        type: string
+    type: object
+  order.PostOrderRequest:
+    properties:
+      address:
+        $ref: '#/definitions/base.Address'
+      items:
+        items:
+          $ref: '#/definitions/base.CartItem'
+        type: array
+      paymentMethod:
+        type: string
+    type: object
+  order.PostOrderResponse:
+    properties:
+      message:
+        type: string
+      orderId:
+        type: integer
+    type: object
+  product.CreateProductRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      stock:
+        type: integer
+    type: object
+  product.CreateProductResponse:
+    properties:
+      message:
+        type: string
+      productId:
+        type: integer
+    type: object
+  product.DeleteProductRequest:
+    properties:
+      id:
+        type: integer
+    type: object
+  product.DeleteProductResponse:
+    properties:
+      message:
+        type: string
+      productId:
+        type: integer
+    type: object
+  product.UpdateProductRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+      stock:
+        type: integer
+    type: object
+  product.UpdateProductResponse:
+    properties:
+      message:
+        type: string
+      productId:
+        type: integer
     type: object
   user.LoginRequest:
     properties:
@@ -98,7 +267,7 @@ paths:
           description: Invalid request or login failed
           schema:
             type: string
-      summary: user AdminLogin
+      summary: AdminLogin
       tags:
       - user
   /api/auth/login:
@@ -124,7 +293,7 @@ paths:
           description: Invalid request or login failed
           schema:
             type: string
-      summary: user log
+      summary: Login
       tags:
       - user
   /api/auth/register:
@@ -150,7 +319,7 @@ paths:
           description: Invalid request or validation failed
           schema:
             type: string
-      summary: user Register
+      summary: Register
       tags:
       - user
   /api/auth/verify:
@@ -176,48 +345,419 @@ paths:
           description: Invalid request or verification failed
           schema:
             type: string
-      summary: user verify
+      summary: Verify
       tags:
       - user
   /api/cart:
     delete:
-      responses: {}
+      consumes:
+      - application/json
+      description: 清空购物车中的所有商品。
+      parameters:
+      - description: Details for clearing the cart
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/cart.DeleteCartRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart cleared successfully
+          schema:
+            $ref: '#/definitions/base.MessageResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: DeleteCart
+      tags:
+      - cart
     get:
-      responses: {}
+      consumes:
+      - application/json
+      description: 获取购物车中的所有商品。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of items in the cart
+          schema:
+            items:
+              $ref: '#/definitions/base.CartItem'
+            type: array
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: GetCart
+      tags:
+      - cart
     post:
-      responses: {}
+      consumes:
+      - application/json
+      description: 向购物车中添加一件商品。
+      parameters:
+      - description: Details of the item to add
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/cart.AddToCartRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Item added to the cart successfully
+          schema:
+            $ref: '#/definitions/base.MessageResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: AddToCart
+      tags:
+      - cart
   /api/cart/:productId:
     delete:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据商品 ID 从购物车中移除指定商品。
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      - description: Details of the item to delete
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/cart.DeleteCartItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Item removed successfully
+          schema:
+            $ref: '#/definitions/base.MessageResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: DeleteCartItem
+      tags:
+      - cart
     put:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据商品 ID 更新购物车中商品的数量。
+      parameters:
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      - description: Details of the item to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/cart.UpdateCartItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Item updated successfully
+          schema:
+            $ref: '#/definitions/base.MessageResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: UpdateCartItem
+      tags:
+      - cart
   /api/order:
     post:
-      responses: {}
+      consumes:
+      - application/json
+      description: 创建一个新的订单，包括订单的详细信息。
+      parameters:
+      - description: Order details for creation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.PostOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order created successfully
+          schema:
+            $ref: '#/definitions/order.PostOrderResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: PostOrder
+      tags:
+      - order
   /api/order/:orderId:
     get:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据订单 ID 获取订单的详细信息。
+      parameters:
+      - description: Order ID
+        in: path
+        name: orderId
+        required: true
+        type: string
+      - in: query
+        name: orderId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order details
+          schema:
+            $ref: '#/definitions/base.Order'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: GetOrderInfo
+      tags:
+      - order
   /api/order/:orderId/pay:
     post:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据订单 ID 支付订单。
+      parameters:
+      - description: Order ID
+        in: path
+        name: orderId
+        required: true
+        type: string
+      - description: Payment details for the order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.PayOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment successful
+          schema:
+            $ref: '#/definitions/base.MessageResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: PayOrder
+      tags:
+      - order
   /api/orders:
     get:
-      responses: {}
+      consumes:
+      - application/json
+      description: 获取订单列表，支持分页和过滤。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of orders
+          schema:
+            items:
+              $ref: '#/definitions/base.Order'
+            type: array
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: GetOrders
+      tags:
+      - order
   /api/orders/:orderId/cancel:
     post:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据订单 ID 取消订单。
+      parameters:
+      - description: Order ID
+        in: path
+        name: orderId
+        required: true
+        type: string
+      - description: Details for canceling the order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.CancelOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order canceled successfully
+          schema:
+            $ref: '#/definitions/base.MessageResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: CancelOrder
+      tags:
+      - order
   /api/product/:id:
     delete:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据产品 ID 删除指定的产品。
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request body with product ID
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.DeleteProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product deleted successfully
+          schema:
+            $ref: '#/definitions/product.DeleteProductResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: DeleteProduct
+      tags:
+      - product
     get:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据产品 ID 获取单个产品的详细信息。
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product details
+          schema:
+            $ref: '#/definitions/base.Product'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: GetProduct
+      tags:
+      - product
     put:
-      responses: {}
+      consumes:
+      - application/json
+      description: 根据产品 ID 更新产品的详细信息。
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request body with updated product details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product updated successfully
+          schema:
+            $ref: '#/definitions/product.UpdateProductResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: UpdateProduct
+      tags:
+      - product
   /api/products:
     get:
-      responses: {}
+      consumes:
+      - application/json
+      description: 获取产品列表
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of products
+          schema:
+            items:
+              $ref: '#/definitions/base.Product'
+            type: array
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: GetProducts
+      tags:
+      - product
     post:
-      responses: {}
+      consumes:
+      - application/json
+      description: 创建一个新的产品，包含产品的详细信息。
+      parameters:
+      - description: Request body with product details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product created successfully
+          schema:
+            $ref: '#/definitions/product.CreateProductResponse'
+        "400":
+          description: Invalid request
+          schema:
+            type: string
+      summary: CreateProduct
+      tags:
+      - product
   /api/user/:id:
     get:
       consumes:
@@ -240,7 +780,7 @@ paths:
           description: Invalid request or user ID not found
           schema:
             type: string
-      summary: user GetUserInfoByID
+      summary: GetUserInfoByID
       tags:
       - user
     put:
@@ -270,7 +810,7 @@ paths:
           description: Invalid request or validation failed
           schema:
             type: string
-      summary: user UpdateUser
+      summary: UpdateUser
       tags:
       - user
   /api/user/:id/password:
@@ -301,7 +841,7 @@ paths:
           description: Invalid request or validation failed
           schema:
             type: string
-      summary: user UpdatePassword
+      summary: UpdatePassword
       tags:
       - user
   /ping:

@@ -34,7 +34,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "user AdminLogin",
+                "summary": "AdminLogin",
                 "parameters": [
                     {
                         "description": "Login request",
@@ -74,7 +74,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "user log",
+                "summary": "Login",
                 "parameters": [
                     {
                         "description": "Login request",
@@ -114,7 +114,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "user Register",
+                "summary": "Register",
                 "parameters": [
                     {
                         "description": "Register user request",
@@ -154,7 +154,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "user verify",
+                "summary": "Verify",
                 "parameters": [
                     {
                         "description": "Verify request",
@@ -184,65 +184,626 @@ const docTemplate = `{
         },
         "/api/cart": {
             "get": {
-                "responses": {}
+                "description": "获取购物车中的所有商品。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "GetCart",
+                "responses": {
+                    "200": {
+                        "description": "List of items in the cart",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/base.CartItem"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "post": {
-                "responses": {}
+                "description": "向购物车中添加一件商品。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "AddToCart",
+                "parameters": [
+                    {
+                        "description": "Details of the item to add",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.AddToCartRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item added to the cart successfully",
+                        "schema": {
+                            "$ref": "#/definitions/base.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "delete": {
-                "responses": {}
+                "description": "清空购物车中的所有商品。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "DeleteCart",
+                "parameters": [
+                    {
+                        "description": "Details for clearing the cart",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.DeleteCartRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cart cleared successfully",
+                        "schema": {
+                            "$ref": "#/definitions/base.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/cart/:productId": {
             "put": {
-                "responses": {}
+                "description": "根据商品 ID 更新购物车中商品的数量。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "UpdateCartItem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "productId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Details of the item to update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.UpdateCartItemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/base.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "delete": {
-                "responses": {}
+                "description": "根据商品 ID 从购物车中移除指定商品。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "DeleteCartItem",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "productId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Details of the item to delete",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.DeleteCartItemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item removed successfully",
+                        "schema": {
+                            "$ref": "#/definitions/base.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/order": {
             "post": {
-                "responses": {}
+                "description": "创建一个新的订单，包括订单的详细信息。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "PostOrder",
+                "parameters": [
+                    {
+                        "description": "Order details for creation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.PostOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/order.PostOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/order/:orderId": {
             "get": {
-                "responses": {}
+                "description": "根据订单 ID 获取订单的详细信息。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "GetOrderInfo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "orderId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order details",
+                        "schema": {
+                            "$ref": "#/definitions/base.Order"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/order/:orderId/pay": {
             "post": {
-                "responses": {}
+                "description": "根据订单 ID 支付订单。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "PayOrder",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Payment details for the order",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.PayOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment successful",
+                        "schema": {
+                            "$ref": "#/definitions/base.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/orders": {
             "get": {
-                "responses": {}
+                "description": "获取订单列表，支持分页和过滤。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "GetOrders",
+                "responses": {
+                    "200": {
+                        "description": "List of orders",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/base.Order"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/orders/:orderId/cancel": {
             "post": {
-                "responses": {}
+                "description": "根据订单 ID 取消订单。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "CancelOrder",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Details for canceling the order",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.CancelOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order canceled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/base.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/product/:id": {
             "get": {
-                "responses": {}
+                "description": "根据产品 ID 获取单个产品的详细信息。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "GetProduct",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product details",
+                        "schema": {
+                            "$ref": "#/definitions/base.Product"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "put": {
-                "responses": {}
+                "description": "根据产品 ID 更新产品的详细信息。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "UpdateProduct",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request body with updated product details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.UpdateProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.UpdateProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "delete": {
-                "responses": {}
+                "description": "根据产品 ID 删除指定的产品。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "DeleteProduct",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request body with product ID",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.DeleteProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.DeleteProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/products": {
             "get": {
-                "responses": {}
+                "description": "获取产品列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "GetProducts",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of products",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/base.Product"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "post": {
-                "responses": {}
+                "description": "创建一个新的产品，包含产品的详细信息。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "CreateProduct",
+                "parameters": [
+                    {
+                        "description": "Request body with product details",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.CreateProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.CreateProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/api/user/:id": {
@@ -257,7 +818,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "user GetUserInfoByID",
+                "summary": "GetUserInfoByID",
                 "parameters": [
                     {
                         "type": "integer",
@@ -293,7 +854,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "user UpdateUser",
+                "summary": "UpdateUser",
                 "parameters": [
                     {
                         "type": "integer",
@@ -340,7 +901,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "user UpdatePassword",
+                "summary": "UpdatePassword",
                 "parameters": [
                     {
                         "type": "integer",
@@ -398,12 +959,275 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "base.Address": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "postalCode": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                }
+            }
+        },
+        "base.CartItem": {
+            "type": "object",
+            "properties": {
+                "productId": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
         "base.MessageResponse": {
             "type": "object",
             "properties": {
                 "message": {
                     "description": "Return status description",
                     "type": "string"
+                }
+            }
+        },
+        "base.Order": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base.OrderItem"
+                    }
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "totalAmount": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "base.OrderItem": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "integer"
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "base.PaymentDetails": {
+            "type": "object",
+            "properties": {
+                "cardNumber": {
+                    "type": "string"
+                },
+                "cvv": {
+                    "type": "string"
+                },
+                "expiryDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "base.Product": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "cart.AddToCartRequest": {
+            "type": "object",
+            "properties": {
+                "productId": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "cart.DeleteCartItemRequest": {
+            "type": "object",
+            "properties": {
+                "productId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "cart.DeleteCartRequest": {
+            "type": "object"
+        },
+        "cart.UpdateCartItemRequest": {
+            "type": "object",
+            "properties": {
+                "productId": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "order.CancelOrderRequest": {
+            "type": "object",
+            "properties": {
+                "orderId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "order.PayOrderRequest": {
+            "type": "object",
+            "properties": {
+                "orderId": {
+                    "type": "integer"
+                },
+                "paymentDetails": {
+                    "$ref": "#/definitions/base.PaymentDetails"
+                },
+                "paymentMethod": {
+                    "type": "string"
+                }
+            }
+        },
+        "order.PostOrderRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "$ref": "#/definitions/base.Address"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base.CartItem"
+                    }
+                },
+                "paymentMethod": {
+                    "type": "string"
+                }
+            }
+        },
+        "order.PostOrderResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "orderId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.CreateProductRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.CreateProductResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.DeleteProductRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.DeleteProductResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.UpdateProductRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.UpdateProductResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "integer"
                 }
             }
         },

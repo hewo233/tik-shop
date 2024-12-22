@@ -14,6 +14,14 @@ import (
 )
 
 // GetCart .
+// @Summary GetCart
+// @Description 获取购物车中的所有商品。
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param request query cart.GetCartRequest true "Query parameters for cart details"
+// @Success 200 {array} base.CartItem "List of items in the cart"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/cart [GET]
 func GetCart(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -41,6 +49,14 @@ func GetCart(ctx context.Context, c *app.RequestContext) {
 }
 
 // AddToCart .
+// @Summary AddToCart
+// @Description 向购物车中添加一件商品。
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param request body cart.AddToCartRequest true "Details of the item to add"
+// @Success 200 {object} base.MessageResponse "Item added to the cart successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/cart [POST]
 func AddToCart(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -57,6 +73,15 @@ func AddToCart(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdateCartItem .
+// @Summary UpdateCartItem
+// @Description 根据商品 ID 更新购物车中商品的数量。
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param productId path string true "Product ID"
+// @Param request body cart.UpdateCartItemRequest true "Details of the item to update"
+// @Success 200 {object} base.MessageResponse "Item updated successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/cart/:productId [PUT]
 func UpdateCartItem(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -73,6 +98,15 @@ func UpdateCartItem(ctx context.Context, c *app.RequestContext) {
 }
 
 // DeleteCartItem .
+// @Summary DeleteCartItem
+// @Description 根据商品 ID 从购物车中移除指定商品。
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param productId path string true "Product ID"
+// @Param request body cart.DeleteCartItemRequest true "Details of the item to delete"
+// @Success 200 {object} base.MessageResponse "Item removed successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/cart/:productId [DELETE]
 func DeleteCartItem(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -89,6 +123,14 @@ func DeleteCartItem(ctx context.Context, c *app.RequestContext) {
 }
 
 // DeleteCart .
+// @Summary DeleteCart
+// @Description 清空购物车中的所有商品。
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param request body cart.DeleteCartRequest true "Details for clearing the cart"
+// @Success 200 {object} base.MessageResponse "Cart cleared successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/cart [DELETE]
 func DeleteCart(ctx context.Context, c *app.RequestContext) {
 	var err error
