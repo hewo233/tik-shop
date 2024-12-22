@@ -12,7 +12,15 @@ import (
 )
 
 // GetProducts .
-// @router /api/products [GET]
+// @Summary GetProducts
+// @Description 获取产品列表
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param request query product.GetProductsRequest true "Request params" // 定义查询参数
+// @Success 200 {array} base.Product "List of products"
+// @Failure 400 {string} string "Invalid request"
+// @Router /api/products [GET]
 func GetProducts(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.GetProductsRequest
@@ -28,6 +36,15 @@ func GetProducts(ctx context.Context, c *app.RequestContext) {
 }
 
 // GetProduct .
+// @Summary GetProduct
+// @Description 根据产品 ID 获取单个产品的详细信息。
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID" // URL 路径参数
+// @Param request query product.GetProductRequest true "Request params" // 查询参数
+// @Success 200 {object} base.Product "Product details"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/product/:id [GET]
 func GetProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -44,6 +61,14 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 }
 
 // CreateProduct .
+// @Summary CreateProduct
+// @Description 创建一个新的产品，包含产品的详细信息。
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param request body product.CreateProductRequest true "Request body with product details"
+// @Success 200 {object} product.CreateProductResponse "Product created successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/products [POST]
 func CreateProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -60,6 +85,15 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdateProduct .
+// @Summary UpdateProduct
+// @Description 根据产品 ID 更新产品的详细信息。
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID" // 路径参数，指定需要更新的产品 ID
+// @Param request body product.UpdateProductRequest true "Request body with updated product details"
+// @Success 200 {object} product.UpdateProductResponse "Product updated successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/product/:id [PUT]
 func UpdateProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -76,6 +110,15 @@ func UpdateProduct(ctx context.Context, c *app.RequestContext) {
 }
 
 // DeleteProduct .
+// @Summary DeleteProduct
+// @Description 根据产品 ID 删除指定的产品。
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID" // 路径参数，用于指定需要删除的产品 ID
+// @Param request body product.DeleteProductRequest true "Request body with product ID"
+// @Success 200 {object} product.DeleteProductResponse "Product deleted successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/product/:id [DELETE]
 func DeleteProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
