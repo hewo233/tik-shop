@@ -10,7 +10,13 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
-// Ping .
+// Ping
+// @Summary 测试接口
+// @Description 用于测试服务器是否正常响应，返回 "pong" 消息
+// @Accept application/json
+// @Produce application/json
+// @Success 200 {object} map[string]interface{} "返回 message: pong 的 JSON 响应"
+// @Router /ping [get]
 func Ping(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, utils.H{
 		"message": "pong",

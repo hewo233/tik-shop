@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-	//
-	//// 初始化 GORM 数据库对象
+
+	// 初始化 GORM 数据库对象
 	//db, err := connectDB.ConnectDB()
 	//if err != nil {
 	//	panic(err)
@@ -19,7 +19,9 @@ func main() {
 	//	&model.Address{},
 	//	&model.CartItem{},
 	//	&model.OrderItem{},
-	//	&model.PaymentDetails{})
+	//	&model.PaymentDetails{}
+	//)
+
 	//if err != nil {
 	//	panic(err)
 	//}

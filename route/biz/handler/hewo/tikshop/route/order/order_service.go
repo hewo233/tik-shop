@@ -12,6 +12,14 @@ import (
 )
 
 // GetOrders .
+// @Summary GetOrders
+// @Description 获取订单列表，支持分页和过滤。
+// @Tags order
+// @Accept json
+// @Produce json
+// @Param request query order.GetOrdersRequest true "Query parameters for filtering and pagination"
+// @Success 200 {array} base.Order "List of orders"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/orders [GET]
 func GetOrders(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -28,6 +36,15 @@ func GetOrders(ctx context.Context, c *app.RequestContext) {
 }
 
 // GetOrderInfo .
+// @Summary GetOrderInfo
+// @Description 根据订单 ID 获取订单的详细信息。
+// @Tags order
+// @Accept json
+// @Produce json
+// @Param orderId path string true "Order ID"
+// @Param request query order.GetOrderInfoRequest true "Query parameters for order details"
+// @Success 200 {object} base.Order "Order details"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/order/:orderId [GET]
 func GetOrderInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -44,6 +61,14 @@ func GetOrderInfo(ctx context.Context, c *app.RequestContext) {
 }
 
 // PostOrder .
+// @Summary PostOrder
+// @Description 创建一个新的订单，包括订单的详细信息。
+// @Tags order
+// @Accept json
+// @Produce json
+// @Param request body order.PostOrderRequest true "Order details for creation"
+// @Success 200 {object} order.PostOrderResponse "Order created successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/order [POST]
 func PostOrder(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -60,6 +85,15 @@ func PostOrder(ctx context.Context, c *app.RequestContext) {
 }
 
 // PayOrder .
+// @Summary PayOrder
+// @Description 根据订单 ID 支付订单。
+// @Tags order
+// @Accept json
+// @Produce json
+// @Param orderId path string true "Order ID"
+// @Param request body order.PayOrderRequest true "Payment details for the order"
+// @Success 200 {object} base.MessageResponse "Payment successful"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/order/:orderId/pay [POST]
 func PayOrder(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -76,6 +110,15 @@ func PayOrder(ctx context.Context, c *app.RequestContext) {
 }
 
 // CancelOrder .
+// @Summary CancelOrder
+// @Description 根据订单 ID 取消订单。
+// @Tags order
+// @Accept json
+// @Produce json
+// @Param orderId path string true "Order ID"
+// @Param request body order.CancelOrderRequest true "Details for canceling the order"
+// @Success 200 {object} base.MessageResponse "Order canceled successfully"
+// @Failure 400 {string} string "Invalid request"
 // @router /api/orders/:orderId/cancel [POST]
 func CancelOrder(ctx context.Context, c *app.RequestContext) {
 	var err error
