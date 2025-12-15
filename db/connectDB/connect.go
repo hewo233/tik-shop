@@ -1,6 +1,7 @@
 package connectDB
 
 import (
+	"github.com/hewo/tik-shop/shared/consts"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -15,7 +16,7 @@ func ConnectDB() (*gorm.DB, error) {
 	}
 
 	// 读取 .env 文件中的环境变量
-	env, err := godotenv.Read("db/.env")
+	env, err := godotenv.Read(consts.RpcDBEnvPath)
 	if err != nil {
 		log.Fatal("Error reading .env file", err, dir)
 
