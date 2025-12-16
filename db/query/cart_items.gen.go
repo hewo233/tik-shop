@@ -6,6 +6,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/hewo/tik-shop/db/model"
 	"gorm.io/gorm"
@@ -26,10 +27,165 @@ func newCartItem(db *gorm.DB, opts ...gen.DOOption) cartItem {
 
 	tableName := _cartItem.cartItemDo.TableName()
 	_cartItem.ALL = field.NewAsterisk(tableName)
-	_cartItem.Id = field.NewUint(tableName, "id")
-	_cartItem.ProductId = field.NewInt64(tableName, "ProductId")
-	_cartItem.UserId = field.NewUint(tableName, "UserId")
-	_cartItem.Quantity = field.NewInt64(tableName, "Quantity")
+	_cartItem.ID = field.NewInt64(tableName, "id")
+	_cartItem.CustomerID = field.NewInt64(tableName, "customer_id")
+	_cartItem.ProductID = field.NewInt64(tableName, "product_id")
+	_cartItem.MerchantID = field.NewInt64(tableName, "merchant_id")
+	_cartItem.Quantity = field.NewInt(tableName, "quantity")
+	_cartItem.Selected = field.NewBool(tableName, "selected")
+	_cartItem.CreatedAt = field.NewTime(tableName, "created_at")
+	_cartItem.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_cartItem.Customer = cartItemBelongsToCustomer{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Customer", "model.Customer"),
+		User: struct {
+			field.RelationField
+			Customer struct {
+				field.RelationField
+			}
+			Merchant struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+				Products struct {
+					field.RelationField
+					Merchant struct {
+						field.RelationField
+					}
+				}
+			}
+			Admin struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+			}
+		}{
+			RelationField: field.NewRelation("Customer.User", "model.User"),
+			Customer: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Customer.User.Customer", "model.Customer"),
+			},
+			Merchant: struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+				Products struct {
+					field.RelationField
+					Merchant struct {
+						field.RelationField
+					}
+				}
+			}{
+				RelationField: field.NewRelation("Customer.User.Merchant", "model.Merchant"),
+				User: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Customer.User.Merchant.User", "model.User"),
+				},
+				Products: struct {
+					field.RelationField
+					Merchant struct {
+						field.RelationField
+					}
+				}{
+					RelationField: field.NewRelation("Customer.User.Merchant.Products", "model.Product"),
+					Merchant: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Customer.User.Merchant.Products.Merchant", "model.Merchant"),
+					},
+				},
+			},
+			Admin: struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Customer.User.Admin", "model.Admin"),
+				User: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Customer.User.Admin.User", "model.User"),
+				},
+			},
+		},
+		Orders: struct {
+			field.RelationField
+			Customer struct {
+				field.RelationField
+			}
+			OrderItems struct {
+				field.RelationField
+				Order struct {
+					field.RelationField
+				}
+				Product struct {
+					field.RelationField
+				}
+			}
+		}{
+			RelationField: field.NewRelation("Customer.Orders", "model.Order"),
+			Customer: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Customer.Orders.Customer", "model.Customer"),
+			},
+			OrderItems: struct {
+				field.RelationField
+				Order struct {
+					field.RelationField
+				}
+				Product struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Customer.Orders.OrderItems", "model.OrderItem"),
+				Order: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Customer.Orders.OrderItems.Order", "model.Order"),
+				},
+				Product: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Customer.Orders.OrderItems.Product", "model.Product"),
+				},
+			},
+		},
+		Cart: struct {
+			field.RelationField
+			Customer struct {
+				field.RelationField
+			}
+			Product struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Customer.Cart", "model.CartItem"),
+			Customer: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Customer.Cart.Customer", "model.Customer"),
+			},
+			Product: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Customer.Cart.Product", "model.Product"),
+			},
+		},
+	}
+
+	_cartItem.Product = cartItemBelongsToProduct{
+		db: db.Session(&gorm.Session{}),
+
+		RelationField: field.NewRelation("Product", "model.Product"),
+	}
 
 	_cartItem.fillFieldMap()
 
@@ -39,11 +195,18 @@ func newCartItem(db *gorm.DB, opts ...gen.DOOption) cartItem {
 type cartItem struct {
 	cartItemDo
 
-	ALL       field.Asterisk
-	Id        field.Uint
-	ProductId field.Int64
-	UserId    field.Uint
-	Quantity  field.Int64
+	ALL        field.Asterisk
+	ID         field.Int64
+	CustomerID field.Int64
+	ProductID  field.Int64
+	MerchantID field.Int64
+	Quantity   field.Int
+	Selected   field.Bool
+	CreatedAt  field.Time
+	UpdatedAt  field.Time
+	Customer   cartItemBelongsToCustomer
+
+	Product cartItemBelongsToProduct
 
 	fieldMap map[string]field.Expr
 }
@@ -60,10 +223,14 @@ func (c cartItem) As(alias string) *cartItem {
 
 func (c *cartItem) updateTableName(table string) *cartItem {
 	c.ALL = field.NewAsterisk(table)
-	c.Id = field.NewUint(table, "id")
-	c.ProductId = field.NewInt64(table, "ProductId")
-	c.UserId = field.NewUint(table, "UserId")
-	c.Quantity = field.NewInt64(table, "Quantity")
+	c.ID = field.NewInt64(table, "id")
+	c.CustomerID = field.NewInt64(table, "customer_id")
+	c.ProductID = field.NewInt64(table, "product_id")
+	c.MerchantID = field.NewInt64(table, "merchant_id")
+	c.Quantity = field.NewInt(table, "quantity")
+	c.Selected = field.NewBool(table, "selected")
+	c.CreatedAt = field.NewTime(table, "created_at")
+	c.UpdatedAt = field.NewTime(table, "updated_at")
 
 	c.fillFieldMap()
 
@@ -80,21 +247,243 @@ func (c *cartItem) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (c *cartItem) fillFieldMap() {
-	c.fieldMap = make(map[string]field.Expr, 4)
-	c.fieldMap["id"] = c.Id
-	c.fieldMap["ProductId"] = c.ProductId
-	c.fieldMap["UserId"] = c.UserId
-	c.fieldMap["Quantity"] = c.Quantity
+	c.fieldMap = make(map[string]field.Expr, 10)
+	c.fieldMap["id"] = c.ID
+	c.fieldMap["customer_id"] = c.CustomerID
+	c.fieldMap["product_id"] = c.ProductID
+	c.fieldMap["merchant_id"] = c.MerchantID
+	c.fieldMap["quantity"] = c.Quantity
+	c.fieldMap["selected"] = c.Selected
+	c.fieldMap["created_at"] = c.CreatedAt
+	c.fieldMap["updated_at"] = c.UpdatedAt
+
 }
 
 func (c cartItem) clone(db *gorm.DB) cartItem {
 	c.cartItemDo.ReplaceConnPool(db.Statement.ConnPool)
+	c.Customer.db = db.Session(&gorm.Session{Initialized: true})
+	c.Customer.db.Statement.ConnPool = db.Statement.ConnPool
+	c.Product.db = db.Session(&gorm.Session{Initialized: true})
+	c.Product.db.Statement.ConnPool = db.Statement.ConnPool
 	return c
 }
 
 func (c cartItem) replaceDB(db *gorm.DB) cartItem {
 	c.cartItemDo.ReplaceDB(db)
+	c.Customer.db = db.Session(&gorm.Session{})
+	c.Product.db = db.Session(&gorm.Session{})
 	return c
+}
+
+type cartItemBelongsToCustomer struct {
+	db *gorm.DB
+
+	field.RelationField
+
+	User struct {
+		field.RelationField
+		Customer struct {
+			field.RelationField
+		}
+		Merchant struct {
+			field.RelationField
+			User struct {
+				field.RelationField
+			}
+			Products struct {
+				field.RelationField
+				Merchant struct {
+					field.RelationField
+				}
+			}
+		}
+		Admin struct {
+			field.RelationField
+			User struct {
+				field.RelationField
+			}
+		}
+	}
+	Orders struct {
+		field.RelationField
+		Customer struct {
+			field.RelationField
+		}
+		OrderItems struct {
+			field.RelationField
+			Order struct {
+				field.RelationField
+			}
+			Product struct {
+				field.RelationField
+			}
+		}
+	}
+	Cart struct {
+		field.RelationField
+		Customer struct {
+			field.RelationField
+		}
+		Product struct {
+			field.RelationField
+		}
+	}
+}
+
+func (a cartItemBelongsToCustomer) Where(conds ...field.Expr) *cartItemBelongsToCustomer {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a cartItemBelongsToCustomer) WithContext(ctx context.Context) *cartItemBelongsToCustomer {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a cartItemBelongsToCustomer) Session(session *gorm.Session) *cartItemBelongsToCustomer {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a cartItemBelongsToCustomer) Model(m *model.CartItem) *cartItemBelongsToCustomerTx {
+	return &cartItemBelongsToCustomerTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a cartItemBelongsToCustomer) Unscoped() *cartItemBelongsToCustomer {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type cartItemBelongsToCustomerTx struct{ tx *gorm.Association }
+
+func (a cartItemBelongsToCustomerTx) Find() (result *model.Customer, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a cartItemBelongsToCustomerTx) Append(values ...*model.Customer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a cartItemBelongsToCustomerTx) Replace(values ...*model.Customer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a cartItemBelongsToCustomerTx) Delete(values ...*model.Customer) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a cartItemBelongsToCustomerTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a cartItemBelongsToCustomerTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a cartItemBelongsToCustomerTx) Unscoped() *cartItemBelongsToCustomerTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
+
+type cartItemBelongsToProduct struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a cartItemBelongsToProduct) Where(conds ...field.Expr) *cartItemBelongsToProduct {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a cartItemBelongsToProduct) WithContext(ctx context.Context) *cartItemBelongsToProduct {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a cartItemBelongsToProduct) Session(session *gorm.Session) *cartItemBelongsToProduct {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a cartItemBelongsToProduct) Model(m *model.CartItem) *cartItemBelongsToProductTx {
+	return &cartItemBelongsToProductTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a cartItemBelongsToProduct) Unscoped() *cartItemBelongsToProduct {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type cartItemBelongsToProductTx struct{ tx *gorm.Association }
+
+func (a cartItemBelongsToProductTx) Find() (result *model.Product, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a cartItemBelongsToProductTx) Append(values ...*model.Product) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a cartItemBelongsToProductTx) Replace(values ...*model.Product) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a cartItemBelongsToProductTx) Delete(values ...*model.Product) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a cartItemBelongsToProductTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a cartItemBelongsToProductTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a cartItemBelongsToProductTx) Unscoped() *cartItemBelongsToProductTx {
+	a.tx = a.tx.Unscoped()
+	return &a
 }
 
 type cartItemDo struct{ gen.DO }
@@ -154,6 +543,8 @@ type ICartItemDo interface {
 	FirstOrCreate() (*model.CartItem, error)
 	FindByPage(offset int, limit int) (result []*model.CartItem, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Rows() (*sql.Rows, error)
+	Row() *sql.Row
 	Scan(result interface{}) (err error)
 	Returning(value interface{}, columns ...string) ICartItemDo
 	UnderlyingDB() *gorm.DB

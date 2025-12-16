@@ -16,64 +16,54 @@ import (
 )
 
 var (
-	Q              = new(Query)
-	Address        *address
-	CartItem       *cartItem
-	Order          *order
-	OrderItem      *orderItem
-	PaymentDetails *paymentDetails
-	Product        *product
-	Users          *users
+	Q         = new(Query)
+	CartItem  *cartItem
+	Order     *order
+	OrderItem *orderItem
+	Product   *product
+	User      *user
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
-	Address = &Q.Address
 	CartItem = &Q.CartItem
 	Order = &Q.Order
 	OrderItem = &Q.OrderItem
-	PaymentDetails = &Q.PaymentDetails
 	Product = &Q.Product
-	Users = &Q.Users
+	User = &Q.User
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:             db,
-		Address:        newAddress(db, opts...),
-		CartItem:       newCartItem(db, opts...),
-		Order:          newOrder(db, opts...),
-		OrderItem:      newOrderItem(db, opts...),
-		PaymentDetails: newPaymentDetails(db, opts...),
-		Product:        newProduct(db, opts...),
-		Users:          newUsers(db, opts...),
+		db:        db,
+		CartItem:  newCartItem(db, opts...),
+		Order:     newOrder(db, opts...),
+		OrderItem: newOrderItem(db, opts...),
+		Product:   newProduct(db, opts...),
+		User:      newUser(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	Address        address
-	CartItem       cartItem
-	Order          order
-	OrderItem      orderItem
-	PaymentDetails paymentDetails
-	Product        product
-	Users          users
+	CartItem  cartItem
+	Order     order
+	OrderItem orderItem
+	Product   product
+	User      user
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:             db,
-		Address:        q.Address.clone(db),
-		CartItem:       q.CartItem.clone(db),
-		Order:          q.Order.clone(db),
-		OrderItem:      q.OrderItem.clone(db),
-		PaymentDetails: q.PaymentDetails.clone(db),
-		Product:        q.Product.clone(db),
-		Users:          q.Users.clone(db),
+		db:        db,
+		CartItem:  q.CartItem.clone(db),
+		Order:     q.Order.clone(db),
+		OrderItem: q.OrderItem.clone(db),
+		Product:   q.Product.clone(db),
+		User:      q.User.clone(db),
 	}
 }
 
@@ -87,36 +77,30 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:             db,
-		Address:        q.Address.replaceDB(db),
-		CartItem:       q.CartItem.replaceDB(db),
-		Order:          q.Order.replaceDB(db),
-		OrderItem:      q.OrderItem.replaceDB(db),
-		PaymentDetails: q.PaymentDetails.replaceDB(db),
-		Product:        q.Product.replaceDB(db),
-		Users:          q.Users.replaceDB(db),
+		db:        db,
+		CartItem:  q.CartItem.replaceDB(db),
+		Order:     q.Order.replaceDB(db),
+		OrderItem: q.OrderItem.replaceDB(db),
+		Product:   q.Product.replaceDB(db),
+		User:      q.User.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	Address        IAddressDo
-	CartItem       ICartItemDo
-	Order          IOrderDo
-	OrderItem      IOrderItemDo
-	PaymentDetails IPaymentDetailsDo
-	Product        IProductDo
-	Users          IUsersDo
+	CartItem  ICartItemDo
+	Order     IOrderDo
+	OrderItem IOrderItemDo
+	Product   IProductDo
+	User      IUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Address:        q.Address.WithContext(ctx),
-		CartItem:       q.CartItem.WithContext(ctx),
-		Order:          q.Order.WithContext(ctx),
-		OrderItem:      q.OrderItem.WithContext(ctx),
-		PaymentDetails: q.PaymentDetails.WithContext(ctx),
-		Product:        q.Product.WithContext(ctx),
-		Users:          q.Users.WithContext(ctx),
+		CartItem:  q.CartItem.WithContext(ctx),
+		Order:     q.Order.WithContext(ctx),
+		OrderItem: q.OrderItem.WithContext(ctx),
+		Product:   q.Product.WithContext(ctx),
+		User:      q.User.WithContext(ctx),
 	}
 }
 

@@ -1,11 +1,20 @@
 package model
 
-type Product struct {
-	Id          int64   `gorm:"primaryKey;autoIncrement;column:Id" thrift:"id,1" frugal:"1,default,i64" json:"id"`
-	Name        string  `gorm:"column:Name;not null" thrift:"name,2" frugal:"2,default,string" json:"name"`
-	Price       float64 `gorm:"column:Price;not null" thrift:"price,3" frugal:"3,default,double" json:"price"`
-	Stock       int64   `gorm:"column:Stock;not null" thrift:"stock,4" frugal:"4,default,i64" json:"stock"`
-	Description string  `gorm:"column:Description;not null" thrift:"description,5" frugal:"5,default,string" json:"description"`
+import "time"
 
-	CartItems []CartItem `gorm:"foreignKey:ProductId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+type Product struct {
+	ID          int64  `gorm:"primaryKey;column:id" json:"id"`
+	MerchantID  int64  `gorm:"column:merchant_id;index;not null" json:"merchant_id"` // 外键关联 Merchant
+	Name        string `gorm:"column:name;size:255;not null;index" json:"name"`
+	Description string `gorm:"column:description;type:text" json:"description"`
+
+	Price  int64 `gorm:"column:price;not null" json:"price"`
+	Stock  int   `gorm:"column:stock;default:0" json:"stock"`
+	Status int8  `gorm:"column:status;default:1;index" json:"status"` // 1:上架, 0:删除 2:下架 3:售罄
+
+	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updated_at"`
+
+	// 关联
+	Merchant *Merchant `gorm:"foreignKey:MerchantID;references:UserID" json:"-"` // json:"-" 避免循环嵌套输出
 }

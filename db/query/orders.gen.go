@@ -6,6 +6,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/hewo/tik-shop/db/model"
 	"gorm.io/gorm"
@@ -26,28 +27,224 @@ func newOrder(db *gorm.DB, opts ...gen.DOOption) order {
 
 	tableName := _order.orderDo.TableName()
 	_order.ALL = field.NewAsterisk(tableName)
-	_order.Id = field.NewInt64(tableName, "Id")
-	_order.UserId = field.NewInt64(tableName, "UserId")
-	_order.Status = field.NewInt64(tableName, "Status")
-	_order.TotalAmount = field.NewFloat64(tableName, "TotalAmount")
-	_order.CreatedAt = field.NewTime(tableName, "CreatedAt")
-	_order.PaymentMethod = field.NewString(tableName, "PaymentMethod")
-	_order.Address = orderHasOneAddress{
+	_order.ID = field.NewInt64(tableName, "id")
+	_order.CustomerID = field.NewInt64(tableName, "customer_id")
+	_order.OrderNo = field.NewString(tableName, "order_no")
+	_order.TotalAmount = field.NewInt64(tableName, "total_amount")
+	_order.Status = field.NewInt8(tableName, "status")
+	_order.SnapshotAddress = field.NewString(tableName, "snapshot_address")
+	_order.CreatedAt = field.NewTime(tableName, "created_at")
+	_order.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_order.OrderItems = orderHasManyOrderItems{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("Address", "model.Address"),
+		RelationField: field.NewRelation("OrderItems", "model.OrderItem"),
+		Order: struct {
+			field.RelationField
+			Customer struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Merchant struct {
+						field.RelationField
+						User struct {
+							field.RelationField
+						}
+						Products struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}
+					}
+					Admin struct {
+						field.RelationField
+						User struct {
+							field.RelationField
+						}
+					}
+				}
+				Orders struct {
+					field.RelationField
+				}
+				Cart struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Product struct {
+						field.RelationField
+					}
+				}
+			}
+			OrderItems struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("OrderItems.Order", "model.Order"),
+			Customer: struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Merchant struct {
+						field.RelationField
+						User struct {
+							field.RelationField
+						}
+						Products struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}
+					}
+					Admin struct {
+						field.RelationField
+						User struct {
+							field.RelationField
+						}
+					}
+				}
+				Orders struct {
+					field.RelationField
+				}
+				Cart struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Product struct {
+						field.RelationField
+					}
+				}
+			}{
+				RelationField: field.NewRelation("OrderItems.Order.Customer", "model.Customer"),
+				User: struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Merchant struct {
+						field.RelationField
+						User struct {
+							field.RelationField
+						}
+						Products struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}
+					}
+					Admin struct {
+						field.RelationField
+						User struct {
+							field.RelationField
+						}
+					}
+				}{
+					RelationField: field.NewRelation("OrderItems.Order.Customer.User", "model.User"),
+					Customer: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("OrderItems.Order.Customer.User.Customer", "model.Customer"),
+					},
+					Merchant: struct {
+						field.RelationField
+						User struct {
+							field.RelationField
+						}
+						Products struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}
+					}{
+						RelationField: field.NewRelation("OrderItems.Order.Customer.User.Merchant", "model.Merchant"),
+						User: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("OrderItems.Order.Customer.User.Merchant.User", "model.User"),
+						},
+						Products: struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}{
+							RelationField: field.NewRelation("OrderItems.Order.Customer.User.Merchant.Products", "model.Product"),
+							Merchant: struct {
+								field.RelationField
+							}{
+								RelationField: field.NewRelation("OrderItems.Order.Customer.User.Merchant.Products.Merchant", "model.Merchant"),
+							},
+						},
+					},
+					Admin: struct {
+						field.RelationField
+						User struct {
+							field.RelationField
+						}
+					}{
+						RelationField: field.NewRelation("OrderItems.Order.Customer.User.Admin", "model.Admin"),
+						User: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("OrderItems.Order.Customer.User.Admin.User", "model.User"),
+						},
+					},
+				},
+				Orders: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("OrderItems.Order.Customer.Orders", "model.Order"),
+				},
+				Cart: struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Product struct {
+						field.RelationField
+					}
+				}{
+					RelationField: field.NewRelation("OrderItems.Order.Customer.Cart", "model.CartItem"),
+					Customer: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("OrderItems.Order.Customer.Cart.Customer", "model.Customer"),
+					},
+					Product: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("OrderItems.Order.Customer.Cart.Product", "model.Product"),
+					},
+				},
+			},
+			OrderItems: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("OrderItems.Order.OrderItems", "model.OrderItem"),
+			},
+		},
+		Product: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("OrderItems.Product", "model.Product"),
+		},
 	}
 
-	_order.PaymentDetails = orderHasOnePaymentDetails{
+	_order.Customer = orderBelongsToCustomer{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("PaymentDetails", "model.PaymentDetails"),
-	}
-
-	_order.Items = orderHasManyItems{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("Items", "model.OrderItem"),
+		RelationField: field.NewRelation("Customer", "model.Customer"),
 	}
 
 	_order.fillFieldMap()
@@ -58,18 +255,18 @@ func newOrder(db *gorm.DB, opts ...gen.DOOption) order {
 type order struct {
 	orderDo
 
-	ALL           field.Asterisk
-	Id            field.Int64
-	UserId        field.Int64
-	Status        field.Int64
-	TotalAmount   field.Float64
-	CreatedAt     field.Time
-	PaymentMethod field.String
-	Address       orderHasOneAddress
+	ALL             field.Asterisk
+	ID              field.Int64
+	CustomerID      field.Int64
+	OrderNo         field.String
+	TotalAmount     field.Int64
+	Status          field.Int8
+	SnapshotAddress field.String
+	CreatedAt       field.Time
+	UpdatedAt       field.Time
+	OrderItems      orderHasManyOrderItems
 
-	PaymentDetails orderHasOnePaymentDetails
-
-	Items orderHasManyItems
+	Customer orderBelongsToCustomer
 
 	fieldMap map[string]field.Expr
 }
@@ -86,12 +283,14 @@ func (o order) As(alias string) *order {
 
 func (o *order) updateTableName(table string) *order {
 	o.ALL = field.NewAsterisk(table)
-	o.Id = field.NewInt64(table, "Id")
-	o.UserId = field.NewInt64(table, "UserId")
-	o.Status = field.NewInt64(table, "Status")
-	o.TotalAmount = field.NewFloat64(table, "TotalAmount")
-	o.CreatedAt = field.NewTime(table, "CreatedAt")
-	o.PaymentMethod = field.NewString(table, "PaymentMethod")
+	o.ID = field.NewInt64(table, "id")
+	o.CustomerID = field.NewInt64(table, "customer_id")
+	o.OrderNo = field.NewString(table, "order_no")
+	o.TotalAmount = field.NewInt64(table, "total_amount")
+	o.Status = field.NewInt8(table, "status")
+	o.SnapshotAddress = field.NewString(table, "snapshot_address")
+	o.CreatedAt = field.NewTime(table, "created_at")
+	o.UpdatedAt = field.NewTime(table, "updated_at")
 
 	o.fillFieldMap()
 
@@ -108,33 +307,90 @@ func (o *order) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (o *order) fillFieldMap() {
-	o.fieldMap = make(map[string]field.Expr, 9)
-	o.fieldMap["Id"] = o.Id
-	o.fieldMap["UserId"] = o.UserId
-	o.fieldMap["Status"] = o.Status
-	o.fieldMap["TotalAmount"] = o.TotalAmount
-	o.fieldMap["CreatedAt"] = o.CreatedAt
-	o.fieldMap["PaymentMethod"] = o.PaymentMethod
+	o.fieldMap = make(map[string]field.Expr, 10)
+	o.fieldMap["id"] = o.ID
+	o.fieldMap["customer_id"] = o.CustomerID
+	o.fieldMap["order_no"] = o.OrderNo
+	o.fieldMap["total_amount"] = o.TotalAmount
+	o.fieldMap["status"] = o.Status
+	o.fieldMap["snapshot_address"] = o.SnapshotAddress
+	o.fieldMap["created_at"] = o.CreatedAt
+	o.fieldMap["updated_at"] = o.UpdatedAt
 
 }
 
 func (o order) clone(db *gorm.DB) order {
 	o.orderDo.ReplaceConnPool(db.Statement.ConnPool)
+	o.OrderItems.db = db.Session(&gorm.Session{Initialized: true})
+	o.OrderItems.db.Statement.ConnPool = db.Statement.ConnPool
+	o.Customer.db = db.Session(&gorm.Session{Initialized: true})
+	o.Customer.db.Statement.ConnPool = db.Statement.ConnPool
 	return o
 }
 
 func (o order) replaceDB(db *gorm.DB) order {
 	o.orderDo.ReplaceDB(db)
+	o.OrderItems.db = db.Session(&gorm.Session{})
+	o.Customer.db = db.Session(&gorm.Session{})
 	return o
 }
 
-type orderHasOneAddress struct {
+type orderHasManyOrderItems struct {
 	db *gorm.DB
 
 	field.RelationField
+
+	Order struct {
+		field.RelationField
+		Customer struct {
+			field.RelationField
+			User struct {
+				field.RelationField
+				Customer struct {
+					field.RelationField
+				}
+				Merchant struct {
+					field.RelationField
+					User struct {
+						field.RelationField
+					}
+					Products struct {
+						field.RelationField
+						Merchant struct {
+							field.RelationField
+						}
+					}
+				}
+				Admin struct {
+					field.RelationField
+					User struct {
+						field.RelationField
+					}
+				}
+			}
+			Orders struct {
+				field.RelationField
+			}
+			Cart struct {
+				field.RelationField
+				Customer struct {
+					field.RelationField
+				}
+				Product struct {
+					field.RelationField
+				}
+			}
+		}
+		OrderItems struct {
+			field.RelationField
+		}
+	}
+	Product struct {
+		field.RelationField
+	}
 }
 
-func (a orderHasOneAddress) Where(conds ...field.Expr) *orderHasOneAddress {
+func (a orderHasManyOrderItems) Where(conds ...field.Expr) *orderHasManyOrderItems {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -147,27 +403,32 @@ func (a orderHasOneAddress) Where(conds ...field.Expr) *orderHasOneAddress {
 	return &a
 }
 
-func (a orderHasOneAddress) WithContext(ctx context.Context) *orderHasOneAddress {
+func (a orderHasManyOrderItems) WithContext(ctx context.Context) *orderHasManyOrderItems {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a orderHasOneAddress) Session(session *gorm.Session) *orderHasOneAddress {
+func (a orderHasManyOrderItems) Session(session *gorm.Session) *orderHasManyOrderItems {
 	a.db = a.db.Session(session)
 	return &a
 }
 
-func (a orderHasOneAddress) Model(m *model.Order) *orderHasOneAddressTx {
-	return &orderHasOneAddressTx{a.db.Model(m).Association(a.Name())}
+func (a orderHasManyOrderItems) Model(m *model.Order) *orderHasManyOrderItemsTx {
+	return &orderHasManyOrderItemsTx{a.db.Model(m).Association(a.Name())}
 }
 
-type orderHasOneAddressTx struct{ tx *gorm.Association }
+func (a orderHasManyOrderItems) Unscoped() *orderHasManyOrderItems {
+	a.db = a.db.Unscoped()
+	return &a
+}
 
-func (a orderHasOneAddressTx) Find() (result *model.Address, err error) {
+type orderHasManyOrderItemsTx struct{ tx *gorm.Association }
+
+func (a orderHasManyOrderItemsTx) Find() (result []*model.OrderItem, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a orderHasOneAddressTx) Append(values ...*model.Address) (err error) {
+func (a orderHasManyOrderItemsTx) Append(values ...*model.OrderItem) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -175,7 +436,7 @@ func (a orderHasOneAddressTx) Append(values ...*model.Address) (err error) {
 	return a.tx.Append(targetValues...)
 }
 
-func (a orderHasOneAddressTx) Replace(values ...*model.Address) (err error) {
+func (a orderHasManyOrderItemsTx) Replace(values ...*model.OrderItem) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -183,7 +444,7 @@ func (a orderHasOneAddressTx) Replace(values ...*model.Address) (err error) {
 	return a.tx.Replace(targetValues...)
 }
 
-func (a orderHasOneAddressTx) Delete(values ...*model.Address) (err error) {
+func (a orderHasManyOrderItemsTx) Delete(values ...*model.OrderItem) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -191,21 +452,26 @@ func (a orderHasOneAddressTx) Delete(values ...*model.Address) (err error) {
 	return a.tx.Delete(targetValues...)
 }
 
-func (a orderHasOneAddressTx) Clear() error {
+func (a orderHasManyOrderItemsTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a orderHasOneAddressTx) Count() int64 {
+func (a orderHasManyOrderItemsTx) Count() int64 {
 	return a.tx.Count()
 }
 
-type orderHasOnePaymentDetails struct {
+func (a orderHasManyOrderItemsTx) Unscoped() *orderHasManyOrderItemsTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
+
+type orderBelongsToCustomer struct {
 	db *gorm.DB
 
 	field.RelationField
 }
 
-func (a orderHasOnePaymentDetails) Where(conds ...field.Expr) *orderHasOnePaymentDetails {
+func (a orderBelongsToCustomer) Where(conds ...field.Expr) *orderBelongsToCustomer {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -218,27 +484,32 @@ func (a orderHasOnePaymentDetails) Where(conds ...field.Expr) *orderHasOnePaymen
 	return &a
 }
 
-func (a orderHasOnePaymentDetails) WithContext(ctx context.Context) *orderHasOnePaymentDetails {
+func (a orderBelongsToCustomer) WithContext(ctx context.Context) *orderBelongsToCustomer {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a orderHasOnePaymentDetails) Session(session *gorm.Session) *orderHasOnePaymentDetails {
+func (a orderBelongsToCustomer) Session(session *gorm.Session) *orderBelongsToCustomer {
 	a.db = a.db.Session(session)
 	return &a
 }
 
-func (a orderHasOnePaymentDetails) Model(m *model.Order) *orderHasOnePaymentDetailsTx {
-	return &orderHasOnePaymentDetailsTx{a.db.Model(m).Association(a.Name())}
+func (a orderBelongsToCustomer) Model(m *model.Order) *orderBelongsToCustomerTx {
+	return &orderBelongsToCustomerTx{a.db.Model(m).Association(a.Name())}
 }
 
-type orderHasOnePaymentDetailsTx struct{ tx *gorm.Association }
+func (a orderBelongsToCustomer) Unscoped() *orderBelongsToCustomer {
+	a.db = a.db.Unscoped()
+	return &a
+}
 
-func (a orderHasOnePaymentDetailsTx) Find() (result *model.PaymentDetails, err error) {
+type orderBelongsToCustomerTx struct{ tx *gorm.Association }
+
+func (a orderBelongsToCustomerTx) Find() (result *model.Customer, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a orderHasOnePaymentDetailsTx) Append(values ...*model.PaymentDetails) (err error) {
+func (a orderBelongsToCustomerTx) Append(values ...*model.Customer) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -246,7 +517,7 @@ func (a orderHasOnePaymentDetailsTx) Append(values ...*model.PaymentDetails) (er
 	return a.tx.Append(targetValues...)
 }
 
-func (a orderHasOnePaymentDetailsTx) Replace(values ...*model.PaymentDetails) (err error) {
+func (a orderBelongsToCustomerTx) Replace(values ...*model.Customer) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -254,7 +525,7 @@ func (a orderHasOnePaymentDetailsTx) Replace(values ...*model.PaymentDetails) (e
 	return a.tx.Replace(targetValues...)
 }
 
-func (a orderHasOnePaymentDetailsTx) Delete(values ...*model.PaymentDetails) (err error) {
+func (a orderBelongsToCustomerTx) Delete(values ...*model.Customer) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -262,83 +533,17 @@ func (a orderHasOnePaymentDetailsTx) Delete(values ...*model.PaymentDetails) (er
 	return a.tx.Delete(targetValues...)
 }
 
-func (a orderHasOnePaymentDetailsTx) Clear() error {
+func (a orderBelongsToCustomerTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a orderHasOnePaymentDetailsTx) Count() int64 {
+func (a orderBelongsToCustomerTx) Count() int64 {
 	return a.tx.Count()
 }
 
-type orderHasManyItems struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a orderHasManyItems) Where(conds ...field.Expr) *orderHasManyItems {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+func (a orderBelongsToCustomerTx) Unscoped() *orderBelongsToCustomerTx {
+	a.tx = a.tx.Unscoped()
 	return &a
-}
-
-func (a orderHasManyItems) WithContext(ctx context.Context) *orderHasManyItems {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a orderHasManyItems) Session(session *gorm.Session) *orderHasManyItems {
-	a.db = a.db.Session(session)
-	return &a
-}
-
-func (a orderHasManyItems) Model(m *model.Order) *orderHasManyItemsTx {
-	return &orderHasManyItemsTx{a.db.Model(m).Association(a.Name())}
-}
-
-type orderHasManyItemsTx struct{ tx *gorm.Association }
-
-func (a orderHasManyItemsTx) Find() (result []*model.OrderItem, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a orderHasManyItemsTx) Append(values ...*model.OrderItem) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a orderHasManyItemsTx) Replace(values ...*model.OrderItem) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a orderHasManyItemsTx) Delete(values ...*model.OrderItem) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a orderHasManyItemsTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a orderHasManyItemsTx) Count() int64 {
-	return a.tx.Count()
 }
 
 type orderDo struct{ gen.DO }
@@ -398,6 +603,8 @@ type IOrderDo interface {
 	FirstOrCreate() (*model.Order, error)
 	FindByPage(offset int, limit int) (result []*model.Order, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Rows() (*sql.Rows, error)
+	Row() *sql.Row
 	Scan(result interface{}) (err error)
 	Returning(value interface{}, columns ...string) IOrderDo
 	UnderlyingDB() *gorm.DB

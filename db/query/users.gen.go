@@ -6,6 +6,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/hewo/tik-shop/db/model"
 	"gorm.io/gorm"
@@ -18,94 +19,233 @@ import (
 	"gorm.io/plugin/dbresolver"
 )
 
-func newUsers(db *gorm.DB, opts ...gen.DOOption) users {
-	_users := users{}
+func newUser(db *gorm.DB, opts ...gen.DOOption) user {
+	_user := user{}
 
-	_users.usersDo.UseDB(db, opts...)
-	_users.usersDo.UseModel(&model.Users{})
+	_user.userDo.UseDB(db, opts...)
+	_user.userDo.UseModel(&model.User{})
 
-	tableName := _users.usersDo.TableName()
-	_users.ALL = field.NewAsterisk(tableName)
-	_users.Id = field.NewInt64(tableName, "Id")
-	_users.Username = field.NewString(tableName, "Username")
-	_users.HashedPassword = field.NewString(tableName, "HashedPassword")
-	_users.Email = field.NewString(tableName, "Email")
-	_users.Role = field.NewString(tableName, "Role")
-	_users.CreatedAt = field.NewTime(tableName, "CreatedAt")
-	_users.CartItems = usersHasManyCartItems{
+	tableName := _user.userDo.TableName()
+	_user.ALL = field.NewAsterisk(tableName)
+	_user.ID = field.NewInt64(tableName, "id")
+	_user.Username = field.NewString(tableName, "username")
+	_user.HashedPassword = field.NewString(tableName, "hashed_password")
+	_user.Email = field.NewString(tableName, "email")
+	_user.Role = field.NewString(tableName, "role")
+	_user.Status = field.NewInt8(tableName, "status")
+	_user.CreatedAt = field.NewTime(tableName, "created_at")
+	_user.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_user.Customer = userHasOneCustomer{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("CartItems", "model.CartItem"),
+		RelationField: field.NewRelation("Customer", "model.Customer"),
+		User: struct {
+			field.RelationField
+			Customer struct {
+				field.RelationField
+			}
+			Merchant struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+				Products struct {
+					field.RelationField
+					Merchant struct {
+						field.RelationField
+					}
+				}
+			}
+			Admin struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+			}
+		}{
+			RelationField: field.NewRelation("Customer.User", "model.User"),
+			Customer: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Customer.User.Customer", "model.Customer"),
+			},
+			Merchant: struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+				Products struct {
+					field.RelationField
+					Merchant struct {
+						field.RelationField
+					}
+				}
+			}{
+				RelationField: field.NewRelation("Customer.User.Merchant", "model.Merchant"),
+				User: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Customer.User.Merchant.User", "model.User"),
+				},
+				Products: struct {
+					field.RelationField
+					Merchant struct {
+						field.RelationField
+					}
+				}{
+					RelationField: field.NewRelation("Customer.User.Merchant.Products", "model.Product"),
+					Merchant: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Customer.User.Merchant.Products.Merchant", "model.Merchant"),
+					},
+				},
+			},
+			Admin: struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Customer.User.Admin", "model.Admin"),
+				User: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Customer.User.Admin.User", "model.User"),
+				},
+			},
+		},
+		Orders: struct {
+			field.RelationField
+			Customer struct {
+				field.RelationField
+			}
+			OrderItems struct {
+				field.RelationField
+				Order struct {
+					field.RelationField
+				}
+				Product struct {
+					field.RelationField
+				}
+			}
+		}{
+			RelationField: field.NewRelation("Customer.Orders", "model.Order"),
+			Customer: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Customer.Orders.Customer", "model.Customer"),
+			},
+			OrderItems: struct {
+				field.RelationField
+				Order struct {
+					field.RelationField
+				}
+				Product struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Customer.Orders.OrderItems", "model.OrderItem"),
+				Order: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Customer.Orders.OrderItems.Order", "model.Order"),
+				},
+				Product: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Customer.Orders.OrderItems.Product", "model.Product"),
+				},
+			},
+		},
+		Cart: struct {
+			field.RelationField
+			Customer struct {
+				field.RelationField
+			}
+			Product struct {
+				field.RelationField
+			}
+		}{
+			RelationField: field.NewRelation("Customer.Cart", "model.CartItem"),
+			Customer: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Customer.Cart.Customer", "model.Customer"),
+			},
+			Product: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Customer.Cart.Product", "model.Product"),
+			},
+		},
 	}
 
-	_users.Orders = usersHasManyOrders{
+	_user.Merchant = userHasOneMerchant{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("Orders", "model.Order"),
-		Address: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("Orders.Address", "model.Address"),
-		},
-		PaymentDetails: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("Orders.PaymentDetails", "model.PaymentDetails"),
-		},
-		Items: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("Orders.Items", "model.OrderItem"),
-		},
+		RelationField: field.NewRelation("Merchant", "model.Merchant"),
 	}
 
-	_users.fillFieldMap()
+	_user.Admin = userHasOneAdmin{
+		db: db.Session(&gorm.Session{}),
 
-	return _users
+		RelationField: field.NewRelation("Admin", "model.Admin"),
+	}
+
+	_user.fillFieldMap()
+
+	return _user
 }
 
-type users struct {
-	usersDo
+type user struct {
+	userDo
 
 	ALL            field.Asterisk
-	Id             field.Int64
+	ID             field.Int64
 	Username       field.String
 	HashedPassword field.String
 	Email          field.String
 	Role           field.String
+	Status         field.Int8
 	CreatedAt      field.Time
-	CartItems      usersHasManyCartItems
+	UpdatedAt      field.Time
+	Customer       userHasOneCustomer
 
-	Orders usersHasManyOrders
+	Merchant userHasOneMerchant
+
+	Admin userHasOneAdmin
 
 	fieldMap map[string]field.Expr
 }
 
-func (u users) Table(newTableName string) *users {
-	u.usersDo.UseTable(newTableName)
+func (u user) Table(newTableName string) *user {
+	u.userDo.UseTable(newTableName)
 	return u.updateTableName(newTableName)
 }
 
-func (u users) As(alias string) *users {
-	u.usersDo.DO = *(u.usersDo.As(alias).(*gen.DO))
+func (u user) As(alias string) *user {
+	u.userDo.DO = *(u.userDo.As(alias).(*gen.DO))
 	return u.updateTableName(alias)
 }
 
-func (u *users) updateTableName(table string) *users {
+func (u *user) updateTableName(table string) *user {
 	u.ALL = field.NewAsterisk(table)
-	u.Id = field.NewInt64(table, "Id")
-	u.Username = field.NewString(table, "Username")
-	u.HashedPassword = field.NewString(table, "HashedPassword")
-	u.Email = field.NewString(table, "Email")
-	u.Role = field.NewString(table, "Role")
-	u.CreatedAt = field.NewTime(table, "CreatedAt")
+	u.ID = field.NewInt64(table, "id")
+	u.Username = field.NewString(table, "username")
+	u.HashedPassword = field.NewString(table, "hashed_password")
+	u.Email = field.NewString(table, "email")
+	u.Role = field.NewString(table, "role")
+	u.Status = field.NewInt8(table, "status")
+	u.CreatedAt = field.NewTime(table, "created_at")
+	u.UpdatedAt = field.NewTime(table, "updated_at")
 
 	u.fillFieldMap()
 
 	return u
 }
 
-func (u *users) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
+func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := u.fieldMap[fieldName]
 	if !ok || _f == nil {
 		return nil, false
@@ -114,34 +254,94 @@ func (u *users) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	return _oe, ok
 }
 
-func (u *users) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 8)
-	u.fieldMap["Id"] = u.Id
-	u.fieldMap["Username"] = u.Username
-	u.fieldMap["HashedPassword"] = u.HashedPassword
-	u.fieldMap["Email"] = u.Email
-	u.fieldMap["Role"] = u.Role
-	u.fieldMap["CreatedAt"] = u.CreatedAt
+func (u *user) fillFieldMap() {
+	u.fieldMap = make(map[string]field.Expr, 11)
+	u.fieldMap["id"] = u.ID
+	u.fieldMap["username"] = u.Username
+	u.fieldMap["hashed_password"] = u.HashedPassword
+	u.fieldMap["email"] = u.Email
+	u.fieldMap["role"] = u.Role
+	u.fieldMap["status"] = u.Status
+	u.fieldMap["created_at"] = u.CreatedAt
+	u.fieldMap["updated_at"] = u.UpdatedAt
 
 }
 
-func (u users) clone(db *gorm.DB) users {
-	u.usersDo.ReplaceConnPool(db.Statement.ConnPool)
+func (u user) clone(db *gorm.DB) user {
+	u.userDo.ReplaceConnPool(db.Statement.ConnPool)
+	u.Customer.db = db.Session(&gorm.Session{Initialized: true})
+	u.Customer.db.Statement.ConnPool = db.Statement.ConnPool
+	u.Merchant.db = db.Session(&gorm.Session{Initialized: true})
+	u.Merchant.db.Statement.ConnPool = db.Statement.ConnPool
+	u.Admin.db = db.Session(&gorm.Session{Initialized: true})
+	u.Admin.db.Statement.ConnPool = db.Statement.ConnPool
 	return u
 }
 
-func (u users) replaceDB(db *gorm.DB) users {
-	u.usersDo.ReplaceDB(db)
+func (u user) replaceDB(db *gorm.DB) user {
+	u.userDo.ReplaceDB(db)
+	u.Customer.db = db.Session(&gorm.Session{})
+	u.Merchant.db = db.Session(&gorm.Session{})
+	u.Admin.db = db.Session(&gorm.Session{})
 	return u
 }
 
-type usersHasManyCartItems struct {
+type userHasOneCustomer struct {
 	db *gorm.DB
 
 	field.RelationField
+
+	User struct {
+		field.RelationField
+		Customer struct {
+			field.RelationField
+		}
+		Merchant struct {
+			field.RelationField
+			User struct {
+				field.RelationField
+			}
+			Products struct {
+				field.RelationField
+				Merchant struct {
+					field.RelationField
+				}
+			}
+		}
+		Admin struct {
+			field.RelationField
+			User struct {
+				field.RelationField
+			}
+		}
+	}
+	Orders struct {
+		field.RelationField
+		Customer struct {
+			field.RelationField
+		}
+		OrderItems struct {
+			field.RelationField
+			Order struct {
+				field.RelationField
+			}
+			Product struct {
+				field.RelationField
+			}
+		}
+	}
+	Cart struct {
+		field.RelationField
+		Customer struct {
+			field.RelationField
+		}
+		Product struct {
+			field.RelationField
+		}
+	}
 }
 
-func (a usersHasManyCartItems) Where(conds ...field.Expr) *usersHasManyCartItems {
+func (a userHasOneCustomer) Where(conds ...field.Expr) *userHasOneCustomer {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -154,27 +354,32 @@ func (a usersHasManyCartItems) Where(conds ...field.Expr) *usersHasManyCartItems
 	return &a
 }
 
-func (a usersHasManyCartItems) WithContext(ctx context.Context) *usersHasManyCartItems {
+func (a userHasOneCustomer) WithContext(ctx context.Context) *userHasOneCustomer {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a usersHasManyCartItems) Session(session *gorm.Session) *usersHasManyCartItems {
+func (a userHasOneCustomer) Session(session *gorm.Session) *userHasOneCustomer {
 	a.db = a.db.Session(session)
 	return &a
 }
 
-func (a usersHasManyCartItems) Model(m *model.Users) *usersHasManyCartItemsTx {
-	return &usersHasManyCartItemsTx{a.db.Model(m).Association(a.Name())}
+func (a userHasOneCustomer) Model(m *model.User) *userHasOneCustomerTx {
+	return &userHasOneCustomerTx{a.db.Model(m).Association(a.Name())}
 }
 
-type usersHasManyCartItemsTx struct{ tx *gorm.Association }
+func (a userHasOneCustomer) Unscoped() *userHasOneCustomer {
+	a.db = a.db.Unscoped()
+	return &a
+}
 
-func (a usersHasManyCartItemsTx) Find() (result []*model.CartItem, err error) {
+type userHasOneCustomerTx struct{ tx *gorm.Association }
+
+func (a userHasOneCustomerTx) Find() (result *model.Customer, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a usersHasManyCartItemsTx) Append(values ...*model.CartItem) (err error) {
+func (a userHasOneCustomerTx) Append(values ...*model.Customer) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -182,7 +387,7 @@ func (a usersHasManyCartItemsTx) Append(values ...*model.CartItem) (err error) {
 	return a.tx.Append(targetValues...)
 }
 
-func (a usersHasManyCartItemsTx) Replace(values ...*model.CartItem) (err error) {
+func (a userHasOneCustomerTx) Replace(values ...*model.Customer) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -190,7 +395,7 @@ func (a usersHasManyCartItemsTx) Replace(values ...*model.CartItem) (err error) 
 	return a.tx.Replace(targetValues...)
 }
 
-func (a usersHasManyCartItemsTx) Delete(values ...*model.CartItem) (err error) {
+func (a userHasOneCustomerTx) Delete(values ...*model.Customer) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -198,31 +403,26 @@ func (a usersHasManyCartItemsTx) Delete(values ...*model.CartItem) (err error) {
 	return a.tx.Delete(targetValues...)
 }
 
-func (a usersHasManyCartItemsTx) Clear() error {
+func (a userHasOneCustomerTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a usersHasManyCartItemsTx) Count() int64 {
+func (a userHasOneCustomerTx) Count() int64 {
 	return a.tx.Count()
 }
 
-type usersHasManyOrders struct {
+func (a userHasOneCustomerTx) Unscoped() *userHasOneCustomerTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
+
+type userHasOneMerchant struct {
 	db *gorm.DB
 
 	field.RelationField
-
-	Address struct {
-		field.RelationField
-	}
-	PaymentDetails struct {
-		field.RelationField
-	}
-	Items struct {
-		field.RelationField
-	}
 }
 
-func (a usersHasManyOrders) Where(conds ...field.Expr) *usersHasManyOrders {
+func (a userHasOneMerchant) Where(conds ...field.Expr) *userHasOneMerchant {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -235,27 +435,32 @@ func (a usersHasManyOrders) Where(conds ...field.Expr) *usersHasManyOrders {
 	return &a
 }
 
-func (a usersHasManyOrders) WithContext(ctx context.Context) *usersHasManyOrders {
+func (a userHasOneMerchant) WithContext(ctx context.Context) *userHasOneMerchant {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a usersHasManyOrders) Session(session *gorm.Session) *usersHasManyOrders {
+func (a userHasOneMerchant) Session(session *gorm.Session) *userHasOneMerchant {
 	a.db = a.db.Session(session)
 	return &a
 }
 
-func (a usersHasManyOrders) Model(m *model.Users) *usersHasManyOrdersTx {
-	return &usersHasManyOrdersTx{a.db.Model(m).Association(a.Name())}
+func (a userHasOneMerchant) Model(m *model.User) *userHasOneMerchantTx {
+	return &userHasOneMerchantTx{a.db.Model(m).Association(a.Name())}
 }
 
-type usersHasManyOrdersTx struct{ tx *gorm.Association }
+func (a userHasOneMerchant) Unscoped() *userHasOneMerchant {
+	a.db = a.db.Unscoped()
+	return &a
+}
 
-func (a usersHasManyOrdersTx) Find() (result []*model.Order, err error) {
+type userHasOneMerchantTx struct{ tx *gorm.Association }
+
+func (a userHasOneMerchantTx) Find() (result *model.Merchant, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a usersHasManyOrdersTx) Append(values ...*model.Order) (err error) {
+func (a userHasOneMerchantTx) Append(values ...*model.Merchant) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -263,7 +468,7 @@ func (a usersHasManyOrdersTx) Append(values ...*model.Order) (err error) {
 	return a.tx.Append(targetValues...)
 }
 
-func (a usersHasManyOrdersTx) Replace(values ...*model.Order) (err error) {
+func (a userHasOneMerchantTx) Replace(values ...*model.Merchant) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -271,7 +476,7 @@ func (a usersHasManyOrdersTx) Replace(values ...*model.Order) (err error) {
 	return a.tx.Replace(targetValues...)
 }
 
-func (a usersHasManyOrdersTx) Delete(values ...*model.Order) (err error) {
+func (a userHasOneMerchantTx) Delete(values ...*model.Merchant) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -279,56 +484,142 @@ func (a usersHasManyOrdersTx) Delete(values ...*model.Order) (err error) {
 	return a.tx.Delete(targetValues...)
 }
 
-func (a usersHasManyOrdersTx) Clear() error {
+func (a userHasOneMerchantTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a usersHasManyOrdersTx) Count() int64 {
+func (a userHasOneMerchantTx) Count() int64 {
 	return a.tx.Count()
 }
 
-type usersDo struct{ gen.DO }
+func (a userHasOneMerchantTx) Unscoped() *userHasOneMerchantTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
 
-type IUsersDo interface {
+type userHasOneAdmin struct {
+	db *gorm.DB
+
+	field.RelationField
+}
+
+func (a userHasOneAdmin) Where(conds ...field.Expr) *userHasOneAdmin {
+	if len(conds) == 0 {
+		return &a
+	}
+
+	exprs := make([]clause.Expression, 0, len(conds))
+	for _, cond := range conds {
+		exprs = append(exprs, cond.BeCond().(clause.Expression))
+	}
+	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
+	return &a
+}
+
+func (a userHasOneAdmin) WithContext(ctx context.Context) *userHasOneAdmin {
+	a.db = a.db.WithContext(ctx)
+	return &a
+}
+
+func (a userHasOneAdmin) Session(session *gorm.Session) *userHasOneAdmin {
+	a.db = a.db.Session(session)
+	return &a
+}
+
+func (a userHasOneAdmin) Model(m *model.User) *userHasOneAdminTx {
+	return &userHasOneAdminTx{a.db.Model(m).Association(a.Name())}
+}
+
+func (a userHasOneAdmin) Unscoped() *userHasOneAdmin {
+	a.db = a.db.Unscoped()
+	return &a
+}
+
+type userHasOneAdminTx struct{ tx *gorm.Association }
+
+func (a userHasOneAdminTx) Find() (result *model.Admin, err error) {
+	return result, a.tx.Find(&result)
+}
+
+func (a userHasOneAdminTx) Append(values ...*model.Admin) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Append(targetValues...)
+}
+
+func (a userHasOneAdminTx) Replace(values ...*model.Admin) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Replace(targetValues...)
+}
+
+func (a userHasOneAdminTx) Delete(values ...*model.Admin) (err error) {
+	targetValues := make([]interface{}, len(values))
+	for i, v := range values {
+		targetValues[i] = v
+	}
+	return a.tx.Delete(targetValues...)
+}
+
+func (a userHasOneAdminTx) Clear() error {
+	return a.tx.Clear()
+}
+
+func (a userHasOneAdminTx) Count() int64 {
+	return a.tx.Count()
+}
+
+func (a userHasOneAdminTx) Unscoped() *userHasOneAdminTx {
+	a.tx = a.tx.Unscoped()
+	return &a
+}
+
+type userDo struct{ gen.DO }
+
+type IUserDo interface {
 	gen.SubQuery
-	Debug() IUsersDo
-	WithContext(ctx context.Context) IUsersDo
+	Debug() IUserDo
+	WithContext(ctx context.Context) IUserDo
 	WithResult(fc func(tx gen.Dao)) gen.ResultInfo
 	ReplaceDB(db *gorm.DB)
-	ReadDB() IUsersDo
-	WriteDB() IUsersDo
+	ReadDB() IUserDo
+	WriteDB() IUserDo
 	As(alias string) gen.Dao
-	Session(config *gorm.Session) IUsersDo
+	Session(config *gorm.Session) IUserDo
 	Columns(cols ...field.Expr) gen.Columns
-	Clauses(conds ...clause.Expression) IUsersDo
-	Not(conds ...gen.Condition) IUsersDo
-	Or(conds ...gen.Condition) IUsersDo
-	Select(conds ...field.Expr) IUsersDo
-	Where(conds ...gen.Condition) IUsersDo
-	Order(conds ...field.Expr) IUsersDo
-	Distinct(cols ...field.Expr) IUsersDo
-	Omit(cols ...field.Expr) IUsersDo
-	Join(table schema.Tabler, on ...field.Expr) IUsersDo
-	LeftJoin(table schema.Tabler, on ...field.Expr) IUsersDo
-	RightJoin(table schema.Tabler, on ...field.Expr) IUsersDo
-	Group(cols ...field.Expr) IUsersDo
-	Having(conds ...gen.Condition) IUsersDo
-	Limit(limit int) IUsersDo
-	Offset(offset int) IUsersDo
+	Clauses(conds ...clause.Expression) IUserDo
+	Not(conds ...gen.Condition) IUserDo
+	Or(conds ...gen.Condition) IUserDo
+	Select(conds ...field.Expr) IUserDo
+	Where(conds ...gen.Condition) IUserDo
+	Order(conds ...field.Expr) IUserDo
+	Distinct(cols ...field.Expr) IUserDo
+	Omit(cols ...field.Expr) IUserDo
+	Join(table schema.Tabler, on ...field.Expr) IUserDo
+	LeftJoin(table schema.Tabler, on ...field.Expr) IUserDo
+	RightJoin(table schema.Tabler, on ...field.Expr) IUserDo
+	Group(cols ...field.Expr) IUserDo
+	Having(conds ...gen.Condition) IUserDo
+	Limit(limit int) IUserDo
+	Offset(offset int) IUserDo
 	Count() (count int64, err error)
-	Scopes(funcs ...func(gen.Dao) gen.Dao) IUsersDo
-	Unscoped() IUsersDo
-	Create(values ...*model.Users) error
-	CreateInBatches(values []*model.Users, batchSize int) error
-	Save(values ...*model.Users) error
-	First() (*model.Users, error)
-	Take() (*model.Users, error)
-	Last() (*model.Users, error)
-	Find() ([]*model.Users, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Users, err error)
-	FindInBatches(result *[]*model.Users, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Scopes(funcs ...func(gen.Dao) gen.Dao) IUserDo
+	Unscoped() IUserDo
+	Create(values ...*model.User) error
+	CreateInBatches(values []*model.User, batchSize int) error
+	Save(values ...*model.User) error
+	First() (*model.User, error)
+	Take() (*model.User, error)
+	Last() (*model.User, error)
+	Find() ([]*model.User, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.User, err error)
+	FindInBatches(result *[]*model.User, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*model.Users) (info gen.ResultInfo, err error)
+	Delete(...*model.User) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -336,163 +627,165 @@ type IUsersDo interface {
 	UpdateColumnSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	UpdateColumns(value interface{}) (info gen.ResultInfo, err error)
 	UpdateFrom(q gen.SubQuery) gen.Dao
-	Attrs(attrs ...field.AssignExpr) IUsersDo
-	Assign(attrs ...field.AssignExpr) IUsersDo
-	Joins(fields ...field.RelationField) IUsersDo
-	Preload(fields ...field.RelationField) IUsersDo
-	FirstOrInit() (*model.Users, error)
-	FirstOrCreate() (*model.Users, error)
-	FindByPage(offset int, limit int) (result []*model.Users, count int64, err error)
+	Attrs(attrs ...field.AssignExpr) IUserDo
+	Assign(attrs ...field.AssignExpr) IUserDo
+	Joins(fields ...field.RelationField) IUserDo
+	Preload(fields ...field.RelationField) IUserDo
+	FirstOrInit() (*model.User, error)
+	FirstOrCreate() (*model.User, error)
+	FindByPage(offset int, limit int) (result []*model.User, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Rows() (*sql.Rows, error)
+	Row() *sql.Row
 	Scan(result interface{}) (err error)
-	Returning(value interface{}, columns ...string) IUsersDo
+	Returning(value interface{}, columns ...string) IUserDo
 	UnderlyingDB() *gorm.DB
 	schema.Tabler
 }
 
-func (u usersDo) Debug() IUsersDo {
+func (u userDo) Debug() IUserDo {
 	return u.withDO(u.DO.Debug())
 }
 
-func (u usersDo) WithContext(ctx context.Context) IUsersDo {
+func (u userDo) WithContext(ctx context.Context) IUserDo {
 	return u.withDO(u.DO.WithContext(ctx))
 }
 
-func (u usersDo) ReadDB() IUsersDo {
+func (u userDo) ReadDB() IUserDo {
 	return u.Clauses(dbresolver.Read)
 }
 
-func (u usersDo) WriteDB() IUsersDo {
+func (u userDo) WriteDB() IUserDo {
 	return u.Clauses(dbresolver.Write)
 }
 
-func (u usersDo) Session(config *gorm.Session) IUsersDo {
+func (u userDo) Session(config *gorm.Session) IUserDo {
 	return u.withDO(u.DO.Session(config))
 }
 
-func (u usersDo) Clauses(conds ...clause.Expression) IUsersDo {
+func (u userDo) Clauses(conds ...clause.Expression) IUserDo {
 	return u.withDO(u.DO.Clauses(conds...))
 }
 
-func (u usersDo) Returning(value interface{}, columns ...string) IUsersDo {
+func (u userDo) Returning(value interface{}, columns ...string) IUserDo {
 	return u.withDO(u.DO.Returning(value, columns...))
 }
 
-func (u usersDo) Not(conds ...gen.Condition) IUsersDo {
+func (u userDo) Not(conds ...gen.Condition) IUserDo {
 	return u.withDO(u.DO.Not(conds...))
 }
 
-func (u usersDo) Or(conds ...gen.Condition) IUsersDo {
+func (u userDo) Or(conds ...gen.Condition) IUserDo {
 	return u.withDO(u.DO.Or(conds...))
 }
 
-func (u usersDo) Select(conds ...field.Expr) IUsersDo {
+func (u userDo) Select(conds ...field.Expr) IUserDo {
 	return u.withDO(u.DO.Select(conds...))
 }
 
-func (u usersDo) Where(conds ...gen.Condition) IUsersDo {
+func (u userDo) Where(conds ...gen.Condition) IUserDo {
 	return u.withDO(u.DO.Where(conds...))
 }
 
-func (u usersDo) Order(conds ...field.Expr) IUsersDo {
+func (u userDo) Order(conds ...field.Expr) IUserDo {
 	return u.withDO(u.DO.Order(conds...))
 }
 
-func (u usersDo) Distinct(cols ...field.Expr) IUsersDo {
+func (u userDo) Distinct(cols ...field.Expr) IUserDo {
 	return u.withDO(u.DO.Distinct(cols...))
 }
 
-func (u usersDo) Omit(cols ...field.Expr) IUsersDo {
+func (u userDo) Omit(cols ...field.Expr) IUserDo {
 	return u.withDO(u.DO.Omit(cols...))
 }
 
-func (u usersDo) Join(table schema.Tabler, on ...field.Expr) IUsersDo {
+func (u userDo) Join(table schema.Tabler, on ...field.Expr) IUserDo {
 	return u.withDO(u.DO.Join(table, on...))
 }
 
-func (u usersDo) LeftJoin(table schema.Tabler, on ...field.Expr) IUsersDo {
+func (u userDo) LeftJoin(table schema.Tabler, on ...field.Expr) IUserDo {
 	return u.withDO(u.DO.LeftJoin(table, on...))
 }
 
-func (u usersDo) RightJoin(table schema.Tabler, on ...field.Expr) IUsersDo {
+func (u userDo) RightJoin(table schema.Tabler, on ...field.Expr) IUserDo {
 	return u.withDO(u.DO.RightJoin(table, on...))
 }
 
-func (u usersDo) Group(cols ...field.Expr) IUsersDo {
+func (u userDo) Group(cols ...field.Expr) IUserDo {
 	return u.withDO(u.DO.Group(cols...))
 }
 
-func (u usersDo) Having(conds ...gen.Condition) IUsersDo {
+func (u userDo) Having(conds ...gen.Condition) IUserDo {
 	return u.withDO(u.DO.Having(conds...))
 }
 
-func (u usersDo) Limit(limit int) IUsersDo {
+func (u userDo) Limit(limit int) IUserDo {
 	return u.withDO(u.DO.Limit(limit))
 }
 
-func (u usersDo) Offset(offset int) IUsersDo {
+func (u userDo) Offset(offset int) IUserDo {
 	return u.withDO(u.DO.Offset(offset))
 }
 
-func (u usersDo) Scopes(funcs ...func(gen.Dao) gen.Dao) IUsersDo {
+func (u userDo) Scopes(funcs ...func(gen.Dao) gen.Dao) IUserDo {
 	return u.withDO(u.DO.Scopes(funcs...))
 }
 
-func (u usersDo) Unscoped() IUsersDo {
+func (u userDo) Unscoped() IUserDo {
 	return u.withDO(u.DO.Unscoped())
 }
 
-func (u usersDo) Create(values ...*model.Users) error {
+func (u userDo) Create(values ...*model.User) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return u.DO.Create(values)
 }
 
-func (u usersDo) CreateInBatches(values []*model.Users, batchSize int) error {
+func (u userDo) CreateInBatches(values []*model.User, batchSize int) error {
 	return u.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (u usersDo) Save(values ...*model.Users) error {
+func (u userDo) Save(values ...*model.User) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return u.DO.Save(values)
 }
 
-func (u usersDo) First() (*model.Users, error) {
+func (u userDo) First() (*model.User, error) {
 	if result, err := u.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Users), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (u usersDo) Take() (*model.Users, error) {
+func (u userDo) Take() (*model.User, error) {
 	if result, err := u.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Users), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (u usersDo) Last() (*model.Users, error) {
+func (u userDo) Last() (*model.User, error) {
 	if result, err := u.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Users), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (u usersDo) Find() ([]*model.Users, error) {
+func (u userDo) Find() ([]*model.User, error) {
 	result, err := u.DO.Find()
-	return result.([]*model.Users), err
+	return result.([]*model.User), err
 }
 
-func (u usersDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.Users, err error) {
-	buf := make([]*model.Users, 0, batchSize)
+func (u userDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.User, err error) {
+	buf := make([]*model.User, 0, batchSize)
 	err = u.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -500,49 +793,49 @@ func (u usersDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error
 	return results, err
 }
 
-func (u usersDo) FindInBatches(result *[]*model.Users, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (u userDo) FindInBatches(result *[]*model.User, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return u.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (u usersDo) Attrs(attrs ...field.AssignExpr) IUsersDo {
+func (u userDo) Attrs(attrs ...field.AssignExpr) IUserDo {
 	return u.withDO(u.DO.Attrs(attrs...))
 }
 
-func (u usersDo) Assign(attrs ...field.AssignExpr) IUsersDo {
+func (u userDo) Assign(attrs ...field.AssignExpr) IUserDo {
 	return u.withDO(u.DO.Assign(attrs...))
 }
 
-func (u usersDo) Joins(fields ...field.RelationField) IUsersDo {
+func (u userDo) Joins(fields ...field.RelationField) IUserDo {
 	for _, _f := range fields {
 		u = *u.withDO(u.DO.Joins(_f))
 	}
 	return &u
 }
 
-func (u usersDo) Preload(fields ...field.RelationField) IUsersDo {
+func (u userDo) Preload(fields ...field.RelationField) IUserDo {
 	for _, _f := range fields {
 		u = *u.withDO(u.DO.Preload(_f))
 	}
 	return &u
 }
 
-func (u usersDo) FirstOrInit() (*model.Users, error) {
+func (u userDo) FirstOrInit() (*model.User, error) {
 	if result, err := u.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Users), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (u usersDo) FirstOrCreate() (*model.Users, error) {
+func (u userDo) FirstOrCreate() (*model.User, error) {
 	if result, err := u.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*model.Users), nil
+		return result.(*model.User), nil
 	}
 }
 
-func (u usersDo) FindByPage(offset int, limit int) (result []*model.Users, count int64, err error) {
+func (u userDo) FindByPage(offset int, limit int) (result []*model.User, count int64, err error) {
 	result, err = u.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -557,7 +850,7 @@ func (u usersDo) FindByPage(offset int, limit int) (result []*model.Users, count
 	return
 }
 
-func (u usersDo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
+func (u userDo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
 	count, err = u.Count()
 	if err != nil {
 		return
@@ -567,15 +860,15 @@ func (u usersDo) ScanByPage(result interface{}, offset int, limit int) (count in
 	return
 }
 
-func (u usersDo) Scan(result interface{}) (err error) {
+func (u userDo) Scan(result interface{}) (err error) {
 	return u.DO.Scan(result)
 }
 
-func (u usersDo) Delete(models ...*model.Users) (result gen.ResultInfo, err error) {
+func (u userDo) Delete(models ...*model.User) (result gen.ResultInfo, err error) {
 	return u.DO.Delete(models)
 }
 
-func (u *usersDo) withDO(do gen.Dao) *usersDo {
+func (u *userDo) withDO(do gen.Dao) *userDo {
 	u.DO = *do.(*gen.DO)
 	return u
 }

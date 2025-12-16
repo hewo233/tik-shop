@@ -11,12 +11,18 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	Login(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error)
-	AdminLogin(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error)
-	GetUserInfoByID(ctx context.Context, request *user.GetUserInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetUserInfoByIDResponse, err error)
-	UpdateUser(ctx context.Context, request *user.UpdateUserRequest, callOptions ...callopt.Option) (r *user.UpdateUserResponse, err error)
-	Register(ctx context.Context, request *user.RegisterRequest, callOptions ...callopt.Option) (r *user.RegisterResponse, err error)
-	UpdatePasswordByID(ctx context.Context, request *user.UpdatePasswordByIDRequest, callOptions ...callopt.Option) (r *user.UpdatePasswordByIDResponse, err error)
+	Register(ctx context.Context, req *user.RegisterRequest, callOptions ...callopt.Option) (r *user.RegisterResponse, err error)
+	Login(ctx context.Context, req *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error)
+	GetUserInfoByID(ctx context.Context, req *user.GetUserInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetUserInfoByIDResponse, err error)
+	UpdateUser(ctx context.Context, req *user.UpdateUserRequest, callOptions ...callopt.Option) (r *user.UpdateUserResponse, err error)
+	DeleteUser(ctx context.Context, req *user.DeleteUserRequest, callOptions ...callopt.Option) (r *user.DeleteUserResponse, err error)
+	GetCustomerInfoByID(ctx context.Context, req *user.GetCustomerInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetCustomerInfoByIDResponse, err error)
+	UpdateCustomerInfoByID(ctx context.Context, req *user.UpdateCustomerInfoByIDRequest, callOptions ...callopt.Option) (r *user.UpdateCustomerInfoByIDResponse, err error)
+	GetMerchantInfoByID(ctx context.Context, req *user.GetMerchantInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetMerchantInfoByIDResponse, err error)
+	UpdateMerchantInfoByID(ctx context.Context, req *user.UpdateMerchantInfoByIDRequest, callOptions ...callopt.Option) (r *user.UpdateMerchantInfoByIDResponse, err error)
+	GetAdminInfoByID(ctx context.Context, req *user.GetAdminInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetAdminInfoByIDResponse, err error)
+	UpdateAdminInfoByID(ctx context.Context, req *user.UpdateAdminInfoByIDRequest, callOptions ...callopt.Option) (r *user.UpdateAdminInfoByIDResponse, err error)
+	ListUsers(ctx context.Context, req *user.ListUsersRequest, callOptions ...callopt.Option) (r *user.ListUsersResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -48,32 +54,62 @@ type kUserServiceClient struct {
 	*kClient
 }
 
-func (p *kUserServiceClient) Login(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error) {
+func (p *kUserServiceClient) Register(ctx context.Context, req *user.RegisterRequest, callOptions ...callopt.Option) (r *user.RegisterResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.Login(ctx, request)
+	return p.kClient.Register(ctx, req)
 }
 
-func (p *kUserServiceClient) AdminLogin(ctx context.Context, request *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error) {
+func (p *kUserServiceClient) Login(ctx context.Context, req *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.AdminLogin(ctx, request)
+	return p.kClient.Login(ctx, req)
 }
 
-func (p *kUserServiceClient) GetUserInfoByID(ctx context.Context, request *user.GetUserInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetUserInfoByIDResponse, err error) {
+func (p *kUserServiceClient) GetUserInfoByID(ctx context.Context, req *user.GetUserInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetUserInfoByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUserInfoByID(ctx, request)
+	return p.kClient.GetUserInfoByID(ctx, req)
 }
 
-func (p *kUserServiceClient) UpdateUser(ctx context.Context, request *user.UpdateUserRequest, callOptions ...callopt.Option) (r *user.UpdateUserResponse, err error) {
+func (p *kUserServiceClient) UpdateUser(ctx context.Context, req *user.UpdateUserRequest, callOptions ...callopt.Option) (r *user.UpdateUserResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateUser(ctx, request)
+	return p.kClient.UpdateUser(ctx, req)
 }
 
-func (p *kUserServiceClient) Register(ctx context.Context, request *user.RegisterRequest, callOptions ...callopt.Option) (r *user.RegisterResponse, err error) {
+func (p *kUserServiceClient) DeleteUser(ctx context.Context, req *user.DeleteUserRequest, callOptions ...callopt.Option) (r *user.DeleteUserResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.Register(ctx, request)
+	return p.kClient.DeleteUser(ctx, req)
 }
 
-func (p *kUserServiceClient) UpdatePasswordByID(ctx context.Context, request *user.UpdatePasswordByIDRequest, callOptions ...callopt.Option) (r *user.UpdatePasswordByIDResponse, err error) {
+func (p *kUserServiceClient) GetCustomerInfoByID(ctx context.Context, req *user.GetCustomerInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetCustomerInfoByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdatePasswordByID(ctx, request)
+	return p.kClient.GetCustomerInfoByID(ctx, req)
+}
+
+func (p *kUserServiceClient) UpdateCustomerInfoByID(ctx context.Context, req *user.UpdateCustomerInfoByIDRequest, callOptions ...callopt.Option) (r *user.UpdateCustomerInfoByIDResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UpdateCustomerInfoByID(ctx, req)
+}
+
+func (p *kUserServiceClient) GetMerchantInfoByID(ctx context.Context, req *user.GetMerchantInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetMerchantInfoByIDResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetMerchantInfoByID(ctx, req)
+}
+
+func (p *kUserServiceClient) UpdateMerchantInfoByID(ctx context.Context, req *user.UpdateMerchantInfoByIDRequest, callOptions ...callopt.Option) (r *user.UpdateMerchantInfoByIDResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UpdateMerchantInfoByID(ctx, req)
+}
+
+func (p *kUserServiceClient) GetAdminInfoByID(ctx context.Context, req *user.GetAdminInfoByIDRequest, callOptions ...callopt.Option) (r *user.GetAdminInfoByIDResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetAdminInfoByID(ctx, req)
+}
+
+func (p *kUserServiceClient) UpdateAdminInfoByID(ctx context.Context, req *user.UpdateAdminInfoByIDRequest, callOptions ...callopt.Option) (r *user.UpdateAdminInfoByIDResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UpdateAdminInfoByID(ctx, req)
+}
+
+func (p *kUserServiceClient) ListUsers(ctx context.Context, req *user.ListUsersRequest, callOptions ...callopt.Option) (r *user.ListUsersResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ListUsers(ctx, req)
 }

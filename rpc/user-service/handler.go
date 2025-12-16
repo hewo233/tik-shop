@@ -171,3 +171,51 @@ func (s *UserServiceImpl) UpdatePasswordByID(ctx context.Context, request *user.
 	// TODO
 	return resp, nil
 }
+
+// DeleteUser implements the UserServiceImpl interface.
+func (s *UserServiceImpl) DeleteUser(ctx context.Context, req *user.DeleteUserRequest) (resp *user.DeleteUserResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// GetCustomerInfoByID implements the UserServiceImpl interface.
+func (s *UserServiceImpl) GetCustomerInfoByID(ctx context.Context, req *user.GetCustomerInfoByIDRequest) (resp *user.GetCustomerInfoByIDResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// UpdateCustomerInfoByID implements the UserServiceImpl interface.
+func (s *UserServiceImpl) UpdateCustomerInfoByID(ctx context.Context, req *user.UpdateCustomerInfoByIDRequest) (resp *user.UpdateCustomerInfoByIDResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// GetMerchantInfoByID implements the UserServiceImpl interface.
+func (s *UserServiceImpl) GetMerchantInfoByID(ctx context.Context, req *user.GetMerchantInfoByIDRequest) (resp *user.GetMerchantInfoByIDResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// UpdateMerchantInfoByID implements the UserServiceImpl interface.
+func (s *UserServiceImpl) UpdateMerchantInfoByID(ctx context.Context, req *user.UpdateMerchantInfoByIDRequest) (resp *user.UpdateMerchantInfoByIDResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// GetAdminInfoByID implements the UserServiceImpl interface.
+func (s *UserServiceImpl) GetAdminInfoByID(ctx context.Context, req *user.GetAdminInfoByIDRequest) (resp *user.GetAdminInfoByIDResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// UpdateAdminInfoByID implements the UserServiceImpl interface.
+func (s *UserServiceImpl) UpdateAdminInfoByID(ctx context.Context, req *user.UpdateAdminInfoByIDRequest) (resp *user.UpdateAdminInfoByIDResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// ListUsers implements the UserServiceImpl interface.
+func (s *UserServiceImpl) ListUsers(ctx context.Context, req *user.ListUsersRequest) (resp *user.ListUsersResponse, err error) {
+	// TODO: Your code here...
+	return
+}

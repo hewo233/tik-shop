@@ -14,17 +14,17 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
+	"Register": kitex.NewMethodInfo(
+		registerHandler,
+		newUserServiceRegisterArgs,
+		newUserServiceRegisterResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"Login": kitex.NewMethodInfo(
 		loginHandler,
 		newUserServiceLoginArgs,
 		newUserServiceLoginResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
-	),
-	"AdminLogin": kitex.NewMethodInfo(
-		adminLoginHandler,
-		newUserServiceAdminLoginArgs,
-		newUserServiceAdminLoginResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -42,17 +42,59 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"Register": kitex.NewMethodInfo(
-		registerHandler,
-		newUserServiceRegisterArgs,
-		newUserServiceRegisterResult,
+	"DeleteUser": kitex.NewMethodInfo(
+		deleteUserHandler,
+		newUserServiceDeleteUserArgs,
+		newUserServiceDeleteUserResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"UpdatePasswordByID": kitex.NewMethodInfo(
-		updatePasswordByIDHandler,
-		newUserServiceUpdatePasswordByIDArgs,
-		newUserServiceUpdatePasswordByIDResult,
+	"GetCustomerInfoByID": kitex.NewMethodInfo(
+		getCustomerInfoByIDHandler,
+		newUserServiceGetCustomerInfoByIDArgs,
+		newUserServiceGetCustomerInfoByIDResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"UpdateCustomerInfoByID": kitex.NewMethodInfo(
+		updateCustomerInfoByIDHandler,
+		newUserServiceUpdateCustomerInfoByIDArgs,
+		newUserServiceUpdateCustomerInfoByIDResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetMerchantInfoByID": kitex.NewMethodInfo(
+		getMerchantInfoByIDHandler,
+		newUserServiceGetMerchantInfoByIDArgs,
+		newUserServiceGetMerchantInfoByIDResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"UpdateMerchantInfoByID": kitex.NewMethodInfo(
+		updateMerchantInfoByIDHandler,
+		newUserServiceUpdateMerchantInfoByIDArgs,
+		newUserServiceUpdateMerchantInfoByIDResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetAdminInfoByID": kitex.NewMethodInfo(
+		getAdminInfoByIDHandler,
+		newUserServiceGetAdminInfoByIDArgs,
+		newUserServiceGetAdminInfoByIDResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"UpdateAdminInfoByID": kitex.NewMethodInfo(
+		updateAdminInfoByIDHandler,
+		newUserServiceUpdateAdminInfoByIDArgs,
+		newUserServiceUpdateAdminInfoByIDResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"ListUsers": kitex.NewMethodInfo(
+		listUsersHandler,
+		newUserServiceListUsersArgs,
+		newUserServiceListUsersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -122,10 +164,34 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 	return svcInfo
 }
 
+func registerHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceRegisterArgs)
+	realResult := result.(*user.UserServiceRegisterResult)
+	success, err := handler.(user.UserService).Register(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newUserServiceRegisterArgs() interface{} {
+	return user.NewUserServiceRegisterArgs()
+}
+
+func newUserServiceRegisterResult() interface{} {
+	return user.NewUserServiceRegisterResult()
+}
+
 func loginHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*user.UserServiceLoginArgs)
 	realResult := result.(*user.UserServiceLoginResult)
-	success, err := handler.(user.UserService).Login(ctx, realArg.Request)
+	success, err := handler.(user.UserService).Login(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -146,34 +212,10 @@ func newUserServiceLoginResult() interface{} {
 	return user.NewUserServiceLoginResult()
 }
 
-func adminLoginHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*user.UserServiceAdminLoginArgs)
-	realResult := result.(*user.UserServiceAdminLoginResult)
-	success, err := handler.(user.UserService).AdminLogin(ctx, realArg.Request)
-	if err != nil {
-		switch v := err.(type) {
-		case *base.ErrorResponse:
-			realResult.Err = v
-		default:
-			return err
-		}
-	} else {
-		realResult.Success = success
-	}
-	return nil
-}
-func newUserServiceAdminLoginArgs() interface{} {
-	return user.NewUserServiceAdminLoginArgs()
-}
-
-func newUserServiceAdminLoginResult() interface{} {
-	return user.NewUserServiceAdminLoginResult()
-}
-
 func getUserInfoByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*user.UserServiceGetUserInfoByIDArgs)
 	realResult := result.(*user.UserServiceGetUserInfoByIDResult)
-	success, err := handler.(user.UserService).GetUserInfoByID(ctx, realArg.Request)
+	success, err := handler.(user.UserService).GetUserInfoByID(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -197,7 +239,7 @@ func newUserServiceGetUserInfoByIDResult() interface{} {
 func updateUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*user.UserServiceUpdateUserArgs)
 	realResult := result.(*user.UserServiceUpdateUserResult)
-	success, err := handler.(user.UserService).UpdateUser(ctx, realArg.Request)
+	success, err := handler.(user.UserService).UpdateUser(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -218,10 +260,10 @@ func newUserServiceUpdateUserResult() interface{} {
 	return user.NewUserServiceUpdateUserResult()
 }
 
-func registerHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*user.UserServiceRegisterArgs)
-	realResult := result.(*user.UserServiceRegisterResult)
-	success, err := handler.(user.UserService).Register(ctx, realArg.Request)
+func deleteUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceDeleteUserArgs)
+	realResult := result.(*user.UserServiceDeleteUserResult)
+	success, err := handler.(user.UserService).DeleteUser(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -234,18 +276,18 @@ func registerHandler(ctx context.Context, handler interface{}, arg, result inter
 	}
 	return nil
 }
-func newUserServiceRegisterArgs() interface{} {
-	return user.NewUserServiceRegisterArgs()
+func newUserServiceDeleteUserArgs() interface{} {
+	return user.NewUserServiceDeleteUserArgs()
 }
 
-func newUserServiceRegisterResult() interface{} {
-	return user.NewUserServiceRegisterResult()
+func newUserServiceDeleteUserResult() interface{} {
+	return user.NewUserServiceDeleteUserResult()
 }
 
-func updatePasswordByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*user.UserServiceUpdatePasswordByIDArgs)
-	realResult := result.(*user.UserServiceUpdatePasswordByIDResult)
-	success, err := handler.(user.UserService).UpdatePasswordByID(ctx, realArg.Request)
+func getCustomerInfoByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceGetCustomerInfoByIDArgs)
+	realResult := result.(*user.UserServiceGetCustomerInfoByIDResult)
+	success, err := handler.(user.UserService).GetCustomerInfoByID(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -258,12 +300,156 @@ func updatePasswordByIDHandler(ctx context.Context, handler interface{}, arg, re
 	}
 	return nil
 }
-func newUserServiceUpdatePasswordByIDArgs() interface{} {
-	return user.NewUserServiceUpdatePasswordByIDArgs()
+func newUserServiceGetCustomerInfoByIDArgs() interface{} {
+	return user.NewUserServiceGetCustomerInfoByIDArgs()
 }
 
-func newUserServiceUpdatePasswordByIDResult() interface{} {
-	return user.NewUserServiceUpdatePasswordByIDResult()
+func newUserServiceGetCustomerInfoByIDResult() interface{} {
+	return user.NewUserServiceGetCustomerInfoByIDResult()
+}
+
+func updateCustomerInfoByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceUpdateCustomerInfoByIDArgs)
+	realResult := result.(*user.UserServiceUpdateCustomerInfoByIDResult)
+	success, err := handler.(user.UserService).UpdateCustomerInfoByID(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newUserServiceUpdateCustomerInfoByIDArgs() interface{} {
+	return user.NewUserServiceUpdateCustomerInfoByIDArgs()
+}
+
+func newUserServiceUpdateCustomerInfoByIDResult() interface{} {
+	return user.NewUserServiceUpdateCustomerInfoByIDResult()
+}
+
+func getMerchantInfoByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceGetMerchantInfoByIDArgs)
+	realResult := result.(*user.UserServiceGetMerchantInfoByIDResult)
+	success, err := handler.(user.UserService).GetMerchantInfoByID(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newUserServiceGetMerchantInfoByIDArgs() interface{} {
+	return user.NewUserServiceGetMerchantInfoByIDArgs()
+}
+
+func newUserServiceGetMerchantInfoByIDResult() interface{} {
+	return user.NewUserServiceGetMerchantInfoByIDResult()
+}
+
+func updateMerchantInfoByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceUpdateMerchantInfoByIDArgs)
+	realResult := result.(*user.UserServiceUpdateMerchantInfoByIDResult)
+	success, err := handler.(user.UserService).UpdateMerchantInfoByID(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newUserServiceUpdateMerchantInfoByIDArgs() interface{} {
+	return user.NewUserServiceUpdateMerchantInfoByIDArgs()
+}
+
+func newUserServiceUpdateMerchantInfoByIDResult() interface{} {
+	return user.NewUserServiceUpdateMerchantInfoByIDResult()
+}
+
+func getAdminInfoByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceGetAdminInfoByIDArgs)
+	realResult := result.(*user.UserServiceGetAdminInfoByIDResult)
+	success, err := handler.(user.UserService).GetAdminInfoByID(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newUserServiceGetAdminInfoByIDArgs() interface{} {
+	return user.NewUserServiceGetAdminInfoByIDArgs()
+}
+
+func newUserServiceGetAdminInfoByIDResult() interface{} {
+	return user.NewUserServiceGetAdminInfoByIDResult()
+}
+
+func updateAdminInfoByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceUpdateAdminInfoByIDArgs)
+	realResult := result.(*user.UserServiceUpdateAdminInfoByIDResult)
+	success, err := handler.(user.UserService).UpdateAdminInfoByID(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newUserServiceUpdateAdminInfoByIDArgs() interface{} {
+	return user.NewUserServiceUpdateAdminInfoByIDArgs()
+}
+
+func newUserServiceUpdateAdminInfoByIDResult() interface{} {
+	return user.NewUserServiceUpdateAdminInfoByIDResult()
+}
+
+func listUsersHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceListUsersArgs)
+	realResult := result.(*user.UserServiceListUsersResult)
+	success, err := handler.(user.UserService).ListUsers(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newUserServiceListUsersArgs() interface{} {
+	return user.NewUserServiceListUsersArgs()
+}
+
+func newUserServiceListUsersResult() interface{} {
+	return user.NewUserServiceListUsersResult()
 }
 
 type kClient struct {
@@ -276,65 +462,9 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) Login(ctx context.Context, request *user.LoginRequest) (r *user.LoginResponse, err error) {
-	var _args user.UserServiceLoginArgs
-	_args.Request = request
-	var _result user.UserServiceLoginResult
-	if err = p.c.Call(ctx, "Login", &_args, &_result); err != nil {
-		return
-	}
-	switch {
-	case _result.Err != nil:
-		return r, _result.Err
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) AdminLogin(ctx context.Context, request *user.LoginRequest) (r *user.LoginResponse, err error) {
-	var _args user.UserServiceAdminLoginArgs
-	_args.Request = request
-	var _result user.UserServiceAdminLoginResult
-	if err = p.c.Call(ctx, "AdminLogin", &_args, &_result); err != nil {
-		return
-	}
-	switch {
-	case _result.Err != nil:
-		return r, _result.Err
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) GetUserInfoByID(ctx context.Context, request *user.GetUserInfoByIDRequest) (r *user.GetUserInfoByIDResponse, err error) {
-	var _args user.UserServiceGetUserInfoByIDArgs
-	_args.Request = request
-	var _result user.UserServiceGetUserInfoByIDResult
-	if err = p.c.Call(ctx, "GetUserInfoByID", &_args, &_result); err != nil {
-		return
-	}
-	switch {
-	case _result.Err != nil:
-		return r, _result.Err
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) UpdateUser(ctx context.Context, request *user.UpdateUserRequest) (r *user.UpdateUserResponse, err error) {
-	var _args user.UserServiceUpdateUserArgs
-	_args.Request = request
-	var _result user.UserServiceUpdateUserResult
-	if err = p.c.Call(ctx, "UpdateUser", &_args, &_result); err != nil {
-		return
-	}
-	switch {
-	case _result.Err != nil:
-		return r, _result.Err
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) Register(ctx context.Context, request *user.RegisterRequest) (r *user.RegisterResponse, err error) {
+func (p *kClient) Register(ctx context.Context, req *user.RegisterRequest) (r *user.RegisterResponse, err error) {
 	var _args user.UserServiceRegisterArgs
-	_args.Request = request
+	_args.Req = req
 	var _result user.UserServiceRegisterResult
 	if err = p.c.Call(ctx, "Register", &_args, &_result); err != nil {
 		return
@@ -346,11 +476,151 @@ func (p *kClient) Register(ctx context.Context, request *user.RegisterRequest) (
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdatePasswordByID(ctx context.Context, request *user.UpdatePasswordByIDRequest) (r *user.UpdatePasswordByIDResponse, err error) {
-	var _args user.UserServiceUpdatePasswordByIDArgs
-	_args.Request = request
-	var _result user.UserServiceUpdatePasswordByIDResult
-	if err = p.c.Call(ctx, "UpdatePasswordByID", &_args, &_result); err != nil {
+func (p *kClient) Login(ctx context.Context, req *user.LoginRequest) (r *user.LoginResponse, err error) {
+	var _args user.UserServiceLoginArgs
+	_args.Req = req
+	var _result user.UserServiceLoginResult
+	if err = p.c.Call(ctx, "Login", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetUserInfoByID(ctx context.Context, req *user.GetUserInfoByIDRequest) (r *user.GetUserInfoByIDResponse, err error) {
+	var _args user.UserServiceGetUserInfoByIDArgs
+	_args.Req = req
+	var _result user.UserServiceGetUserInfoByIDResult
+	if err = p.c.Call(ctx, "GetUserInfoByID", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UpdateUser(ctx context.Context, req *user.UpdateUserRequest) (r *user.UpdateUserResponse, err error) {
+	var _args user.UserServiceUpdateUserArgs
+	_args.Req = req
+	var _result user.UserServiceUpdateUserResult
+	if err = p.c.Call(ctx, "UpdateUser", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DeleteUser(ctx context.Context, req *user.DeleteUserRequest) (r *user.DeleteUserResponse, err error) {
+	var _args user.UserServiceDeleteUserArgs
+	_args.Req = req
+	var _result user.UserServiceDeleteUserResult
+	if err = p.c.Call(ctx, "DeleteUser", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetCustomerInfoByID(ctx context.Context, req *user.GetCustomerInfoByIDRequest) (r *user.GetCustomerInfoByIDResponse, err error) {
+	var _args user.UserServiceGetCustomerInfoByIDArgs
+	_args.Req = req
+	var _result user.UserServiceGetCustomerInfoByIDResult
+	if err = p.c.Call(ctx, "GetCustomerInfoByID", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UpdateCustomerInfoByID(ctx context.Context, req *user.UpdateCustomerInfoByIDRequest) (r *user.UpdateCustomerInfoByIDResponse, err error) {
+	var _args user.UserServiceUpdateCustomerInfoByIDArgs
+	_args.Req = req
+	var _result user.UserServiceUpdateCustomerInfoByIDResult
+	if err = p.c.Call(ctx, "UpdateCustomerInfoByID", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetMerchantInfoByID(ctx context.Context, req *user.GetMerchantInfoByIDRequest) (r *user.GetMerchantInfoByIDResponse, err error) {
+	var _args user.UserServiceGetMerchantInfoByIDArgs
+	_args.Req = req
+	var _result user.UserServiceGetMerchantInfoByIDResult
+	if err = p.c.Call(ctx, "GetMerchantInfoByID", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UpdateMerchantInfoByID(ctx context.Context, req *user.UpdateMerchantInfoByIDRequest) (r *user.UpdateMerchantInfoByIDResponse, err error) {
+	var _args user.UserServiceUpdateMerchantInfoByIDArgs
+	_args.Req = req
+	var _result user.UserServiceUpdateMerchantInfoByIDResult
+	if err = p.c.Call(ctx, "UpdateMerchantInfoByID", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetAdminInfoByID(ctx context.Context, req *user.GetAdminInfoByIDRequest) (r *user.GetAdminInfoByIDResponse, err error) {
+	var _args user.UserServiceGetAdminInfoByIDArgs
+	_args.Req = req
+	var _result user.UserServiceGetAdminInfoByIDResult
+	if err = p.c.Call(ctx, "GetAdminInfoByID", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UpdateAdminInfoByID(ctx context.Context, req *user.UpdateAdminInfoByIDRequest) (r *user.UpdateAdminInfoByIDResponse, err error) {
+	var _args user.UserServiceUpdateAdminInfoByIDArgs
+	_args.Req = req
+	var _result user.UserServiceUpdateAdminInfoByIDResult
+	if err = p.c.Call(ctx, "UpdateAdminInfoByID", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ListUsers(ctx context.Context, req *user.ListUsersRequest) (r *user.ListUsersResponse, err error) {
+	var _args user.UserServiceListUsersArgs
+	_args.Req = req
+	var _result user.UserServiceListUsersResult
+	if err = p.c.Call(ctx, "ListUsers", &_args, &_result); err != nil {
 		return
 	}
 	switch {

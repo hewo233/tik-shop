@@ -6,6 +6,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/hewo/tik-shop/db/model"
 	"gorm.io/gorm"
@@ -26,15 +27,207 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 
 	tableName := _product.productDo.TableName()
 	_product.ALL = field.NewAsterisk(tableName)
-	_product.Id = field.NewInt64(tableName, "Id")
-	_product.Name = field.NewString(tableName, "Name")
-	_product.Price = field.NewFloat64(tableName, "Price")
-	_product.Stock = field.NewInt64(tableName, "Stock")
-	_product.Description = field.NewString(tableName, "Description")
-	_product.CartItems = productHasManyCartItems{
+	_product.ID = field.NewInt64(tableName, "id")
+	_product.MerchantID = field.NewInt64(tableName, "merchant_id")
+	_product.Name = field.NewString(tableName, "name")
+	_product.Description = field.NewString(tableName, "description")
+	_product.Price = field.NewInt64(tableName, "price")
+	_product.Stock = field.NewInt(tableName, "stock")
+	_product.Status = field.NewInt8(tableName, "status")
+	_product.CreatedAt = field.NewTime(tableName, "created_at")
+	_product.UpdatedAt = field.NewTime(tableName, "updated_at")
+	_product.Merchant = productBelongsToMerchant{
 		db: db.Session(&gorm.Session{}),
 
-		RelationField: field.NewRelation("CartItems", "model.CartItem"),
+		RelationField: field.NewRelation("Merchant", "model.Merchant"),
+		User: struct {
+			field.RelationField
+			Customer struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+				Orders struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					OrderItems struct {
+						field.RelationField
+						Order struct {
+							field.RelationField
+						}
+						Product struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}
+					}
+				}
+				Cart struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Product struct {
+						field.RelationField
+					}
+				}
+			}
+			Merchant struct {
+				field.RelationField
+			}
+			Admin struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+			}
+		}{
+			RelationField: field.NewRelation("Merchant.User", "model.User"),
+			Customer: struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+				Orders struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					OrderItems struct {
+						field.RelationField
+						Order struct {
+							field.RelationField
+						}
+						Product struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}
+					}
+				}
+				Cart struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Product struct {
+						field.RelationField
+					}
+				}
+			}{
+				RelationField: field.NewRelation("Merchant.User.Customer", "model.Customer"),
+				User: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Merchant.User.Customer.User", "model.User"),
+				},
+				Orders: struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					OrderItems struct {
+						field.RelationField
+						Order struct {
+							field.RelationField
+						}
+						Product struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}
+					}
+				}{
+					RelationField: field.NewRelation("Merchant.User.Customer.Orders", "model.Order"),
+					Customer: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Merchant.User.Customer.Orders.Customer", "model.Customer"),
+					},
+					OrderItems: struct {
+						field.RelationField
+						Order struct {
+							field.RelationField
+						}
+						Product struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}
+					}{
+						RelationField: field.NewRelation("Merchant.User.Customer.Orders.OrderItems", "model.OrderItem"),
+						Order: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("Merchant.User.Customer.Orders.OrderItems.Order", "model.Order"),
+						},
+						Product: struct {
+							field.RelationField
+							Merchant struct {
+								field.RelationField
+							}
+						}{
+							RelationField: field.NewRelation("Merchant.User.Customer.Orders.OrderItems.Product", "model.Product"),
+							Merchant: struct {
+								field.RelationField
+							}{
+								RelationField: field.NewRelation("Merchant.User.Customer.Orders.OrderItems.Product.Merchant", "model.Merchant"),
+							},
+						},
+					},
+				},
+				Cart: struct {
+					field.RelationField
+					Customer struct {
+						field.RelationField
+					}
+					Product struct {
+						field.RelationField
+					}
+				}{
+					RelationField: field.NewRelation("Merchant.User.Customer.Cart", "model.CartItem"),
+					Customer: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Merchant.User.Customer.Cart.Customer", "model.Customer"),
+					},
+					Product: struct {
+						field.RelationField
+					}{
+						RelationField: field.NewRelation("Merchant.User.Customer.Cart.Product", "model.Product"),
+					},
+				},
+			},
+			Merchant: struct {
+				field.RelationField
+			}{
+				RelationField: field.NewRelation("Merchant.User.Merchant", "model.Merchant"),
+			},
+			Admin: struct {
+				field.RelationField
+				User struct {
+					field.RelationField
+				}
+			}{
+				RelationField: field.NewRelation("Merchant.User.Admin", "model.Admin"),
+				User: struct {
+					field.RelationField
+				}{
+					RelationField: field.NewRelation("Merchant.User.Admin.User", "model.User"),
+				},
+			},
+		},
+		Products: struct {
+			field.RelationField
+		}{
+			RelationField: field.NewRelation("Merchant.Products", "model.Product"),
+		},
 	}
 
 	_product.fillFieldMap()
@@ -46,12 +239,16 @@ type product struct {
 	productDo
 
 	ALL         field.Asterisk
-	Id          field.Int64
+	ID          field.Int64
+	MerchantID  field.Int64
 	Name        field.String
-	Price       field.Float64
-	Stock       field.Int64
 	Description field.String
-	CartItems   productHasManyCartItems
+	Price       field.Int64
+	Stock       field.Int
+	Status      field.Int8
+	CreatedAt   field.Time
+	UpdatedAt   field.Time
+	Merchant    productBelongsToMerchant
 
 	fieldMap map[string]field.Expr
 }
@@ -68,11 +265,15 @@ func (p product) As(alias string) *product {
 
 func (p *product) updateTableName(table string) *product {
 	p.ALL = field.NewAsterisk(table)
-	p.Id = field.NewInt64(table, "Id")
-	p.Name = field.NewString(table, "Name")
-	p.Price = field.NewFloat64(table, "Price")
-	p.Stock = field.NewInt64(table, "Stock")
-	p.Description = field.NewString(table, "Description")
+	p.ID = field.NewInt64(table, "id")
+	p.MerchantID = field.NewInt64(table, "merchant_id")
+	p.Name = field.NewString(table, "name")
+	p.Description = field.NewString(table, "description")
+	p.Price = field.NewInt64(table, "price")
+	p.Stock = field.NewInt(table, "stock")
+	p.Status = field.NewInt8(table, "status")
+	p.CreatedAt = field.NewTime(table, "created_at")
+	p.UpdatedAt = field.NewTime(table, "updated_at")
 
 	p.fillFieldMap()
 
@@ -89,32 +290,88 @@ func (p *product) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (p *product) fillFieldMap() {
-	p.fieldMap = make(map[string]field.Expr, 6)
-	p.fieldMap["Id"] = p.Id
-	p.fieldMap["Name"] = p.Name
-	p.fieldMap["Price"] = p.Price
-	p.fieldMap["Stock"] = p.Stock
-	p.fieldMap["Description"] = p.Description
+	p.fieldMap = make(map[string]field.Expr, 10)
+	p.fieldMap["id"] = p.ID
+	p.fieldMap["merchant_id"] = p.MerchantID
+	p.fieldMap["name"] = p.Name
+	p.fieldMap["description"] = p.Description
+	p.fieldMap["price"] = p.Price
+	p.fieldMap["stock"] = p.Stock
+	p.fieldMap["status"] = p.Status
+	p.fieldMap["created_at"] = p.CreatedAt
+	p.fieldMap["updated_at"] = p.UpdatedAt
 
 }
 
 func (p product) clone(db *gorm.DB) product {
 	p.productDo.ReplaceConnPool(db.Statement.ConnPool)
+	p.Merchant.db = db.Session(&gorm.Session{Initialized: true})
+	p.Merchant.db.Statement.ConnPool = db.Statement.ConnPool
 	return p
 }
 
 func (p product) replaceDB(db *gorm.DB) product {
 	p.productDo.ReplaceDB(db)
+	p.Merchant.db = db.Session(&gorm.Session{})
 	return p
 }
 
-type productHasManyCartItems struct {
+type productBelongsToMerchant struct {
 	db *gorm.DB
 
 	field.RelationField
+
+	User struct {
+		field.RelationField
+		Customer struct {
+			field.RelationField
+			User struct {
+				field.RelationField
+			}
+			Orders struct {
+				field.RelationField
+				Customer struct {
+					field.RelationField
+				}
+				OrderItems struct {
+					field.RelationField
+					Order struct {
+						field.RelationField
+					}
+					Product struct {
+						field.RelationField
+						Merchant struct {
+							field.RelationField
+						}
+					}
+				}
+			}
+			Cart struct {
+				field.RelationField
+				Customer struct {
+					field.RelationField
+				}
+				Product struct {
+					field.RelationField
+				}
+			}
+		}
+		Merchant struct {
+			field.RelationField
+		}
+		Admin struct {
+			field.RelationField
+			User struct {
+				field.RelationField
+			}
+		}
+	}
+	Products struct {
+		field.RelationField
+	}
 }
 
-func (a productHasManyCartItems) Where(conds ...field.Expr) *productHasManyCartItems {
+func (a productBelongsToMerchant) Where(conds ...field.Expr) *productBelongsToMerchant {
 	if len(conds) == 0 {
 		return &a
 	}
@@ -127,27 +384,32 @@ func (a productHasManyCartItems) Where(conds ...field.Expr) *productHasManyCartI
 	return &a
 }
 
-func (a productHasManyCartItems) WithContext(ctx context.Context) *productHasManyCartItems {
+func (a productBelongsToMerchant) WithContext(ctx context.Context) *productBelongsToMerchant {
 	a.db = a.db.WithContext(ctx)
 	return &a
 }
 
-func (a productHasManyCartItems) Session(session *gorm.Session) *productHasManyCartItems {
+func (a productBelongsToMerchant) Session(session *gorm.Session) *productBelongsToMerchant {
 	a.db = a.db.Session(session)
 	return &a
 }
 
-func (a productHasManyCartItems) Model(m *model.Product) *productHasManyCartItemsTx {
-	return &productHasManyCartItemsTx{a.db.Model(m).Association(a.Name())}
+func (a productBelongsToMerchant) Model(m *model.Product) *productBelongsToMerchantTx {
+	return &productBelongsToMerchantTx{a.db.Model(m).Association(a.Name())}
 }
 
-type productHasManyCartItemsTx struct{ tx *gorm.Association }
+func (a productBelongsToMerchant) Unscoped() *productBelongsToMerchant {
+	a.db = a.db.Unscoped()
+	return &a
+}
 
-func (a productHasManyCartItemsTx) Find() (result []*model.CartItem, err error) {
+type productBelongsToMerchantTx struct{ tx *gorm.Association }
+
+func (a productBelongsToMerchantTx) Find() (result *model.Merchant, err error) {
 	return result, a.tx.Find(&result)
 }
 
-func (a productHasManyCartItemsTx) Append(values ...*model.CartItem) (err error) {
+func (a productBelongsToMerchantTx) Append(values ...*model.Merchant) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -155,7 +417,7 @@ func (a productHasManyCartItemsTx) Append(values ...*model.CartItem) (err error)
 	return a.tx.Append(targetValues...)
 }
 
-func (a productHasManyCartItemsTx) Replace(values ...*model.CartItem) (err error) {
+func (a productBelongsToMerchantTx) Replace(values ...*model.Merchant) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -163,7 +425,7 @@ func (a productHasManyCartItemsTx) Replace(values ...*model.CartItem) (err error
 	return a.tx.Replace(targetValues...)
 }
 
-func (a productHasManyCartItemsTx) Delete(values ...*model.CartItem) (err error) {
+func (a productBelongsToMerchantTx) Delete(values ...*model.Merchant) (err error) {
 	targetValues := make([]interface{}, len(values))
 	for i, v := range values {
 		targetValues[i] = v
@@ -171,12 +433,17 @@ func (a productHasManyCartItemsTx) Delete(values ...*model.CartItem) (err error)
 	return a.tx.Delete(targetValues...)
 }
 
-func (a productHasManyCartItemsTx) Clear() error {
+func (a productBelongsToMerchantTx) Clear() error {
 	return a.tx.Clear()
 }
 
-func (a productHasManyCartItemsTx) Count() int64 {
+func (a productBelongsToMerchantTx) Count() int64 {
 	return a.tx.Count()
+}
+
+func (a productBelongsToMerchantTx) Unscoped() *productBelongsToMerchantTx {
+	a.tx = a.tx.Unscoped()
+	return &a
 }
 
 type productDo struct{ gen.DO }
@@ -236,6 +503,8 @@ type IProductDo interface {
 	FirstOrCreate() (*model.Product, error)
 	FindByPage(offset int, limit int) (result []*model.Product, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Rows() (*sql.Rows, error)
+	Row() *sql.Row
 	Scan(result interface{}) (err error)
 	Returning(value interface{}, columns ...string) IProductDo
 	UnderlyingDB() *gorm.DB
