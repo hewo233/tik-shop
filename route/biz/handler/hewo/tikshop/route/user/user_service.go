@@ -230,3 +230,131 @@ func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// DeleteUser .
+// @router /user/:user_id [DELETE]
+func DeleteUser(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.DeleteUserRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.DeleteUserResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// GetCustomerInfoByID .
+// @router /customer/:user_id [GET]
+func GetCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.GetCustomerInfoByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.GetCustomerInfoByIDResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// UpdateCustomerInfoByID .
+// @router /customer/:user_id [PUT]
+func UpdateCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.UpdateCustomerInfoByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.UpdateCustomerInfoByIDResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// GetMerchantInfoByID .
+// @router /merchant/:user_id [GET]
+func GetMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.GetMerchantInfoByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.GetMerchantInfoByIDResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// UpdateMerchantInfoByID .
+// @router /merchant/:user_id [PUT]
+func UpdateMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.UpdateMerchantInfoByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.UpdateMerchantInfoByIDResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// GetAdminInfoByID .
+// @router /admin/:user_id [GET]
+func GetAdminInfoByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.GetAdminInfoByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.GetAdminInfoByIDResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// UpdateAdminInfoByID .
+// @router /admin/:user_id [PUT]
+func UpdateAdminInfoByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.UpdateAdminInfoByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.UpdateAdminInfoByIDResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// ListUsers .
+// @router /users [GET]
+func ListUsers(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.ListUsersRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(user.ListUsersResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}

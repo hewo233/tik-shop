@@ -82,3 +82,53 @@ func _getuserinfobyidMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _listusersMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getadmininfobyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _updateadmininfobyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _customerMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getcustomerinfobyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _updatecustomerinfobyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _merchantMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getmerchantinfobyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _updatemerchantinfobyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _deleteuserMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

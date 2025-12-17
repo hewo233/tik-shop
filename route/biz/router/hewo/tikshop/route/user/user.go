@@ -17,24 +17,28 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
+	root.GET("/users", append(_listusersMw(), user.ListUsers)...)
 	{
-		_api := root.Group("/api", _apiMw()...)
-		{
-			_auth := _api.Group("/auth", _authMw()...)
-			_auth.POST("/login", append(_loginMw(), user.Login)...)
-			_auth.POST("/register", append(_registerMw(), user.Register)...)
-			_auth.GET("/verify", append(_verifyMw(), user.Verify)...)
-			{
-				_admin := _auth.Group("/admin", _adminMw()...)
-				_admin.POST("/login", append(_adminloginMw(), user.AdminLogin)...)
-			}
-		}
-		{
-			_user := _api.Group("/user", _userMw()...)
-			_user.GET("/:id", append(_getuserinfobyidMw(), user.GetUserInfoByID)...)
-			_id := _user.Group("/:id", _idMw()...)
-			_id.PUT("/password", append(_updatepasswordMw(), user.UpdatePassword)...)
-			_user.PUT("/:id", append(_updateuserMw(), user.UpdateUser)...)
-		}
+		_admin := root.Group("/admin", _adminMw()...)
+		_admin.GET("/:user_id", append(_getadmininfobyidMw(), user.GetAdminInfoByID)...)
+		_admin.PUT("/:user_id", append(_updateadmininfobyidMw(), user.UpdateAdminInfoByID)...)
+	}
+	{
+		_customer := root.Group("/customer", _customerMw()...)
+		_customer.GET("/:user_id", append(_getcustomerinfobyidMw(), user.GetCustomerInfoByID)...)
+		_customer.PUT("/:user_id", append(_updatecustomerinfobyidMw(), user.UpdateCustomerInfoByID)...)
+	}
+	{
+		_merchant := root.Group("/merchant", _merchantMw()...)
+		_merchant.GET("/:user_id", append(_getmerchantinfobyidMw(), user.GetMerchantInfoByID)...)
+		_merchant.PUT("/:user_id", append(_updatemerchantinfobyidMw(), user.UpdateMerchantInfoByID)...)
+	}
+	{
+		_user := root.Group("/user", _userMw()...)
+		_user.POST("/login", append(_loginMw(), user.Login)...)
+		_user.POST("/register", append(_registerMw(), user.Register)...)
+		_user.DELETE("/:user_id", append(_deleteuserMw(), user.DeleteUser)...)
+		_user.GET("/:user_id", append(_getuserinfobyidMw(), user.GetUserInfoByID)...)
+		_user.PUT("/:user_id", append(_updateuserMw(), user.UpdateUser)...)
 	}
 }

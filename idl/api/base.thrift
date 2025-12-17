@@ -1,5 +1,10 @@
 namespace go hewo.tikshop.route.base
 
+struct BaseResponse {
+    1: i64 code;
+    2: string message;  // 描述信息
+}
+
 struct MessageResponse {
     1: string message, // Return status description
 }
