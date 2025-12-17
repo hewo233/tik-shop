@@ -73,8 +73,7 @@ struct GetUserInfoByIDResponse {
 }
 
 struct UpdateUserRequest {
-    1: i64 user_id (api.path="user_id", api.vd="$ > 0; msg:'用户ID必须大于0'");
-    2: optional string username (api.body="username", api.vd="len($) > 0 && len($) <= 50; msg:'用户名长度必须在1-50之间'");
+    1: User user (api.body="user");
 }
 
 struct UpdateUserResponse {

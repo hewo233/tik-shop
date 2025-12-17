@@ -13,4 +13,8 @@ const (
 	Admin          = "admin"
 	SevenDays      = time.Hour * 24 * 7
 	ThirtyDays     = time.Hour * 24 * 30
+
+	RoleCustomer  = "customer"
+	RoleMerchant  = "merchant"
+	RoleAdmin     = "admin"
 )

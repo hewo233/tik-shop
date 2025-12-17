@@ -69,8 +69,7 @@ struct GetUserInfoByIDResponse {
 }
 
 struct UpdateUserRequest {
-    1: i64 user_id;
-    2: optional string username;
+    1: User user;
 }
 
 struct UpdateUserResponse {

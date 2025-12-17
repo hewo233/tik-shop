@@ -6,41 +6,15 @@ import (
 	"context"
 	"errors"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	baserpc "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	userrpc "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/user"
-	base "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/base"
 	user "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/user"
 	"github.com/hewo/tik-shop/route/init/rpc"
-	myconsts "github.com/hewo/tik-shop/shared/consts"
-	"log"
+	"github.com/hewo/tik-shop/route/utils"
+	"github.com/hewo/tik-shop/shared/consts"
+	"github.com/jinzhu/copier"
+	"net/http"
 	"strconv"
 )
-
-// UpdateUser
-// @Summary UpdateUser
-// @Description 根据用户 ID 更新用户的详细信息
-// @Tags user
-// @Accept json
-// @Produce json
-// @Param id path int true "User ID"
-// @Param request body user.UpdateUserRequest true "Update user request"
-// @Success 200 {object} user.UserResponse "User information updated successfully"
-// @Failure 400 {string} string "Invalid request or validation failed"
-// @router /api/user/:id [PUT]
-func UpdateUser(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req user.UpdateUserRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(user.UserResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
 
 // Register
 // @Summary Register
@@ -57,55 +31,25 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	var req user.RegisterRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	rpcReq := userrpc.NewRegisterRequest()
-	rpcReq.Username = req.Username
-	rpcReq.Password = req.Password
-	rpcReq.Email = req.Email
-	rpcReq.Role = req.Role
 
-	//log.Println("rpcReq: ", rpcReq)
+	err = copier.Copy(rpcReq, &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 
 	resp, err := rpc.UserClient.Register(ctx, rpcReq)
 
 	if err != nil {
-		var errResp *baserpc.ErrorResponse
-		log.Println("rpc error: ", err)
-		// TODO: handle error
-		if errors.As(err, &errResp) {
-			c.String(int(errResp.Code), errResp.Message)
-		}
+		utils.HandleRPCError(c, err)
 		return
 	}
-	c.JSON(consts.StatusOK, resp)
-}
-
-// UpdatePassword
-// @Summary UpdatePassword
-// @Description 根据用户 ID 更新用户的密码
-// @Tags user
-// @Accept json
-// @Produce json
-// @Param id path int true "User ID"
-// @Param request body user.UpdatePasswordRequest true "Password update request"
-// @Success 200 {object} base.MessageResponse "Password updated successfully"
-// @Failure 400 {string} string "Invalid request or validation failed"
-// @router /api/user/:id/password [PUT]
-func UpdatePassword(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req user.UpdatePasswordRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(base.MessageResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // Login 用户登录
@@ -123,69 +67,24 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	var req user.LoginRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	rpcReq := userrpc.NewLoginRequest()
-	rpcReq.Username = req.Username
-	rpcReq.Password = req.Password
+	err = copier.Copy(rpcReq, &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 
 	resp, err := rpc.UserClient.Login(ctx, rpcReq)
 
 	if err != nil {
-		c.JSON(consts.StatusBadRequest, err)
+		utils.HandleRPCError(c, err)
 	}
 
-	c.JSON(consts.StatusOK, resp)
-}
-
-// AdminLogin 管理员登录
-// @Summary AdminLogin
-// @Description 管理员通过用户名和密码进行登录，返回登录成功的管理员信息。
-// @Tags user
-// @Accept json
-// @Produce json
-// @Param request body user.LoginRequest true "Login request"
-// @Success 200 {object} user.LoginResponse "Login successful"
-// @Failure 400 {string} string "Invalid request or login failed"
-// @Router /api/auth/admin/login [post]
-func AdminLogin(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req user.LoginRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(user.LoginResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// Verify .
-// @Summary Verify
-// @Description 验证用户的身份信息，返回验证结果。
-// @Tags user
-// @Accept json
-// @Produce json
-// @Param request body user.VerifyRequest true "Verify request"
-// @Success 200 {object} user.VerifyResponse "Verification successful"
-// @Failure 400 {string} string "Invalid request or verification failed"
-// @router /api/auth/verify [GET]
-func Verify(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req user.VerifyRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(user.VerifyResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetUserInfoByID 根据用户 ID 获取用户信息
@@ -203,32 +102,72 @@ func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 	var req user.GetUserInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	idStr := strconv.FormatInt(req.ID, 10)
-	idCtx, exi := c.Get(myconsts.AccountID)
+	idStr := strconv.FormatInt(req.UserID, 10)
+	idCtx, exi := c.Get(consts.AccountID)
 	if !exi {
-		c.String(consts.StatusBadRequest, "account id not found")
-		return
-	}
-
-	if idStr != idCtx {
-		c.String(consts.StatusBadRequest, "account id not match")
+		c.JSON(http.StatusBadRequest, "account id not found")
 		return
 	}
 
 	rpcReq := userrpc.NewGetUserInfoByIDRequest()
-	rpcReq.Id = req.ID
+	err = copier.Copy(rpcReq, &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 
 	resp, err := rpc.UserClient.GetUserInfoByID(ctx, rpcReq)
 
-	if err != nil {
-		c.JSON(consts.StatusBadRequest, err)
+	if resp.User.Role != consts.RoleAdmin && idCtx != idStr {
+		c.JSON(http.StatusUnauthorized, "unauthorized")
+		return
 	}
 
-	c.JSON(consts.StatusOK, resp)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// UpdateUser
+// @Summary UpdateUser
+// @Description 根据用户 ID 更新用户的详细信息
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param request body user.UpdateUserRequest true "Update user request"
+// @Success 200 {object} user.UserResponse "User information updated successfully"
+// @Failure 400 {string} string "Invalid request or validation failed"
+// @router /api/user/:id [PUT]
+func UpdateUser(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.UpdateUserRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	rpcReq := userrpc.NewUpdateUserRequest()
+	err = copier.Copy(rpcReq, &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := rpc.UserClient.UpdateUser(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // DeleteUser .
@@ -238,13 +177,13 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var req user.DeleteUserRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	resp := new(user.DeleteUserResponse)
 
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetCustomerInfoByID .

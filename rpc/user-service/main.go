@@ -7,6 +7,7 @@ import (
 	"github.com/hewo/tik-shop/rpc/user-service/config"
 	usinit "github.com/hewo/tik-shop/rpc/user-service/init"
 	"github.com/hewo/tik-shop/rpc/user-service/pkg/paseto"
+	"github.com/hewo/tik-shop/shared/consts"
 	"log"
 	"net"
 
@@ -18,7 +19,7 @@ import (
 
 func main() {
 
-	database, err := connectDB.ConnectDB()
+	database, err := connectDB.ConnectDB(consts.RpcDBEnvPath)
 	if err != nil {
 		log.Println(err)
 	}

@@ -2625,8 +2625,7 @@ func (p *GetUserInfoByIDResponse) Field1DeepEqual(src *User) bool {
 }
 
 type UpdateUserRequest struct {
-	UserId   int64   `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
-	Username *string `thrift:"username,2,optional" frugal:"2,optional,string" json:"username,omitempty"`
+	User *User `thrift:"user,1" frugal:"1,default,User" json:"user"`
 }
 
 func NewUpdateUserRequest() *UpdateUserRequest {
@@ -2636,32 +2635,24 @@ func NewUpdateUserRequest() *UpdateUserRequest {
 func (p *UpdateUserRequest) InitDefault() {
 }
 
-func (p *UpdateUserRequest) GetUserId() (v int64) {
-	return p.UserId
-}
+var UpdateUserRequest_User_DEFAULT *User
 
-var UpdateUserRequest_Username_DEFAULT string
-
-func (p *UpdateUserRequest) GetUsername() (v string) {
-	if !p.IsSetUsername() {
-		return UpdateUserRequest_Username_DEFAULT
+func (p *UpdateUserRequest) GetUser() (v *User) {
+	if !p.IsSetUser() {
+		return UpdateUserRequest_User_DEFAULT
 	}
-	return *p.Username
+	return p.User
 }
-func (p *UpdateUserRequest) SetUserId(val int64) {
-	p.UserId = val
-}
-func (p *UpdateUserRequest) SetUsername(val *string) {
-	p.Username = val
+func (p *UpdateUserRequest) SetUser(val *User) {
+	p.User = val
 }
 
 var fieldIDToName_UpdateUserRequest = map[int16]string{
-	1: "user_id",
-	2: "username",
+	1: "user",
 }
 
-func (p *UpdateUserRequest) IsSetUsername() bool {
-	return p.Username != nil
+func (p *UpdateUserRequest) IsSetUser() bool {
+	return p.User != nil
 }
 
 func (p *UpdateUserRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -2684,16 +2675,8 @@ func (p *UpdateUserRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRUCT {
 				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 2:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -2729,25 +2712,11 @@ ReadStructEndError:
 }
 
 func (p *UpdateUserRequest) ReadField1(iprot thrift.TProtocol) error {
-
-	var _field int64
-	if v, err := iprot.ReadI64(); err != nil {
+	_field := NewUser()
+	if err := _field.Read(iprot); err != nil {
 		return err
-	} else {
-		_field = v
 	}
-	p.UserId = _field
-	return nil
-}
-func (p *UpdateUserRequest) ReadField2(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.Username = _field
+	p.User = _field
 	return nil
 }
 
@@ -2760,10 +2729,6 @@ func (p *UpdateUserRequest) Write(oprot thrift.TProtocol) (err error) {
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
 			goto WriteFieldError
 		}
 	}
@@ -2785,10 +2750,10 @@ WriteStructEndError:
 }
 
 func (p *UpdateUserRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("user", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.UserId); err != nil {
+	if err := p.User.Write(oprot); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2799,25 +2764,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *UpdateUserRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetUsername() {
-		if err = oprot.WriteFieldBegin("username", thrift.STRING, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.Username); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
 func (p *UpdateUserRequest) String() string {
@@ -2834,30 +2780,15 @@ func (p *UpdateUserRequest) DeepEqual(ano *UpdateUserRequest) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.UserId) {
-		return false
-	}
-	if !p.Field2DeepEqual(ano.Username) {
+	if !p.Field1DeepEqual(ano.User) {
 		return false
 	}
 	return true
 }
 
-func (p *UpdateUserRequest) Field1DeepEqual(src int64) bool {
+func (p *UpdateUserRequest) Field1DeepEqual(src *User) bool {
 
-	if p.UserId != src {
-		return false
-	}
-	return true
-}
-func (p *UpdateUserRequest) Field2DeepEqual(src *string) bool {
-
-	if p.Username == src {
-		return true
-	} else if p.Username == nil || src == nil {
-		return false
-	}
-	if strings.Compare(*p.Username, *src) != 0 {
+	if !p.User.DeepEqual(src) {
 		return false
 	}
 	return true
