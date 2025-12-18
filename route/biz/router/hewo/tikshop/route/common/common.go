@@ -21,13 +21,13 @@ func ComMiddleWare() []app.HandlerFunc {
 	}
 }
 
-func PasetoAuth(audience string) app.HandlerFunc {
+func PasetoAuth(audiences ...string) app.HandlerFunc {
 	pasetoInfo := config.GlobalServerConfig.PasetoInfo
 
 	pasetoParse, err := paseto.NewV4PublicParseFunc(
 		pasetoInfo.PubKey,
 		[]byte(pasetoInfo.Implicit),
-		paseto.WithAudience(audience),
+		//paseto.WithAudience(audience), // 我们需要更加灵活的处理 audience
 		paseto.WithNotBefore(),
 	)
 	if err != nil {
@@ -42,7 +42,34 @@ func PasetoAuth(audience string) app.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		tokenAudience, err := token.GetAudience()
+		if err != nil {
+			errHere := errno.StatusBadRequest.WithMessage("invalid toekn: missing audience in token")
+			c.JSON(http.StatusUnauthorized, errHere)
+			c.Abort()
+			return
+		}
+
+		// 只要在 允许的 audience 列表中，就通过
+		allowed := false
+		for _, a := range audiences {
+			if a == tokenAudience {
+				allowed = true
+				break
+			}
+		}
+
+		if !allowed {
+			errHere := errno.StatusBadRequest.WithMessage("invalid token: audience mismatch")
+			c.JSON(http.StatusUnauthorized, errHere)
+			c.Abort()
+			return
+		}
+
 		c.Set(consts.AccountID, accountID)
+		c.Set(consts.Audience, tokenAudience)
+		c.Next(ctx)
 	}
 
 	failHandler := func(ctx context.Context, c *app.RequestContext) {

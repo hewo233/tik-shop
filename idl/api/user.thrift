@@ -49,7 +49,7 @@ struct RegisterRequest {
 
 struct RegisterResponse {
     1: base.BaseResponse base;
-    2: i64 user_id;
+    2: optional i64 user_id;
 }
 
 // Login
@@ -60,7 +60,7 @@ struct LoginRequest {
 
 struct LoginResponse {
     1: base.BaseResponse base;
-    2: string token;
+    2: optional string token;
 }
 
 struct GetUserInfoByIDRequest {
@@ -69,7 +69,7 @@ struct GetUserInfoByIDRequest {
 
 struct GetUserInfoByIDResponse {
     1: base.BaseResponse base;
-    2: User user;
+    2: optional User user;
 }
 
 struct UpdateUserRequest {
@@ -78,7 +78,7 @@ struct UpdateUserRequest {
 
 struct UpdateUserResponse {
     1: base.BaseResponse base;
-    2: User user;
+    2: optional User user;
 }
 
 struct DeleteUserRequest {
@@ -87,18 +87,18 @@ struct DeleteUserRequest {
 
 struct DeleteUserResponse {
     1: base.BaseResponse base;
-    2: bool success;
+    2: optional bool success;
 }
 
 // ========== Customer APIs ==========
 struct GetCustomerInfoByIDRequest {
-    1: i64 user_id (api.path="user_id", api.vd="$ > 0; msg:'用户ID必须大于0'");
+    1: optional i64 user_id (api.path="user_id", api.vd="$ > 0; msg:'用户ID必须大于0'");
 }
 
 struct GetCustomerInfoByIDResponse {
     1: base.BaseResponse base;
-    2: User user;
-    3: Customer customer;
+    2: optional User user;
+    3: optional Customer customer;
 }
 
 struct UpdateCustomerInfoByIDRequest {
@@ -109,7 +109,7 @@ struct UpdateCustomerInfoByIDRequest {
 
 struct UpdateCustomerInfoByIDResponse {
     1: base.BaseResponse base;
-    2: Customer customer;
+    2: optional Customer customer;
 }
 
 // ========== Merchant APIs ==========
@@ -119,8 +119,8 @@ struct GetMerchantInfoByIDRequest {
 
 struct GetMerchantInfoByIDResponse {
     1: base.BaseResponse base;
-    2: User user;
-    3: Merchant merchant;
+    2: optional User user;
+    3: optional Merchant merchant;
 }
 
 struct UpdateMerchantInfoByIDRequest {
@@ -131,7 +131,7 @@ struct UpdateMerchantInfoByIDRequest {
 
 struct UpdateMerchantInfoByIDResponse {
     1: base.BaseResponse base;
-    2: Merchant merchant;
+    2: optional Merchant merchant;
 }
 
 // ========== Admin APIs ==========
@@ -142,8 +142,8 @@ struct GetAdminInfoByIDRequest {
 
 struct GetAdminInfoByIDResponse {
     1: base.BaseResponse base;
-    2: User user;
-    3: Admin admin;
+    2: optional User user;
+    3: optional Admin admin;
 }
 
 struct UpdateAdminInfoByIDRequest {
@@ -153,7 +153,7 @@ struct UpdateAdminInfoByIDRequest {
 
 struct UpdateAdminInfoByIDResponse {
     1: base.BaseResponse base;
-    2: i32 level;
+    2: optional i32 level;
 }
 
 struct ListUsersRequest {
@@ -163,8 +163,8 @@ struct ListUsersRequest {
 
 struct ListUsersResponse {
     1: base.BaseResponse base;
-    2: list<User> users;
-    3: i32 total_count;
+    2: optional list<User> users;
+    3: optional i32 total_count;
 }
 
 

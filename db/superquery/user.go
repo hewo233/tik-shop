@@ -92,10 +92,10 @@ func (m *LoginSqlManageImpl) UpdateUser(usr *user.User) (usrRet *user.User, err 
 		return nil, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
 	}
 
-	// 这个接口只能改这两个
-	if usr.Email != "" {
-		exist.Email = usr.Email
-	}
+	// 这个接口暂时只能改这个
+	//if usr.Email != "" {
+	//	exist.Email = usr.Email
+	//}
 	if usr.Username != "" {
 		exist.Username = usr.Username
 	}
@@ -116,25 +116,70 @@ func (m *LoginSqlManageImpl) UpdateUser(usr *user.User) (usrRet *user.User, err 
 	return usrRet, nil
 }
 
-func (m *LoginSqlManageImpl) UpdatePasswordByID(id int64, oldPassword, newPassword string) error {
-	temUsr, err := u.Where(u.ID.Eq(id)).First()
-	if err != nil {
-		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
-	}
-
-	ok := hash.CheckPassword(temUsr.HashedPassword, oldPassword)
-	if !ok {
-		return &base.ErrorResponse{Code: errno.StatusNotAcceptableCode, Message: "old pass not match"}
-	}
-
-	hashNew, err := hash.HashPassword(newPassword)
-	if err != nil {
-		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
-	}
-
-	_, err = u.Where(u.Id.Eq(id)).Update(u.HashedPassword, hashNew)
+func (m *LoginSqlManageImpl) DeleteUserByID(id int64) error {
+	_, err := u.Where(u.ID.Eq(id)).Delete()
 	if err != nil {
 		return &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 	return nil
+}
+
+func (m *LoginSqlManageImpl) GetCustomerInfoByID(id int64) (usrRet *user.User, cusRet *user.Customer, err error) {
+	usr, err := u.Where(u.ID.Eq(id)).First()
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
+	}
+
+	usrRet = &user.User{}
+	err = copier.Copy(&usrRet, &usr)
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+	}
+
+	cusRet = &user.Customer{}
+	err = copier.Copy(&cusRet, &usr.Customer)
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+	}
+	return usrRet, cusRet, nil
+}
+
+func (m *LoginSqlManageImpl) GetMerchantInfoByID(id int64) (usrRet *user.User, merRet *user.Merchant, err error) {
+	usr, err := u.Where(u.ID.Eq(id)).First()
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
+	}
+
+	usrRet = &user.User{}
+	err = copier.Copy(&usrRet, &usr)
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+	}
+
+	merRet = &user.Merchant{}
+	err = copier.Copy(&merRet, &usr.Merchant)
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+	}
+	return usrRet, merRet, nil
+}
+
+func (m *LoginSqlManageImpl) GetAdminInfoByID(id int64) (usrRet *user.User, admRet *user.Admin, err error) {
+	usr, err := u.Where(u.ID.Eq(id)).First()
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusNotFoundCode, Message: err.Error()}
+	}
+
+	usrRet = &user.User{}
+	err = copier.Copy(&usrRet, &usr)
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+	}
+
+	admRet = &user.Admin{}
+	err = copier.Copy(&admRet, &usr.Admin)
+	if err != nil {
+		return nil, nil, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
+	}
+	return usrRet, admRet, nil
 }

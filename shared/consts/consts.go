@@ -7,14 +7,15 @@ const (
 
 	AccountID = "accountID"
 
-	Issuer         = "tik-shop"
-	User           = "user"
-	ID             = "id"
-	Admin          = "admin"
-	SevenDays      = time.Hour * 24 * 7
-	ThirtyDays     = time.Hour * 24 * 30
+	Issuer     = "tik-shop"
+	User       = "user"
+	ID         = "id"
+	Admin      = "admin"
+	Audience   = "audience"
+	SevenDays  = time.Hour * 24 * 7
+	ThirtyDays = time.Hour * 24 * 30
 
-	RoleCustomer  = "customer"
-	RoleMerchant  = "merchant"
-	RoleAdmin     = "admin"
+	RoleCustomer = "customer"
+	RoleMerchant = "merchant"
+	RoleAdmin    = "admin"
 )

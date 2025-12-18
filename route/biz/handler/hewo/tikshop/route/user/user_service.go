@@ -4,16 +4,14 @@ package user
 
 import (
 	"context"
-	"errors"
 	"github.com/cloudwego/hertz/pkg/app"
 	userrpc "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/user"
+	"github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/base"
 	user "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/user"
 	"github.com/hewo/tik-shop/route/init/rpc"
 	"github.com/hewo/tik-shop/route/utils"
-	"github.com/hewo/tik-shop/shared/consts"
 	"github.com/jinzhu/copier"
 	"net/http"
-	"strconv"
 )
 
 // Register
@@ -31,7 +29,12 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	var req user.RegisterRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.RegisterResponse{
+			Base: &base.BaseResponse{
+				Code:    40000,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
@@ -39,16 +42,38 @@ func Register(ctx context.Context, c *app.RequestContext) {
 
 	err = copier.Copy(rpcReq, &req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.RegisterResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	resp, err := rpc.UserClient.Register(ctx, rpcReq)
+	rpcResp, err := rpc.UserClient.Register(ctx, rpcReq)
 
 	if err != nil {
 		utils.HandleRPCError(c, err)
 		return
 	}
+
+	resp := &user.RegisterResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "User registered successfully",
+		},
+	}
+	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.RegisterResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+	}
+
 	c.JSON(http.StatusOK, resp)
 }
 
@@ -67,21 +92,48 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	var req user.LoginRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.LoginResponse{
+			Base: &base.BaseResponse{
+				Code:    40002,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
 	rpcReq := userrpc.NewLoginRequest()
 	err = copier.Copy(rpcReq, &req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.LoginResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	resp, err := rpc.UserClient.Login(ctx, rpcReq)
+	rpcResp, err := rpc.UserClient.Login(ctx, rpcReq)
 
 	if err != nil {
 		utils.HandleRPCError(c, err)
+	}
+
+	resp := &user.LoginResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Login successful",
+		},
+	}
+	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.LoginResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
 	}
 
 	c.JSON(http.StatusOK, resp)
@@ -102,33 +154,56 @@ func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 	var req user.GetUserInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.GetUserInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40003,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	idStr := strconv.FormatInt(req.UserID, 10)
-	idCtx, exi := c.Get(consts.AccountID)
-	if !exi {
-		c.JSON(http.StatusBadRequest, "account id not found")
+	if !NormalFuncChecker(ctx, c, req.UserID, func(response *base.BaseResponse) *user.GetUserInfoByIDResponse {
+		return &user.GetUserInfoByIDResponse{
+			Base: response,
+		}
+	}) {
 		return
 	}
 
 	rpcReq := userrpc.NewGetUserInfoByIDRequest()
 	err = copier.Copy(rpcReq, &req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.GetUserInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	resp, err := rpc.UserClient.GetUserInfoByID(ctx, rpcReq)
-
-	if resp.User.Role != consts.RoleAdmin && idCtx != idStr {
-		c.JSON(http.StatusUnauthorized, "unauthorized")
-		return
-	}
+	rpcResp, err := rpc.UserClient.GetUserInfoByID(ctx, rpcReq)
 
 	if err != nil {
 		utils.HandleRPCError(c, err)
+	}
+
+	resp := &user.GetUserInfoByIDResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "User information retrieved successfully",
+		},
+	}
+	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.GetUserInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
 	}
 
 	c.JSON(http.StatusOK, resp)
@@ -150,20 +225,55 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	var req user.UpdateUserRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.UpdateUserResponse{
+			Base: &base.BaseResponse{
+				Code:    40004,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+
+	if !NormalFuncChecker(ctx, c, req.User.ID, func(response *base.BaseResponse) *user.UpdateUserResponse {
+		return &user.UpdateUserResponse{
+			Base: response,
+		}
+	}) {
 		return
 	}
 
 	rpcReq := userrpc.NewUpdateUserRequest()
 	err = copier.Copy(rpcReq, &req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.UpdateUserResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	resp, err := rpc.UserClient.UpdateUser(ctx, rpcReq)
+	rpcResp, err := rpc.UserClient.UpdateUser(ctx, rpcReq)
 	if err != nil {
 		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &user.UpdateUserResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "User updated successfully",
+		},
+	}
+	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.UpdateUserResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
@@ -177,11 +287,43 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var req user.DeleteUserRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.DeleteUserResponse)
+	if !NormalFuncChecker(ctx, c, req.UserID, func(response *base.BaseResponse) *user.DeleteUserResponse {
+		return &user.DeleteUserResponse{
+			Base: response,
+		}
+	}) {
+		return
+	}
+
+	rpcReq := userrpc.NewDeleteUserRequest()
+	err = copier.Copy(rpcReq, &req)
+
+	rpcResp, err := rpc.UserClient.DeleteUser(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &user.DeleteUserResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "User deleted successfully",
+		},
+	}
+	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.DeleteUserResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, resp)
 }
@@ -193,13 +335,51 @@ func GetCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 	var req user.GetCustomerInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.GetCustomerInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40080,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	resp := new(user.GetCustomerInfoByIDResponse)
+	rpcReq := userrpc.NewGetCustomerInfoByIDRequest()
+	err = copier.Copy(rpcReq, &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.GetCustomerInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	rpcResp, err := rpc.UserClient.GetCustomerInfoByID(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &user.GetCustomerInfoByIDResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Customer information retrieved successfully",
+		},
+	}
+	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.GetCustomerInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateCustomerInfoByID .
@@ -209,13 +389,14 @@ func UpdateCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 	var req user.UpdateCustomerInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
+	// TODO: add rpc call
 	resp := new(user.UpdateCustomerInfoByIDResponse)
 
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetMerchantInfoByID .
@@ -225,13 +406,54 @@ func GetMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 	var req user.GetMerchantInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.GetMerchantInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40080,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+
+	if !NormalFuncChecker(ctx, c, req.UserID, func(response *base.BaseResponse) *user.GetMerchantInfoByIDResponse {
+		return &user.GetMerchantInfoByIDResponse{
+			Base: response,
+		}
+	}) {
 		return
 	}
 
 	resp := new(user.GetMerchantInfoByIDResponse)
+	rpcReq := userrpc.NewGetMerchantInfoByIDRequest()
+	err = copier.Copy(rpcReq, &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.GetMerchantInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	rpcResp, err := rpc.UserClient.GetMerchantInfoByID(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.GetMerchantInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateMerchantInfoByID .
@@ -241,13 +463,15 @@ func UpdateMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 	var req user.UpdateMerchantInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	resp := new(user.UpdateMerchantInfoByIDResponse)
 
-	c.JSON(consts.StatusOK, resp)
+	// TODO : add rpc call
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetAdminInfoByID .
@@ -257,13 +481,61 @@ func GetAdminInfoByID(ctx context.Context, c *app.RequestContext) {
 	var req user.GetAdminInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, user.GetAdminInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40080,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+
+	if !NormalFuncChecker(ctx, c, req.UserID, func(response *base.BaseResponse) *user.GetAdminInfoByIDResponse {
+		return &user.GetAdminInfoByIDResponse{
+			Base: response,
+		}
+	}) {
+		return
+	}
+
+	rpcReq := userrpc.NewGetAdminInfoByIDRequest()
+	err = copier.Copy(rpcReq, &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.GetAdminInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+
+	rpcResp, err := rpc.UserClient.GetAdminInfoByID(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
 		return
 	}
 
 	resp := new(user.GetAdminInfoByIDResponse)
 
-	c.JSON(consts.StatusOK, resp)
+	resp = &user.GetAdminInfoByIDResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Get Admin info successfully",
+		},
+	}
+	err = copier.Copy(resp, rpcResp)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, user.GetAdminInfoByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateAdminInfoByID .
@@ -273,13 +545,15 @@ func UpdateAdminInfoByID(ctx context.Context, c *app.RequestContext) {
 	var req user.UpdateAdminInfoByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
+	// TODO: add rpc call
+
 	resp := new(user.UpdateAdminInfoByIDResponse)
 
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(http.StatusOK, resp)
 }
 
 // ListUsers .
@@ -289,11 +563,11 @@ func ListUsers(ctx context.Context, c *app.RequestContext) {
 	var req user.ListUsersRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	resp := new(user.ListUsersResponse)
 
-	c.JSON(consts.StatusOK, resp)
+	c.JSON(http.StatusOK, resp)
 }
