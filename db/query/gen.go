@@ -17,7 +17,10 @@ import (
 
 var (
 	Q         = new(Query)
+	Admin     *admin
 	CartItem  *cartItem
+	Customer  *customer
+	Merchant  *merchant
 	Order     *order
 	OrderItem *orderItem
 	Product   *product
@@ -26,7 +29,10 @@ var (
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	Admin = &Q.Admin
 	CartItem = &Q.CartItem
+	Customer = &Q.Customer
+	Merchant = &Q.Merchant
 	Order = &Q.Order
 	OrderItem = &Q.OrderItem
 	Product = &Q.Product
@@ -36,7 +42,10 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:        db,
+		Admin:     newAdmin(db, opts...),
 		CartItem:  newCartItem(db, opts...),
+		Customer:  newCustomer(db, opts...),
+		Merchant:  newMerchant(db, opts...),
 		Order:     newOrder(db, opts...),
 		OrderItem: newOrderItem(db, opts...),
 		Product:   newProduct(db, opts...),
@@ -47,7 +56,10 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
+	Admin     admin
 	CartItem  cartItem
+	Customer  customer
+	Merchant  merchant
 	Order     order
 	OrderItem orderItem
 	Product   product
@@ -59,7 +71,10 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:        db,
+		Admin:     q.Admin.clone(db),
 		CartItem:  q.CartItem.clone(db),
+		Customer:  q.Customer.clone(db),
+		Merchant:  q.Merchant.clone(db),
 		Order:     q.Order.clone(db),
 		OrderItem: q.OrderItem.clone(db),
 		Product:   q.Product.clone(db),
@@ -78,7 +93,10 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:        db,
+		Admin:     q.Admin.replaceDB(db),
 		CartItem:  q.CartItem.replaceDB(db),
+		Customer:  q.Customer.replaceDB(db),
+		Merchant:  q.Merchant.replaceDB(db),
 		Order:     q.Order.replaceDB(db),
 		OrderItem: q.OrderItem.replaceDB(db),
 		Product:   q.Product.replaceDB(db),
@@ -87,7 +105,10 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 }
 
 type queryCtx struct {
+	Admin     IAdminDo
 	CartItem  ICartItemDo
+	Customer  ICustomerDo
+	Merchant  IMerchantDo
 	Order     IOrderDo
 	OrderItem IOrderItemDo
 	Product   IProductDo
@@ -96,7 +117,10 @@ type queryCtx struct {
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		Admin:     q.Admin.WithContext(ctx),
 		CartItem:  q.CartItem.WithContext(ctx),
+		Customer:  q.Customer.WithContext(ctx),
+		Merchant:  q.Merchant.WithContext(ctx),
 		Order:     q.Order.WithContext(ctx),
 		OrderItem: q.OrderItem.WithContext(ctx),
 		Product:   q.Product.WithContext(ctx),

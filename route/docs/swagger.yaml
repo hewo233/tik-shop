@@ -297,6 +297,8 @@ definitions:
     type: object
   user.UpdateAdminInfoByIDRequest:
     properties:
+      authorization:
+        type: string
       level:
         type: integer
       user_id:
@@ -312,6 +314,8 @@ definitions:
   user.UpdateCustomerInfoByIDRequest:
     properties:
       address:
+        type: string
+      authorization:
         type: string
       phone:
         type: string
@@ -329,6 +333,8 @@ definitions:
     properties:
       address:
         type: string
+      authorization:
+        type: string
       shop_name:
         type: string
       user_id:
@@ -343,6 +349,8 @@ definitions:
     type: object
   user.UpdateUserRequest:
     properties:
+      authorization:
+        type: string
       user:
         $ref: '#/definitions/user.User'
     type: object

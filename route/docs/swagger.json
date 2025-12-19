@@ -1623,6 +1623,9 @@
         "user.UpdateAdminInfoByIDRequest": {
             "type": "object",
             "properties": {
+                "authorization": {
+                    "type": "string"
+                },
                 "level": {
                     "type": "integer"
                 },
@@ -1646,6 +1649,9 @@
             "type": "object",
             "properties": {
                 "address": {
+                    "type": "string"
+                },
+                "authorization": {
                     "type": "string"
                 },
                 "phone": {
@@ -1673,6 +1679,9 @@
                 "address": {
                     "type": "string"
                 },
+                "authorization": {
+                    "type": "string"
+                },
                 "shop_name": {
                     "type": "string"
                 },
@@ -1695,6 +1704,9 @@
         "user.UpdateUserRequest": {
             "type": "object",
             "properties": {
+                "authorization": {
+                    "type": "string"
+                },
                 "user": {
                     "$ref": "#/definitions/user.User"
                 }

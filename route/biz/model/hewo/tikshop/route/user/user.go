@@ -910,10 +910,10 @@ type RegisterRequest struct {
 	Email    string `thrift:"email,3,required" form:"email,required" json:"email,required" vd:"len($) > 0 && len($) <= 255 && regexp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$', $); msg:'邮箱格式不正确'"`
 	Role     string `thrift:"role,4,required" form:"role,required" json:"role,required" vd:"$ == 'customer' || $ == 'merchant' || $ == 'admin'; msg:'角色必须是customer/merchant/admin'"`
 	// 可选的扩展字段，根据 role 决定
-	Address  *string `thrift:"address,5,optional" form:"address" json:"address,omitempty" vd:"len($) <= 512; msg:'地址长度不能超过512'"`
-	Phone    *string `thrift:"phone,6,optional" form:"phone" json:"phone,omitempty" vd:"len($) <= 20 && regexp('^[0-9+-]+$', $); msg:'手机号格式不正确'"`
-	ShopName *string `thrift:"shop_name,7,optional" form:"shop_name" json:"shop_name,omitempty" vd:"len($) > 0 && len($) <= 255; msg:'店铺名称长度必须在1-255之间'"`
-	Level    *int32  `thrift:"level,8,optional" form:"level" json:"level,omitempty" vd:"$ >= 1 && $ <= 10; msg:'管理员等级必须在1-10之间'"`
+	Address  *string `thrift:"address,5,optional" form:"address" json:"address,omitempty"`
+	Phone    *string `thrift:"phone,6,optional" form:"phone" json:"phone,omitempty"`
+	ShopName *string `thrift:"shop_name,7,optional" form:"shop_name" json:"shop_name,omitempty"`
+	Level    *int32  `thrift:"level,8,optional" form:"level" json:"level,omitempty"`
 }
 
 func NewRegisterRequest() *RegisterRequest {
@@ -2037,6 +2037,7 @@ func (p *LoginResponse) String() string {
 
 }
 
+// ========== Basic User APIs ==========
 type GetUserInfoByIDRequest struct {
 	UserID int64 `thrift:"user_id,1" json:"user_id" path:"user_id" vd:"$ > 0; msg:'用户ID必须大于0'"`
 }

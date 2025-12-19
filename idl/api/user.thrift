@@ -41,10 +41,10 @@ struct RegisterRequest {
     4: required string role (api.body="role", api.vd="$ == 'customer' || $ == 'merchant' || $ == 'admin'; msg:'角色必须是customer/merchant/admin'");
 
     // 可选的扩展字段，根据 role 决定
-    5: optional string address (api.body="address", api.vd="len($) <= 512; msg:'地址长度不能超过512'");
-    6: optional string phone (api.body="phone", api.vd="len($) <= 20 && regexp('^[0-9+-]+$', $); msg:'手机号格式不正确'");
-    7: optional string shop_name (api.body="shop_name", api.vd="len($) > 0 && len($) <= 255; msg:'店铺名称长度必须在1-255之间'");
-    8: optional i32 level (api.body="level", api.vd="$ >= 1 && $ <= 10; msg:'管理员等级必须在1-10之间'");
+    5: optional string address (api.body="address");
+    6: optional string phone (api.body="phone");
+    7: optional string shop_name (api.body="shop_name");
+    8: optional i32 level (api.body="level");
 }
 
 struct RegisterResponse {
@@ -62,6 +62,8 @@ struct LoginResponse {
     1: base.BaseResponse base;
     2: optional string token;
 }
+
+// ========== Basic User APIs ==========
 
 struct GetUserInfoByIDRequest {
     1: i64 user_id (api.path="user_id", api.vd="$ > 0; msg:'用户ID必须大于0'");

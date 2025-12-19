@@ -7,10 +7,17 @@ import (
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 )
 
+func transToThree(x int64) int {
+	for x >= 1000 {
+		x /= 10
+	}
+	return int(x)
+}
+
 func HandleRPCError(c *app.RequestContext, err error) {
 	var errResp *base.ErrorResponse
 	if errors.As(err, &errResp) {
-		c.JSON(int(errResp.Code), base.ErrorResponse{
+		c.JSON(transToThree(errResp.Code), base.ErrorResponse{
 			Code:    errResp.Code,
 			Message: errResp.Message,
 		})

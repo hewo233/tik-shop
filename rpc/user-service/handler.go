@@ -41,7 +41,7 @@ func (s *UserServiceImpl) Register(ctx context.Context, request *user.RegisterRe
 
 	hashedPassword, err := hash.HashPassword(request.Password)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
@@ -61,8 +61,8 @@ func (s *UserServiceImpl) Register(ctx context.Context, request *user.RegisterRe
 		}
 	case consts.RoleMerchant:
 		usr.Merchant = &model.Merchant{
-			Address:  *request.Address,
 			ShopName: *request.ShopName,
+			Address:  *request.Address,
 		}
 	case consts.RoleAdmin:
 		usr.Admin = &model.Admin{
@@ -72,7 +72,7 @@ func (s *UserServiceImpl) Register(ctx context.Context, request *user.RegisterRe
 
 	usrID, err := s.LoginSqlManage.Register(usr)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
@@ -88,16 +88,10 @@ func (s *UserServiceImpl) Login(ctx context.Context, request *user.LoginRequest)
 
 	resp = new(user.LoginResponse)
 
-	hashedPassword, err := hash.HashPassword(request.Password)
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
-
-	authed, id, role, err := s.LoginSqlManage.Login(request.Email, hashedPassword)
+	authed, id, role, err := s.LoginSqlManage.Login(request.Email, request.Password)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
@@ -118,7 +112,7 @@ func (s *UserServiceImpl) Login(ctx context.Context, request *user.LoginRequest)
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 

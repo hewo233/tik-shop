@@ -5,7 +5,6 @@ package user
 import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/common"
-	"github.com/hewo/tik-shop/shared/consts"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -19,9 +18,7 @@ func _apiMw() []app.HandlerFunc {
 }
 
 func _userMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		common.PasetoAuth(consts.User),
-	}
+	return nil
 }
 
 func _idMw() []app.HandlerFunc {

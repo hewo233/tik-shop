@@ -10,6 +10,7 @@ import (
 	user "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/user"
 	"github.com/hewo/tik-shop/route/init/rpc"
 	"github.com/hewo/tik-shop/route/utils"
+	"github.com/hewo/tik-shop/shared/consts"
 	"github.com/jinzhu/copier"
 	"net/http"
 )
@@ -38,6 +39,43 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	flag := false
+
+	//log.Println(req)
+
+	switch req.Role {
+	case consts.RoleCustomer:
+		if req.Address == nil || req.Phone == nil {
+			flag = true
+		} else if len(*req.Address) == 0 || len(*req.Address) > 512 || len(*req.Phone) != 11 {
+			flag = true
+		}
+	case consts.RoleMerchant:
+		if req.ShopName == nil || req.Address == nil {
+			flag = true
+		} else if len(*req.ShopName) == 0 || len(*req.ShopName) > 256 {
+			flag = true
+		}
+	case consts.RoleAdmin:
+		if req.Level == nil {
+			flag = true
+		} else if *req.Level < 1 || *req.Level > 10 {
+			flag = true
+		}
+	}
+
+	if flag {
+		c.JSON(http.StatusBadRequest, user.RegisterResponse{
+			Base: &base.BaseResponse{
+				Code:    40000,
+				Message: "Validation failed for role-specific fields",
+			},
+		})
+		return
+	}
+
+	//fmt.Println("rpcReq preparing")
+
 	rpcReq := userrpc.NewRegisterRequest()
 
 	err = copier.Copy(rpcReq, &req)
@@ -50,6 +88,8 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
+
+	//log.Println("rpcResp preparing")
 
 	rpcResp, err := rpc.UserClient.Register(ctx, rpcReq)
 
@@ -117,6 +157,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	if err != nil {
 		utils.HandleRPCError(c, err)
+		return
 	}
 
 	resp := &user.LoginResponse{
@@ -187,6 +228,7 @@ func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 
 	if err != nil {
 		utils.HandleRPCError(c, err)
+		return
 	}
 
 	resp := &user.GetUserInfoByIDResponse{

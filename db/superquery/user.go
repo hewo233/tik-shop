@@ -11,7 +11,6 @@ import (
 	"github.com/hewo/tik-shop/shared/errno"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
-	"log"
 )
 
 var u = &query.Q.User
@@ -26,14 +25,15 @@ func (m *LoginSqlManageImpl) Register(usr *model.User) (usrID int64, err error) 
 
 	_, err = u.Where(u.Email.Eq(usr.Email)).First()
 	if err == nil {
-		return -1, &base.ErrorResponse{Code: errno.StatusBadRequestCode, Message: "email already exists"}
+		// Email already exists
+		return -1, &base.ErrorResponse{Code: errno.StatusConflictCode, Message: "Email already exists"}
 	}
-	if errors.Is(err, gorm.ErrRecordNotFound) {
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return -1, &base.ErrorResponse{Code: errno.StatusInternalServerErrorCode, Message: err.Error()}
 	}
 
 	// Debug log
-	log.Println("superQuery usr: ", usr)
+	//log.Println("superQuery usr: ", usr)
 
 	err = u.Create(usr)
 	if err != nil {

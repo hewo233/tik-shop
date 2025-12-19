@@ -1626,6 +1626,9 @@ const docTemplate = `{
         "user.UpdateAdminInfoByIDRequest": {
             "type": "object",
             "properties": {
+                "authorization": {
+                    "type": "string"
+                },
                 "level": {
                     "type": "integer"
                 },
@@ -1649,6 +1652,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
+                    "type": "string"
+                },
+                "authorization": {
                     "type": "string"
                 },
                 "phone": {
@@ -1676,6 +1682,9 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
+                "authorization": {
+                    "type": "string"
+                },
                 "shop_name": {
                     "type": "string"
                 },
@@ -1698,6 +1707,9 @@ const docTemplate = `{
         "user.UpdateUserRequest": {
             "type": "object",
             "properties": {
+                "authorization": {
+                    "type": "string"
+                },
                 "user": {
                     "$ref": "#/definitions/user.User"
                 }

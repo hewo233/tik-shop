@@ -16,6 +16,9 @@ func main() {
 	}
 	err = db.AutoMigrate(
 		&model.User{},
+		&model.Customer{},
+		&model.Merchant{},
+		&model.Admin{},
 		&model.Product{},
 		&model.Order{},
 		&model.CartItem{},
@@ -33,6 +36,9 @@ func main() {
 	g.UseDB(db)
 	g.ApplyBasic(
 		&model.User{},
+		&model.Customer{},
+		&model.Merchant{},
+		&model.Admin{},
 		&model.Product{},
 		&model.Order{},
 		&model.CartItem{},
