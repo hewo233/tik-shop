@@ -21,24 +21,27 @@ func Register(r *server.Hertz) {
 	{
 		_admin := root.Group("/admin", _adminMw()...)
 		_admin.GET("/:user_id", append(_getadmininfobyidMw(), user.GetAdminInfoByID)...)
-		_admin.PUT("/:user_id", append(_updateadmininfobyidMw(), user.UpdateAdminInfoByID)...)
+		_admin.PATCH("/:user_id", append(_updateadmininfobyidMw(), user.UpdateAdminInfoByID)...)
+	}
+	{
+		_auth := root.Group("/auth", _authMw()...)
+		_auth.POST("/login", append(_loginMw(), user.Login)...)
+		_auth.POST("/register", append(_registerMw(), user.Register)...)
 	}
 	{
 		_customer := root.Group("/customer", _customerMw()...)
 		_customer.GET("/:user_id", append(_getcustomerinfobyidMw(), user.GetCustomerInfoByID)...)
-		_customer.PUT("/:user_id", append(_updatecustomerinfobyidMw(), user.UpdateCustomerInfoByID)...)
+		_customer.PATCH("/:user_id", append(_updatecustomerinfobyidMw(), user.UpdateCustomerInfoByID)...)
 	}
 	{
 		_merchant := root.Group("/merchant", _merchantMw()...)
 		_merchant.GET("/:user_id", append(_getmerchantinfobyidMw(), user.GetMerchantInfoByID)...)
-		_merchant.PUT("/:user_id", append(_updatemerchantinfobyidMw(), user.UpdateMerchantInfoByID)...)
+		_merchant.PATCH("/:user_id", append(_updatemerchantinfobyidMw(), user.UpdateMerchantInfoByID)...)
 	}
 	{
 		_user := root.Group("/user", _userMw()...)
-		_user.POST("/login", append(_loginMw(), user.Login)...)
-		_user.POST("/register", append(_registerMw(), user.Register)...)
 		_user.DELETE("/:user_id", append(_deleteuserMw(), user.DeleteUser)...)
 		_user.GET("/:user_id", append(_getuserinfobyidMw(), user.GetUserInfoByID)...)
-		_user.PUT("/:user_id", append(_updateuserMw(), user.UpdateUser)...)
+		_user.PATCH("/:user_id", append(_updateuserMw(), user.UpdateUser)...)
 	}
 }

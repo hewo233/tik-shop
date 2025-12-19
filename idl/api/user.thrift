@@ -169,21 +169,21 @@ struct ListUsersResponse {
 
 
 service UserService {
-    RegisterResponse Register(1: RegisterRequest req) (api.post="/user/register");
-    LoginResponse Login(1: LoginRequest req) (api.post="/user/login");
+    RegisterResponse Register(1: RegisterRequest req) (api.post="/auth/register");
+    LoginResponse Login(1: LoginRequest req) (api.post="/auth/login");
 
     GetUserInfoByIDResponse GetUserInfoByID(1: GetUserInfoByIDRequest req) (api.get="/user/:user_id");
-    UpdateUserResponse UpdateUser(1: UpdateUserRequest req) (api.put="/user/:user_id");
+    UpdateUserResponse UpdateUser(1: UpdateUserRequest req) (api.patch="/user/:user_id");
     DeleteUserResponse DeleteUser(1: DeleteUserRequest req) (api.delete="/user/:user_id");
 
     GetCustomerInfoByIDResponse GetCustomerInfoByID(1: GetCustomerInfoByIDRequest req) (api.get="/customer/:user_id");
-    UpdateCustomerInfoByIDResponse UpdateCustomerInfoByID(1: UpdateCustomerInfoByIDRequest req) (api.put="/customer/:user_id");
+    UpdateCustomerInfoByIDResponse UpdateCustomerInfoByID(1: UpdateCustomerInfoByIDRequest req) (api.patch="/customer/:user_id");
 
     GetMerchantInfoByIDResponse GetMerchantInfoByID(1: GetMerchantInfoByIDRequest req) (api.get="/merchant/:user_id");
-    UpdateMerchantInfoByIDResponse UpdateMerchantInfoByID(1: UpdateMerchantInfoByIDRequest req) (api.put="/merchant/:user_id");
+    UpdateMerchantInfoByIDResponse UpdateMerchantInfoByID(1: UpdateMerchantInfoByIDRequest req) (api.patch="/merchant/:user_id");
 
     GetAdminInfoByIDResponse GetAdminInfoByID(1: GetAdminInfoByIDRequest req) (api.get="/admin/:user_id");
-    UpdateAdminInfoByIDResponse UpdateAdminInfoByID(1: UpdateAdminInfoByIDRequest req) (api.put="/admin/:user_id");
+    UpdateAdminInfoByIDResponse UpdateAdminInfoByID(1: UpdateAdminInfoByIDRequest req) (api.patch="/admin/:user_id");
 
     ListUsersResponse ListUsers(1: ListUsersRequest req) (api.get="/users");
 }

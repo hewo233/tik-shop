@@ -23,7 +23,7 @@ import (
 // @Param request body user.RegisterRequest true "Register user request"
 // @Success 200 {string} string "User registered successfully"
 // @Failure 400 {string} string "Invalid request or validation failed"
-// @router /api/auth/register [POST]
+// @router /auth/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.RegisterRequest

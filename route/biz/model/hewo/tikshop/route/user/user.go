@@ -3227,7 +3227,7 @@ func (p *GetCustomerInfoByIDRequest) String() string {
 
 type GetCustomerInfoByIDResponse struct {
 	Base     *base.BaseResponse `thrift:"base,1" form:"base" json:"base" query:"base"`
-	User     *User              `thrift:"user,2" form:"user" json:"user" query:"user"`
+	User     *User              `thrift:"user,2,optional" form:"user" json:"user,omitempty" query:"user"`
 	Customer *Customer          `thrift:"customer,3,optional" form:"customer" json:"customer,omitempty" query:"customer"`
 }
 
@@ -3435,14 +3435,16 @@ WriteFieldEndError:
 }
 
 func (p *GetCustomerInfoByIDResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user", thrift.STRUCT, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := p.User.Write(oprot); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetUser() {
+		if err = oprot.WriteFieldBegin("user", thrift.STRUCT, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.User.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:

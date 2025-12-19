@@ -1,19 +1,14 @@
 package superquery
 
 import (
-	"errors"
-	"fmt"
-	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
-	cart "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/cart"
-	"github.com/jinzhu/copier"
-	"gorm.io/gorm"
-	"log"
 )
 
 var c = &query.Q.CartItem
 
+/*
 func GetCart(request *cart.GetCartRequest) ([]*cart.CartItem, error) {
+
 
 	cartItems, err := c.Where(c.UserId.Eq(uint(request.UserId))).Find()
 	if err != nil {
@@ -164,3 +159,4 @@ func ClearCart(request *cart.ClearCartRequest) (resp *cart.ClearCartResponse, er
 		Message: fmt.Sprintf("Cart items for user %d cleared successfully", request.UserId),
 	}, nil
 }
+*/

@@ -1,16 +1,12 @@
 package superquery
 
 import (
-	"fmt"
-
-	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
-	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/product"
-	"github.com/jinzhu/copier"
 )
 
 var p = &query.Q.Product
 
+/*
 func GetProducts(page, limit int64) (products []*product.Product, err error) {
 	ps, err := p.Limit(int(limit)).Offset(int(limit) * int(page)).Find()
 	if err != nil {
@@ -63,3 +59,5 @@ func DeleteProduct(id int64) (err error) {
 	}
 	return nil
 }
+
+*/

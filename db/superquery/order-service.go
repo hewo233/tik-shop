@@ -1,20 +1,14 @@
 package superquery
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
-	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/order"
-	"github.com/jinzhu/copier"
-	"gorm.io/gorm"
 )
 
 var o = &query.Q.Order
 
 type OrderSqlManageImpl struct{}
 
+/*
 func NewOrderSqlManageImpl() *OrderSqlManageImpl {
 	return &OrderSqlManageImpl{}
 }
@@ -168,3 +162,5 @@ func (m *OrderSqlManageImpl) GetOrderById(orderId int64) (*order.GetOrderByIdRes
 		Order: orderById,
 	}, nil
 }
+
+*/

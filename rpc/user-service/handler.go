@@ -21,7 +21,6 @@ type UserServiceImpl struct {
 
 type LoginSqlManage interface {
 	Login(username, password string) (authed bool, id int64, role string, err error)
-	AdminLogin(username, password string) (authed bool, id int64, err error)
 	GetUserInfoByID(id int64) (usrRet *user.User, err error)
 	UpdateUser(usr *user.User) (usrRet *user.User, err error)
 	Register(usr *model.User) (usrRet int64, err error)
