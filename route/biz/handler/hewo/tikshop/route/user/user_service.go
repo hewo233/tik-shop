@@ -15,15 +15,15 @@ import (
 )
 
 // Register
-// @Summary Register
-// @Description 注册新用户，返回用户基本信息
-// @Tags user
+// @Summary 用户注册
+// @Description 注册新用户,支持 customer、merchant、admin 三种角色
+// @Tags 用户认证
 // @Accept json
 // @Produce json
-// @Param request body user.RegisterRequest true "Register user request"
-// @Success 200 {string} string "User registered successfully"
-// @Failure 400 {string} string "Invalid request or validation failed"
-// @router /auth/register [POST]
+// @Param request body user.RegisterRequest true "注册请求参数"
+// @Success 200 {object} user.RegisterResponse "User registered successfully"
+// @Failure 400 {object} user.RegisterResponse "Invalid request or validation failed"
+// @Router /auth/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.RegisterRequest
@@ -77,16 +77,16 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// Login 用户登录
-// @Summary Login
-// @Description 通过用户名和密码进行用户登录，返回登录成功的用户信息。
-// @Tags user
+// Login
+// @Summary 用户登录
+// @Description 通过邮箱和密码进行用户登录,返回 JWT token
+// @Tags 用户认证
 // @Accept json
 // @Produce json
-// @Param request body user.LoginRequest true "Login request"
-// @Success 200 {string} string "Login successful"
-// @Failure 400 {string} string "Invalid request or login failed"
-// @Router /api/auth/login [post]
+// @Param request body user.LoginRequest true "登录请求参数"
+// @Success 200 {object} user.LoginResponse "Login successful"
+// @Failure 400 {object} user.LoginResponse "Invalid request or login failed"
+// @Router /auth/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.LoginRequest
@@ -139,16 +139,16 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// GetUserInfoByID 根据用户 ID 获取用户信息
-// @Summary GetUserInfoByID
-// @Description 根据用户 ID 获取详细的用户信息
-// @Tags user
+// GetUserInfoByID
+// @Summary 获取用户信息
+// @Description 根据用户 ID 获取用户基本信息
+// @Tags 用户管理
 // @Accept json
 // @Produce json
-// @Param id path int true "User ID"
-// @Success 200 {string} string "User information retrieved successfully"
-// @Failure 400 {string} string "Invalid request or user ID not found"
-// @router /api/user/:id [GET]
+// @Param user_id path int true "用户ID"
+// @Success 200 {object} user.GetUserInfoByIDResponse "User information retrieved successfully"
+// @Failure 400 {object} user.GetUserInfoByIDResponse "Invalid request or user ID not found"
+// @Router /user/{user_id} [GET]
 func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.GetUserInfoByIDRequest
@@ -210,16 +210,16 @@ func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 }
 
 // UpdateUser
-// @Summary UpdateUser
-// @Description 根据用户 ID 更新用户的详细信息
-// @Tags user
+// @Summary 更新用户信息
+// @Description 根据用户 ID 更新用户的基本信息
+// @Tags 用户管理
 // @Accept json
 // @Produce json
-// @Param id path int true "User ID"
-// @Param request body user.UpdateUserRequest true "Update user request"
-// @Success 200 {object} user.UserResponse "User information updated successfully"
-// @Failure 400 {string} string "Invalid request or validation failed"
-// @router /api/user/:id [PUT]
+// @Param user_id path int true "用户ID"
+// @Param request body user.UpdateUserRequest true "更新用户请求参数"
+// @Success 200 {object} user.UpdateUserResponse "User updated successfully"
+// @Failure 400 {object} user.UpdateUserResponse "Invalid request or validation failed"
+// @Router /user/{user_id} [PATCH]
 func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UpdateUserRequest
@@ -280,8 +280,16 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// DeleteUser .
-// @router /user/:user_id [DELETE]
+// DeleteUser
+// @Summary 删除用户
+// @Description 根据用户 ID 删除用户(软删除)
+// @Tags 用户管理
+// @Accept json
+// @Produce json
+// @Param user_id path int true "用户ID"
+// @Success 200 {object} user.DeleteUserResponse "User deleted successfully"
+// @Failure 400 {object} user.DeleteUserResponse "Invalid request"
+// @Router /user/{user_id} [DELETE]
 func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.DeleteUserRequest
@@ -328,8 +336,16 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// GetCustomerInfoByID .
-// @router /customer/:user_id [GET]
+// GetCustomerInfoByID
+// @Summary 获取顾客信息
+// @Description 根据用户 ID 获取顾客的详细信息
+// @Tags 顾客管理
+// @Accept json
+// @Produce json
+// @Param user_id path int true "用户ID"
+// @Success 200 {object} user.GetCustomerInfoByIDResponse "Customer information retrieved successfully"
+// @Failure 400 {object} user.GetCustomerInfoByIDResponse "Invalid request"
+// @Router /customer/{user_id} [GET]
 func GetCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.GetCustomerInfoByIDRequest
@@ -382,8 +398,17 @@ func GetCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// UpdateCustomerInfoByID .
-// @router /customer/:user_id [PUT]
+// UpdateCustomerInfoByID
+// @Summary 更新顾客信息
+// @Description 根据用户 ID 更新顾客的详细信息(地址、电话)
+// @Tags 顾客管理
+// @Accept json
+// @Produce json
+// @Param user_id path int true "用户ID"
+// @Param request body user.UpdateCustomerInfoByIDRequest true "更新顾客请求参数"
+// @Success 200 {object} user.UpdateCustomerInfoByIDResponse "Customer information updated successfully"
+// @Failure 400 {object} user.UpdateCustomerInfoByIDResponse "Invalid request"
+// @Router /customer/{user_id} [PATCH]
 func UpdateCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UpdateCustomerInfoByIDRequest
@@ -399,8 +424,16 @@ func UpdateCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// GetMerchantInfoByID .
-// @router /merchant/:user_id [GET]
+// GetMerchantInfoByID
+// @Summary 获取商家信息
+// @Description 根据用户 ID 获取商家的详细信息
+// @Tags 商家管理
+// @Accept json
+// @Produce json
+// @Param user_id path int true "用户ID"
+// @Success 200 {object} user.GetMerchantInfoByIDResponse "Merchant information retrieved successfully"
+// @Failure 400 {object} user.GetMerchantInfoByIDResponse "Invalid request"
+// @Router /merchant/{user_id} [GET]
 func GetMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.GetMerchantInfoByIDRequest
@@ -456,8 +489,17 @@ func GetMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// UpdateMerchantInfoByID .
-// @router /merchant/:user_id [PUT]
+// UpdateMerchantInfoByID
+// @Summary 更新商家信息
+// @Description 根据用户 ID 更新商家的详细信息(地址、店铺名称)
+// @Tags 商家管理
+// @Accept json
+// @Produce json
+// @Param user_id path int true "用户ID"
+// @Param request body user.UpdateMerchantInfoByIDRequest true "更新商家请求参数"
+// @Success 200 {object} user.UpdateMerchantInfoByIDResponse "Merchant information updated successfully"
+// @Failure 400 {object} user.UpdateMerchantInfoByIDResponse "Invalid request"
+// @Router /merchant/{user_id} [PATCH]
 func UpdateMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UpdateMerchantInfoByIDRequest
@@ -474,8 +516,16 @@ func UpdateMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// GetAdminInfoByID .
-// @router /admin/:user_id [GET]
+// GetAdminInfoByID
+// @Summary 获取管理员信息
+// @Description 根据用户 ID 获取管理员的详细信息
+// @Tags 管理员管理
+// @Accept json
+// @Produce json
+// @Param user_id path int true "用户ID"
+// @Success 200 {object} user.GetAdminInfoByIDResponse "Get Admin info successfully"
+// @Failure 400 {object} user.GetAdminInfoByIDResponse "Invalid request"
+// @Router /admin/{user_id} [GET]
 func GetAdminInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.GetAdminInfoByIDRequest
@@ -538,8 +588,17 @@ func GetAdminInfoByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// UpdateAdminInfoByID .
-// @router /admin/:user_id [PUT]
+// UpdateAdminInfoByID
+// @Summary 更新管理员信息
+// @Description 根据用户 ID 更新管理员的详细信息(等级)
+// @Tags 管理员管理
+// @Accept json
+// @Produce json
+// @Param user_id path int true "用户ID"
+// @Param request body user.UpdateAdminInfoByIDRequest true "更新管理员请求参数"
+// @Success 200 {object} user.UpdateAdminInfoByIDResponse "Admin information updated successfully"
+// @Failure 400 {object} user.UpdateAdminInfoByIDResponse "Invalid request"
+// @Router /admin/{user_id} [PATCH]
 func UpdateAdminInfoByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.UpdateAdminInfoByIDRequest
@@ -556,8 +615,17 @@ func UpdateAdminInfoByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// ListUsers .
-// @router /users [GET]
+// ListUsers
+// @Summary 获取用户列表
+// @Description 分页获取用户列表
+// @Tags 用户管理
+// @Accept json
+// @Produce json
+// @Param page_number query int true "页码" minimum(1)
+// @Param page_size query int true "每页大小" minimum(1) maximum(100)
+// @Success 200 {object} user.ListUsersResponse "Users retrieved successfully"
+// @Failure 400 {object} user.ListUsersResponse "Invalid request"
+// @Router /users [GET]
 func ListUsers(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.ListUsersRequest
