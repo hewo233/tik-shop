@@ -126,22 +126,6 @@ func ModifyStock(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// GetProducts .
-// @router /products [GET]
-func GetProducts(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req product.GetProductsRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(product.GetProductsResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
 // ListProducts .
 // @router /products [GET]
 func ListProducts(ctx context.Context, c *app.RequestContext) {
