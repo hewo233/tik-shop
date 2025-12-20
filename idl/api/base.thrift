@@ -11,6 +11,37 @@ struct MessageResponse {
 
 struct NilResponse {}
 
+// user begin::
+enum UserStatus {
+    DELETED = 0,
+    ACTIVE = 1,
+    BANNED = 2,
+}
+
+// 定义公共的用户信息结构
+struct User {
+    1: i64    id; // 用户 ID
+    2: string username; // 用户名
+    3: string email; // 邮箱
+    4: string role;
+    5: UserStatus status;
+}
+
+struct Customer {
+    1: string address;
+    2: string phone;
+}
+
+struct Merchant {
+    1: string address;
+    2: string shop_name;
+}
+
+struct Admin {
+    1: i32 level;
+}
+// user end::
+
 // cart begin::
 struct CartItem {
     1: i64 productId
@@ -21,11 +52,13 @@ struct CartItem {
 
 // product begin::
 struct Product {
-  1: i64 productId
-  2: string name
-  3: i64 price
-  4: i64 stock
-  5: string description
+    1: i64    id,
+    2: i64    merchant_id,
+    3: string name,
+    4: string description,
+    5: i64    price,        // 价格(分为单位)
+    6: i64    stock,
+    7: i8     status,       // 0=删除, 1=上架, 2=下架, 3=售罄
 }
 // product end::
 

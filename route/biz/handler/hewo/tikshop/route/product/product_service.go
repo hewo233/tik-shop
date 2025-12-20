@@ -11,26 +11,26 @@ import (
 	product "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/product"
 )
 
-// GetProducts .
-// @Summary GetProducts
-// @Description 获取产品列表
+// CreateProduct .
+// @Summary CreateProduct
+// @Description 创建一个新的产品，包含产品的详细信息。
 // @Tags product
 // @Accept json
 // @Produce json
-// @Param request query product.GetProductsRequest true "Request params" // 定义查询参数
-// @Success 200 {array} base.Product "List of products"
+// @Param request body product.CreateProductRequest true "Request body with product details"
+// @Success 200 {object} product.CreateProductResponse "Product created successfully"
 // @Failure 400 {string} string "Invalid request"
-// @Router /api/products [GET]
-func GetProducts(ctx context.Context, c *app.RequestContext) {
+// @router /api/products [POST]
+func CreateProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req product.GetProductsRequest
+	var req product.CreateProductRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new([]*base.Product)
+	resp := new(product.CreateProductResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -56,30 +56,6 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp := new(base.Product)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// CreateProduct .
-// @Summary CreateProduct
-// @Description 创建一个新的产品，包含产品的详细信息。
-// @Tags product
-// @Accept json
-// @Produce json
-// @Param request body product.CreateProductRequest true "Request body with product details"
-// @Success 200 {object} product.CreateProductResponse "Product created successfully"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/products [POST]
-func CreateProduct(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req product.CreateProductRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(product.CreateProductResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -130,6 +106,54 @@ func DeleteProduct(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp := new(product.DeleteProductResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// ModifyStock .
+// @router /api/product/:id/stock [PUT]
+func ModifyStock(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ModifyStockRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(product.ModifyStockResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// GetProducts .
+// @router /products [GET]
+func GetProducts(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.GetProductsRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(product.GetProductsResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// ListProducts .
+// @router /products [GET]
+func ListProducts(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ListProductsRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(product.ListProductsResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }

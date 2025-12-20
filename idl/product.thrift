@@ -1,84 +1,91 @@
 namespace go hewo.tikshop.product
 
 include "base.thrift"
+
 // 商品信息结构
 struct Product {
-    1: i64    id, // 商品ID
-    2: string name, // 商品名称
-    3: double price, // 商品价格
-    4: i64    stock, // 库存数量
-    5: string description // 商品描述
+    1: i64    id,
+    2: i64    merchant_id,
+    3: string name,
+    4: string description,
+    5: i64    price,        // 价格(分为单位)
+    6: i64    stock,
+    7: i8     status,       // 0=删除, 1=上架, 2=下架, 3=售罄
 }
 
-// 分页请求参数
-struct GetProductsRequest {
-    1: i64 page  = 1, // 页码，默认值为1
-    2: i64 limit = 10 // 每页数量，默认值为10
-}
-
-struct GetProductsReqsponse {
-    1: list<Product> products;
-}
-
-struct GetProductByIdRequest {
-    1: i64 id;
-}
-
-struct GetProductByIdResponse {
-    1: Product product;
-}
-
-// 商品创建请求结构
+// 创建商品请求
 struct CreateProductRequest {
-    1: string name, // 商品名称
-    2: double price, // 商品价格
-    3: i64    stock, // 库存数量
-    4: string description // 商品描述
+    1: required i64    merchant_id,
+    2: required string name,
+    3: optional string description,
+    4: required i64    price,
+    5: optional i64    stock = 0,
 }
 
-// 商品创建响应结构
 struct CreateProductResponse {
-    1: string message, // 成功消息
-    2: i64    productId // 创建的商品ID
+    1: Product product,
 }
 
-// 商品更新请求结构
+// 查询单个商品
+struct GetProductRequest {
+    1: required i64 product_id,
+}
+
+struct GetProductResponse {
+    1: Product product,
+}
+
+// 更新商品
 struct UpdateProductRequest {
-    1: optional string name, // 商品名称（可选）
-    2: optional double price, // 商品价格（可选）
-    3: optional i64    stock, // 库存数量（可选）
-    4: optional string description // 商品描述（可选）
-    5: i64      id
+    1: required i64    product_id,
+    2: optional string name,
+    3: optional string description,
+    4: optional i64    price,
+    5: optional i8     status,
 }
 
-// 商品更新响应结构
 struct UpdateProductResponse {
-    1: string message // 成功消息
+    1: Product product,
 }
 
-// 商品删除响应结构
+// 商品列表查询
+struct ListProductsRequest {
+    1: i64 merchant_id,
+    2: i8  status,
+    3: i64 page = 1,
+    4: i64 page_size = 10,
+}
+
+struct ListProductsResponse {
+    1: list<Product> products,
+    2: i64 total,
+}
+
+// 删除商品
 struct DeleteProductRequest {
-    1: i64 id;
+    1: required i64 product_id,
 }
 
 struct DeleteProductResponse {
-    1: string message // 成功消息
+    1: bool success,
 }
 
-// 商品服务接口
+// 修改库存
+struct ModifyStockRequest {
+    1: required i64 product_id,
+    2: required i64 delta,  // 正数增加,负数减少
+}
+
+struct ModifyStockResponse {
+    1: i64 stock,  // 返回修改后的库存
+}
+
+// 商品服务
 service ProductService {
-    // 获取商品列表，支持分页
-    GetProductsReqsponse getProducts(1: GetProductsRequest request) throws (1: base.ErrorResponse error),
-
-    // 获取单个商品详情
-    GetProductByIdResponse getProductById(1: GetProductByIdRequest request) throws (1: base.ErrorResponse error),
-
-    // 添加新商品（管理员权限）
-    CreateProductResponse createProduct(1: CreateProductRequest request) throws (1: base.ErrorResponse error),
-
-    // 更新商品信息（管理员权限）
-    UpdateProductResponse updateProduct(1: UpdateProductRequest request) throws (1: base.ErrorResponse error),
-
-    // 删除商品（管理员权限）
-    DeleteProductResponse deleteProduct(1: DeleteProductRequest request) throws (1: base.ErrorResponse error)
+    CreateProductResponse CreateProduct(1: CreateProductRequest req) throws (1: base.ErrorResponse err);
+    GetProductResponse GetProduct(1: GetProductRequest req) throws (1: base.ErrorResponse err);
+    UpdateProductResponse UpdateProduct(1: UpdateProductRequest req) throws (1: base.ErrorResponse err);
+    ListProductsResponse ListProducts(1: ListProductsRequest req) throws (1: base.ErrorResponse err);
+    DeleteProductResponse DeleteProduct(1: DeleteProductRequest req) throws (1: base.ErrorResponse err);
+    ModifyStockResponse ModifyStock(1: ModifyStockRequest req) throws (1: base.ErrorResponse err);
 }

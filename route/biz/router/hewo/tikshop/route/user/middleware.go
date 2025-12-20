@@ -5,6 +5,7 @@ package user
 import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/common"
+	"github.com/hewo/tik-shop/shared/consts"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -18,7 +19,9 @@ func _apiMw() []app.HandlerFunc {
 }
 
 func _userMw() []app.HandlerFunc {
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleCustomer, consts.RoleMerchant),
+	}
 }
 
 func _idMw() []app.HandlerFunc {
@@ -61,8 +64,9 @@ func _verifyMw() []app.HandlerFunc {
 }
 
 func _adminMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin),
+	}
 }
 
 func _adminloginMw() []app.HandlerFunc {
@@ -96,8 +100,9 @@ func _updateadmininfobyidMw() []app.HandlerFunc {
 }
 
 func _customerMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleCustomer),
+	}
 }
 
 func _getcustomerinfobyidMw() []app.HandlerFunc {
@@ -111,8 +116,9 @@ func _updatecustomerinfobyidMw() []app.HandlerFunc {
 }
 
 func _merchantMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleMerchant),
+	}
 }
 
 func _getmerchantinfobyidMw() []app.HandlerFunc {

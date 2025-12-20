@@ -297,8 +297,6 @@ definitions:
     type: object
   user.UpdateAdminInfoByIDRequest:
     properties:
-      authorization:
-        type: string
       level:
         type: integer
       user_id:
@@ -314,8 +312,6 @@ definitions:
   user.UpdateCustomerInfoByIDRequest:
     properties:
       address:
-        type: string
-      authorization:
         type: string
       phone:
         type: string
@@ -333,8 +329,6 @@ definitions:
     properties:
       address:
         type: string
-      authorization:
-        type: string
       shop_name:
         type: string
       user_id:
@@ -349,8 +343,6 @@ definitions:
     type: object
   user.UpdateUserRequest:
     properties:
-      authorization:
-        type: string
       user:
         $ref: '#/definitions/user.User'
     type: object
@@ -411,6 +403,11 @@ paths:
         name: user_id
         required: true
         type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -441,6 +438,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/user.UpdateAdminInfoByIDRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -928,6 +930,11 @@ paths:
         name: user_id
         required: true
         type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -958,6 +965,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/user.UpdateCustomerInfoByIDRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -983,6 +995,11 @@ paths:
         name: user_id
         required: true
         type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1013,6 +1030,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/user.UpdateMerchantInfoByIDRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1052,6 +1074,11 @@ paths:
         name: user_id
         required: true
         type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1076,6 +1103,11 @@ paths:
         name: user_id
         required: true
         type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1106,6 +1138,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/user.UpdateUserRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1139,6 +1176,11 @@ paths:
         name: page_size
         required: true
         type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:

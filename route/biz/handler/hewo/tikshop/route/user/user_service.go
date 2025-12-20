@@ -187,6 +187,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "用户ID"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.GetUserInfoByIDResponse "User information retrieved successfully"
 // @Failure 400 {object} user.GetUserInfoByIDResponse "Invalid request or user ID not found"
 // @Router /user/{user_id} [GET]
@@ -259,6 +260,7 @@ func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param user_id path int true "用户ID"
 // @Param request body user.UpdateUserRequest true "更新用户请求参数"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.UpdateUserResponse "User updated successfully"
 // @Failure 400 {object} user.UpdateUserResponse "Invalid request or validation failed"
 // @Router /user/{user_id} [PATCH]
@@ -329,6 +331,7 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "用户ID"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.DeleteUserResponse "User deleted successfully"
 // @Failure 400 {object} user.DeleteUserResponse "Invalid request"
 // @Router /user/{user_id} [DELETE]
@@ -385,6 +388,7 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "用户ID"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.GetCustomerInfoByIDResponse "Customer information retrieved successfully"
 // @Failure 400 {object} user.GetCustomerInfoByIDResponse "Invalid request"
 // @Router /customer/{user_id} [GET]
@@ -399,6 +403,14 @@ func GetCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 				Message: err.Error(),
 			},
 		})
+		return
+	}
+
+	if !NormalFuncChecker(ctx, c, req.UserID, func(response *base.BaseResponse) *user.GetCustomerInfoByIDResponse {
+		return &user.GetCustomerInfoByIDResponse{
+			Base: response,
+		}
+	}) {
 		return
 	}
 
@@ -448,6 +460,7 @@ func GetCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param user_id path int true "用户ID"
 // @Param request body user.UpdateCustomerInfoByIDRequest true "更新顾客请求参数"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.UpdateCustomerInfoByIDResponse "Customer information updated successfully"
 // @Failure 400 {object} user.UpdateCustomerInfoByIDResponse "Invalid request"
 // @Router /customer/{user_id} [PATCH]
@@ -473,6 +486,7 @@ func UpdateCustomerInfoByID(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "用户ID"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.GetMerchantInfoByIDResponse "Merchant information retrieved successfully"
 // @Failure 400 {object} user.GetMerchantInfoByIDResponse "Invalid request"
 // @Router /merchant/{user_id} [GET]
@@ -517,6 +531,13 @@ func GetMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	resp = &user.GetMerchantInfoByIDResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Get Merchant info successfully",
+		},
+	}
+
 	err = copier.Copy(resp, rpcResp)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, user.GetMerchantInfoByIDResponse{
@@ -539,6 +560,7 @@ func GetMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param user_id path int true "用户ID"
 // @Param request body user.UpdateMerchantInfoByIDRequest true "更新商家请求参数"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.UpdateMerchantInfoByIDResponse "Merchant information updated successfully"
 // @Failure 400 {object} user.UpdateMerchantInfoByIDResponse "Invalid request"
 // @Router /merchant/{user_id} [PATCH]
@@ -565,6 +587,7 @@ func UpdateMerchantInfoByID(ctx context.Context, c *app.RequestContext) {
 // @Accept json
 // @Produce json
 // @Param user_id path int true "用户ID"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.GetAdminInfoByIDResponse "Get Admin info successfully"
 // @Failure 400 {object} user.GetAdminInfoByIDResponse "Invalid request"
 // @Router /admin/{user_id} [GET]
@@ -638,6 +661,7 @@ func GetAdminInfoByID(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param user_id path int true "用户ID"
 // @Param request body user.UpdateAdminInfoByIDRequest true "更新管理员请求参数"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.UpdateAdminInfoByIDResponse "Admin information updated successfully"
 // @Failure 400 {object} user.UpdateAdminInfoByIDResponse "Invalid request"
 // @Router /admin/{user_id} [PATCH]
@@ -665,6 +689,7 @@ func UpdateAdminInfoByID(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param page_number query int true "页码" minimum(1)
 // @Param page_size query int true "每页大小" minimum(1) maximum(100)
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} user.ListUsersResponse "Users retrieved successfully"
 // @Failure 400 {object} user.ListUsersResponse "Invalid request"
 // @Router /users [GET]

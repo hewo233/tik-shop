@@ -42,6 +42,13 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -87,6 +94,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/user.UpdateAdminInfoByIDRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -829,6 +843,13 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -874,6 +895,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/user.UpdateCustomerInfoByIDRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -911,6 +939,13 @@ const docTemplate = `{
                         "description": "用户ID",
                         "name": "user_id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -957,6 +992,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/user.UpdateMerchantInfoByIDRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1016,6 +1058,13 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1051,6 +1100,13 @@ const docTemplate = `{
                         "description": "用户ID",
                         "name": "user_id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -1097,6 +1153,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/user.UpdateUserRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1144,6 +1207,13 @@ const docTemplate = `{
                         "description": "每页大小",
                         "name": "page_size",
                         "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -1626,9 +1696,6 @@ const docTemplate = `{
         "user.UpdateAdminInfoByIDRequest": {
             "type": "object",
             "properties": {
-                "authorization": {
-                    "type": "string"
-                },
                 "level": {
                     "type": "integer"
                 },
@@ -1652,9 +1719,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
-                },
-                "authorization": {
                     "type": "string"
                 },
                 "phone": {
@@ -1682,9 +1746,6 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
-                "authorization": {
-                    "type": "string"
-                },
                 "shop_name": {
                     "type": "string"
                 },
@@ -1707,9 +1768,6 @@ const docTemplate = `{
         "user.UpdateUserRequest": {
             "type": "object",
             "properties": {
-                "authorization": {
-                    "type": "string"
-                },
                 "user": {
                     "$ref": "#/definitions/user.User"
                 }

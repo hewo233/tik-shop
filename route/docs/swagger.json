@@ -39,6 +39,13 @@
                         "name": "user_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -84,6 +91,13 @@
                         "schema": {
                             "$ref": "#/definitions/user.UpdateAdminInfoByIDRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -826,6 +840,13 @@
                         "name": "user_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -871,6 +892,13 @@
                         "schema": {
                             "$ref": "#/definitions/user.UpdateCustomerInfoByIDRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -908,6 +936,13 @@
                         "description": "用户ID",
                         "name": "user_id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -954,6 +989,13 @@
                         "schema": {
                             "$ref": "#/definitions/user.UpdateMerchantInfoByIDRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1013,6 +1055,13 @@
                         "name": "user_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1048,6 +1097,13 @@
                         "description": "用户ID",
                         "name": "user_id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -1094,6 +1150,13 @@
                         "schema": {
                             "$ref": "#/definitions/user.UpdateUserRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1141,6 +1204,13 @@
                         "description": "每页大小",
                         "name": "page_size",
                         "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -1623,9 +1693,6 @@
         "user.UpdateAdminInfoByIDRequest": {
             "type": "object",
             "properties": {
-                "authorization": {
-                    "type": "string"
-                },
                 "level": {
                     "type": "integer"
                 },
@@ -1649,9 +1716,6 @@
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
-                },
-                "authorization": {
                     "type": "string"
                 },
                 "phone": {
@@ -1679,9 +1743,6 @@
                 "address": {
                     "type": "string"
                 },
-                "authorization": {
-                    "type": "string"
-                },
                 "shop_name": {
                     "type": "string"
                 },
@@ -1704,9 +1765,6 @@
         "user.UpdateUserRequest": {
             "type": "object",
             "properties": {
-                "authorization": {
-                    "type": "string"
-                },
                 "user": {
                     "$ref": "#/definitions/user.User"
                 }

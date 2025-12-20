@@ -45,3 +45,28 @@ func _updateproductMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _idMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _modifystockMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _listproductsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _products0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

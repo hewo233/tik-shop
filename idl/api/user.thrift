@@ -2,35 +2,6 @@ namespace go hewo.tikshop.route.user
 
 include "./base.thrift"
 
-enum UserStatus {
-    DELETED = 0,
-    ACTIVE = 1,
-    BANNED = 2,
-}
-
-// 定义公共的用户信息结构
-struct User {
-    1: i64    id; // 用户 ID
-    2: string username; // 用户名
-    3: string email; // 邮箱
-    4: string role;
-    5: UserStatus status;
-}
-
-struct Customer {
-    1: string address;
-    2: string phone;
-}
-
-struct Merchant {
-    1: string address;
-    2: string shop_name;
-}
-
-struct Admin {
-    1: i32 level;
-}
-
 // ========== Common APIs ==========
 
 // Register
@@ -63,7 +34,7 @@ struct LoginResponse {
     2: optional string token;
 }
 
-// ========== Basic User APIs ==========
+// ========== Basic base.User APIs ==========
 
 struct GetUserInfoByIDRequest {
     1: i64 user_id (api.path="user_id", api.vd="$ > 0; msg:'用户ID必须大于0'");
@@ -71,16 +42,16 @@ struct GetUserInfoByIDRequest {
 
 struct GetUserInfoByIDResponse {
     1: base.BaseResponse base;
-    2: optional User user;
+    2: optional base.User user;
 }
 
 struct UpdateUserRequest {
-    1: User user (api.body="user");
+    1: base.User user (api.body="user");
 }
 
 struct UpdateUserResponse {
     1: base.BaseResponse base;
-    2: optional User user;
+    2: optional base.User user;
 }
 
 struct DeleteUserRequest {
@@ -94,13 +65,13 @@ struct DeleteUserResponse {
 
 // ========== Customer APIs ==========
 struct GetCustomerInfoByIDRequest {
-    1: optional i64 user_id (api.path="user_id", api.vd="$ > 0; msg:'用户ID必须大于0'");
+    1: i64 user_id (api.path="user_id", api.vd="$ > 0; msg:'用户ID必须大于0'");
 }
 
 struct GetCustomerInfoByIDResponse {
     1: base.BaseResponse base;
-    2: optional User user;
-    3: optional Customer customer;
+    2: optional base.User user;
+    3: optional base.Customer customer;
 }
 
 struct UpdateCustomerInfoByIDRequest {
@@ -111,7 +82,7 @@ struct UpdateCustomerInfoByIDRequest {
 
 struct UpdateCustomerInfoByIDResponse {
     1: base.BaseResponse base;
-    2: optional Customer customer;
+    2: optional base.Customer customer;
 }
 
 // ========== Merchant APIs ==========
@@ -121,8 +92,8 @@ struct GetMerchantInfoByIDRequest {
 
 struct GetMerchantInfoByIDResponse {
     1: base.BaseResponse base;
-    2: optional User user;
-    3: optional Merchant merchant;
+    2: optional base.User user;
+    3: optional base.Merchant merchant;
 }
 
 struct UpdateMerchantInfoByIDRequest {
@@ -133,7 +104,7 @@ struct UpdateMerchantInfoByIDRequest {
 
 struct UpdateMerchantInfoByIDResponse {
     1: base.BaseResponse base;
-    2: optional Merchant merchant;
+    2: optional base.Merchant merchant;
 }
 
 // ========== Admin APIs ==========
@@ -144,8 +115,8 @@ struct GetAdminInfoByIDRequest {
 
 struct GetAdminInfoByIDResponse {
     1: base.BaseResponse base;
-    2: optional User user;
-    3: optional Admin admin;
+    2: optional base.User user;
+    3: optional base.Admin admin;
 }
 
 struct UpdateAdminInfoByIDRequest {
@@ -165,7 +136,7 @@ struct ListUsersRequest {
 
 struct ListUsersResponse {
     1: base.BaseResponse base;
-    2: optional list<User> users;
+    2: optional list<base.User> users;
     3: optional i32 total_count;
 }
 
@@ -187,5 +158,5 @@ service UserService {
     GetAdminInfoByIDResponse GetAdminInfoByID(1: GetAdminInfoByIDRequest req) (api.get="/admin/:user_id");
     UpdateAdminInfoByIDResponse UpdateAdminInfoByID(1: UpdateAdminInfoByIDRequest req) (api.patch="/admin/:user_id");
 
-    ListUsersResponse ListUsers(1: ListUsersRequest req) (api.get="/users");
+    ListUsersResponse ListUsers(1: ListUsersRequest req) (api.get="/admin/users");
 }

@@ -18,4 +18,9 @@ const (
 	RoleCustomer = "customer"
 	RoleMerchant = "merchant"
 	RoleAdmin    = "admin"
+
+	TableUser     = "users"
+	TableCustomer = "customers"
+	TableMerchant = "merchants"
+	TableAdmin    = "admins"
 )

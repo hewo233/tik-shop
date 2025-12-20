@@ -17,11 +17,11 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
-	root.GET("/users", append(_listusersMw(), user.ListUsers)...)
 	{
 		_admin := root.Group("/admin", _adminMw()...)
 		_admin.GET("/:user_id", append(_getadmininfobyidMw(), user.GetAdminInfoByID)...)
 		_admin.PATCH("/:user_id", append(_updateadmininfobyidMw(), user.UpdateAdminInfoByID)...)
+		_admin.GET("/users", append(_listusersMw(), user.ListUsers)...)
 	}
 	{
 		_auth := root.Group("/auth", _authMw()...)

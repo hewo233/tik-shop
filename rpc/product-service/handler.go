@@ -84,3 +84,21 @@ func (s *ProductServiceImpl) DeleteProduct(ctx context.Context, request *product
 	}
 	return
 }
+
+// GetProduct implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) GetProduct(ctx context.Context, req *product.GetProductRequest) (resp *product.GetProductResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// ListProducts implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) ListProducts(ctx context.Context, req *product.ListProductsRequest) (resp *product.ListProductsResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// ModifyStock implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) ModifyStock(ctx context.Context, req *product.ModifyStockRequest) (resp *product.ModifyStockResponse, err error) {
+	// TODO: Your code here...
+	return
+}

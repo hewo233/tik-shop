@@ -49,7 +49,7 @@ func NormalFuncChecker[T any](ctx context.Context, c *app.RequestContext, id int
 	}
 
 	if idCtxStr != idStr && roleCtxStr != consts.Admin {
-		c.JSON(http.StatusOK, buildResp(&base.BaseResponse{
+		c.JSON(http.StatusUnauthorized, buildResp(&base.BaseResponse{
 			Code:    40081,
 			Message: "permission denied",
 		}))

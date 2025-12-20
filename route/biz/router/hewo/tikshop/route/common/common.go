@@ -24,6 +24,7 @@ func ComMiddleWare() []app.HandlerFunc {
 func PasetoAuth(audiences ...string) app.HandlerFunc {
 	pasetoInfo := config.GlobalServerConfig.PasetoInfo
 
+	// audiences 只是一层最基本的过滤，用来判断角色层面的权限
 	pasetoParse, err := paseto.NewV4PublicParseFunc(
 		pasetoInfo.PubKey,
 		[]byte(pasetoInfo.Implicit),
@@ -55,6 +56,7 @@ func PasetoAuth(audiences ...string) app.HandlerFunc {
 		allowed := false
 		for _, a := range audiences {
 			if a == tokenAudience {
+				//log.Println("Pase: finded")
 				allowed = true
 				break
 			}
