@@ -711,7 +711,7 @@ func (p *CreateProductResponse) FastRead(buf []byte) (int, error) {
 		}
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
@@ -744,13 +744,15 @@ SkipFieldError:
 
 func (p *CreateProductResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
-	_field := NewProduct()
-	if l, err := _field.FastRead(buf[offset:]); err != nil {
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
+		_field = v
 	}
-	p.Product = _field
+	p.ProductId = _field
 	return offset, nil
 }
 
@@ -779,19 +781,19 @@ func (p *CreateProductResponse) BLength() int {
 
 func (p *CreateProductResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-	offset += p.Product.FastWriteNocopy(buf[offset:], w)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
 	return offset
 }
 
 func (p *CreateProductResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += p.Product.BLength()
+	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *GetProductRequest) FastRead(buf []byte) (int, error) {
+func (p *GetProductByIDRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -840,14 +842,14 @@ func (p *GetProductRequest) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetProductRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetProductByIDRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 RequiredFieldNotSetError:
-	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_GetProductRequest[fieldId]))
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_GetProductByIDRequest[fieldId]))
 }
 
-func (p *GetProductRequest) FastReadField1(buf []byte) (int, error) {
+func (p *GetProductByIDRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -862,11 +864,11 @@ func (p *GetProductRequest) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *GetProductRequest) FastWrite(buf []byte) int {
+func (p *GetProductByIDRequest) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *GetProductRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *GetProductByIDRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -875,7 +877,7 @@ func (p *GetProductRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) i
 	return offset
 }
 
-func (p *GetProductRequest) BLength() int {
+func (p *GetProductByIDRequest) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -884,21 +886,21 @@ func (p *GetProductRequest) BLength() int {
 	return l
 }
 
-func (p *GetProductRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *GetProductByIDRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
 	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
 	return offset
 }
 
-func (p *GetProductRequest) field1Length() int {
+func (p *GetProductByIDRequest) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *GetProductResponse) FastRead(buf []byte) (int, error) {
+func (p *GetProductByIDResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -941,12 +943,12 @@ func (p *GetProductResponse) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetProductResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetProductByIDResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *GetProductResponse) FastReadField1(buf []byte) (int, error) {
+func (p *GetProductByIDResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 	_field := NewProduct()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -959,11 +961,11 @@ func (p *GetProductResponse) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *GetProductResponse) FastWrite(buf []byte) int {
+func (p *GetProductByIDResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *GetProductResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *GetProductByIDResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -972,7 +974,7 @@ func (p *GetProductResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) 
 	return offset
 }
 
-func (p *GetProductResponse) BLength() int {
+func (p *GetProductByIDResponse) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -981,21 +983,21 @@ func (p *GetProductResponse) BLength() int {
 	return l
 }
 
-func (p *GetProductResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *GetProductByIDResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
 	offset += p.Product.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
-func (p *GetProductResponse) field1Length() int {
+func (p *GetProductByIDResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += p.Product.BLength()
 	return l
 }
 
-func (p *UpdateProductRequest) FastRead(buf []byte) (int, error) {
+func (p *UpdateProductByIDRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -1100,14 +1102,14 @@ func (p *UpdateProductRequest) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateProductRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateProductByIDRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 RequiredFieldNotSetError:
-	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_UpdateProductRequest[fieldId]))
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_UpdateProductByIDRequest[fieldId]))
 }
 
-func (p *UpdateProductRequest) FastReadField1(buf []byte) (int, error) {
+func (p *UpdateProductByIDRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -1121,7 +1123,7 @@ func (p *UpdateProductRequest) FastReadField1(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UpdateProductRequest) FastReadField2(buf []byte) (int, error) {
+func (p *UpdateProductByIDRequest) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *string
@@ -1135,7 +1137,7 @@ func (p *UpdateProductRequest) FastReadField2(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UpdateProductRequest) FastReadField3(buf []byte) (int, error) {
+func (p *UpdateProductByIDRequest) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *string
@@ -1149,7 +1151,7 @@ func (p *UpdateProductRequest) FastReadField3(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UpdateProductRequest) FastReadField4(buf []byte) (int, error) {
+func (p *UpdateProductByIDRequest) FastReadField4(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *int64
@@ -1163,7 +1165,7 @@ func (p *UpdateProductRequest) FastReadField4(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UpdateProductRequest) FastReadField5(buf []byte) (int, error) {
+func (p *UpdateProductByIDRequest) FastReadField5(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *int8
@@ -1178,11 +1180,11 @@ func (p *UpdateProductRequest) FastReadField5(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *UpdateProductRequest) FastWrite(buf []byte) int {
+func (p *UpdateProductByIDRequest) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *UpdateProductRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateProductByIDRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -1195,7 +1197,7 @@ func (p *UpdateProductRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter
 	return offset
 }
 
-func (p *UpdateProductRequest) BLength() int {
+func (p *UpdateProductByIDRequest) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -1208,14 +1210,14 @@ func (p *UpdateProductRequest) BLength() int {
 	return l
 }
 
-func (p *UpdateProductRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateProductByIDRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
 	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
 	return offset
 }
 
-func (p *UpdateProductRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateProductByIDRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetName() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 2)
@@ -1224,7 +1226,7 @@ func (p *UpdateProductRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter
 	return offset
 }
 
-func (p *UpdateProductRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateProductByIDRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetDescription() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 3)
@@ -1233,7 +1235,7 @@ func (p *UpdateProductRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter
 	return offset
 }
 
-func (p *UpdateProductRequest) fastWriteField4(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateProductByIDRequest) fastWriteField4(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetPrice() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 4)
@@ -1242,7 +1244,7 @@ func (p *UpdateProductRequest) fastWriteField4(buf []byte, w thrift.NocopyWriter
 	return offset
 }
 
-func (p *UpdateProductRequest) fastWriteField5(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateProductByIDRequest) fastWriteField5(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetStatus() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BYTE, 5)
@@ -1251,14 +1253,14 @@ func (p *UpdateProductRequest) fastWriteField5(buf []byte, w thrift.NocopyWriter
 	return offset
 }
 
-func (p *UpdateProductRequest) field1Length() int {
+func (p *UpdateProductByIDRequest) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *UpdateProductRequest) field2Length() int {
+func (p *UpdateProductByIDRequest) field2Length() int {
 	l := 0
 	if p.IsSetName() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1267,7 +1269,7 @@ func (p *UpdateProductRequest) field2Length() int {
 	return l
 }
 
-func (p *UpdateProductRequest) field3Length() int {
+func (p *UpdateProductByIDRequest) field3Length() int {
 	l := 0
 	if p.IsSetDescription() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1276,7 +1278,7 @@ func (p *UpdateProductRequest) field3Length() int {
 	return l
 }
 
-func (p *UpdateProductRequest) field4Length() int {
+func (p *UpdateProductByIDRequest) field4Length() int {
 	l := 0
 	if p.IsSetPrice() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1285,7 +1287,7 @@ func (p *UpdateProductRequest) field4Length() int {
 	return l
 }
 
-func (p *UpdateProductRequest) field5Length() int {
+func (p *UpdateProductByIDRequest) field5Length() int {
 	l := 0
 	if p.IsSetStatus() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1294,7 +1296,7 @@ func (p *UpdateProductRequest) field5Length() int {
 	return l
 }
 
-func (p *UpdateProductResponse) FastRead(buf []byte) (int, error) {
+func (p *UpdateProductByIDResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -1337,12 +1339,12 @@ func (p *UpdateProductResponse) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateProductResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateProductByIDResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *UpdateProductResponse) FastReadField1(buf []byte) (int, error) {
+func (p *UpdateProductByIDResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 	_field := NewProduct()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -1355,11 +1357,11 @@ func (p *UpdateProductResponse) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *UpdateProductResponse) FastWrite(buf []byte) int {
+func (p *UpdateProductByIDResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *UpdateProductResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateProductByIDResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -1368,7 +1370,7 @@ func (p *UpdateProductResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWrite
 	return offset
 }
 
-func (p *UpdateProductResponse) BLength() int {
+func (p *UpdateProductByIDResponse) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -1377,14 +1379,14 @@ func (p *UpdateProductResponse) BLength() int {
 	return l
 }
 
-func (p *UpdateProductResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateProductByIDResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
 	offset += p.Product.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
-func (p *UpdateProductResponse) field1Length() int {
+func (p *UpdateProductByIDResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += p.Product.BLength()
@@ -1787,7 +1789,7 @@ func (p *ListProductsResponse) field2Length() int {
 	return l
 }
 
-func (p *DeleteProductRequest) FastRead(buf []byte) (int, error) {
+func (p *DeleteProductByIDRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -1836,14 +1838,14 @@ func (p *DeleteProductRequest) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DeleteProductRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DeleteProductByIDRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 RequiredFieldNotSetError:
-	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_DeleteProductRequest[fieldId]))
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_DeleteProductByIDRequest[fieldId]))
 }
 
-func (p *DeleteProductRequest) FastReadField1(buf []byte) (int, error) {
+func (p *DeleteProductByIDRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -1858,11 +1860,11 @@ func (p *DeleteProductRequest) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *DeleteProductRequest) FastWrite(buf []byte) int {
+func (p *DeleteProductByIDRequest) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *DeleteProductRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *DeleteProductByIDRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -1871,7 +1873,7 @@ func (p *DeleteProductRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter
 	return offset
 }
 
-func (p *DeleteProductRequest) BLength() int {
+func (p *DeleteProductByIDRequest) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -1880,21 +1882,21 @@ func (p *DeleteProductRequest) BLength() int {
 	return l
 }
 
-func (p *DeleteProductRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *DeleteProductByIDRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
 	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
 	return offset
 }
 
-func (p *DeleteProductRequest) field1Length() int {
+func (p *DeleteProductByIDRequest) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *DeleteProductResponse) FastRead(buf []byte) (int, error) {
+func (p *DeleteProductByIDResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -1937,12 +1939,12 @@ func (p *DeleteProductResponse) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DeleteProductResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DeleteProductByIDResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *DeleteProductResponse) FastReadField1(buf []byte) (int, error) {
+func (p *DeleteProductByIDResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	var _field bool
@@ -1957,11 +1959,11 @@ func (p *DeleteProductResponse) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *DeleteProductResponse) FastWrite(buf []byte) int {
+func (p *DeleteProductByIDResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *DeleteProductResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *DeleteProductByIDResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -1970,7 +1972,7 @@ func (p *DeleteProductResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWrite
 	return offset
 }
 
-func (p *DeleteProductResponse) BLength() int {
+func (p *DeleteProductByIDResponse) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -1979,21 +1981,21 @@ func (p *DeleteProductResponse) BLength() int {
 	return l
 }
 
-func (p *DeleteProductResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *DeleteProductByIDResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 1)
 	offset += thrift.Binary.WriteBool(buf[offset:], p.Success)
 	return offset
 }
 
-func (p *DeleteProductResponse) field1Length() int {
+func (p *DeleteProductByIDResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.BoolLength()
 	return l
 }
 
-func (p *ModifyStockRequest) FastRead(buf []byte) (int, error) {
+func (p *ModifyStockByIDRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2063,14 +2065,14 @@ func (p *ModifyStockRequest) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ModifyStockRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ModifyStockByIDRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 RequiredFieldNotSetError:
-	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_ModifyStockRequest[fieldId]))
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_ModifyStockByIDRequest[fieldId]))
 }
 
-func (p *ModifyStockRequest) FastReadField1(buf []byte) (int, error) {
+func (p *ModifyStockByIDRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -2084,7 +2086,7 @@ func (p *ModifyStockRequest) FastReadField1(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *ModifyStockRequest) FastReadField2(buf []byte) (int, error) {
+func (p *ModifyStockByIDRequest) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -2099,11 +2101,11 @@ func (p *ModifyStockRequest) FastReadField2(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *ModifyStockRequest) FastWrite(buf []byte) int {
+func (p *ModifyStockByIDRequest) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *ModifyStockRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ModifyStockByIDRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -2113,7 +2115,7 @@ func (p *ModifyStockRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) 
 	return offset
 }
 
-func (p *ModifyStockRequest) BLength() int {
+func (p *ModifyStockByIDRequest) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -2123,35 +2125,35 @@ func (p *ModifyStockRequest) BLength() int {
 	return l
 }
 
-func (p *ModifyStockRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *ModifyStockByIDRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
 	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
 	return offset
 }
 
-func (p *ModifyStockRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+func (p *ModifyStockByIDRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 2)
 	offset += thrift.Binary.WriteI64(buf[offset:], p.Delta)
 	return offset
 }
 
-func (p *ModifyStockRequest) field1Length() int {
+func (p *ModifyStockByIDRequest) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *ModifyStockRequest) field2Length() int {
+func (p *ModifyStockByIDRequest) field2Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *ModifyStockResponse) FastRead(buf []byte) (int, error) {
+func (p *ModifyStockByIDResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2194,12 +2196,12 @@ func (p *ModifyStockResponse) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ModifyStockResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ModifyStockByIDResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *ModifyStockResponse) FastReadField1(buf []byte) (int, error) {
+func (p *ModifyStockByIDResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -2214,11 +2216,11 @@ func (p *ModifyStockResponse) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *ModifyStockResponse) FastWrite(buf []byte) int {
+func (p *ModifyStockByIDResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *ModifyStockResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ModifyStockByIDResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -2227,7 +2229,7 @@ func (p *ModifyStockResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter)
 	return offset
 }
 
-func (p *ModifyStockResponse) BLength() int {
+func (p *ModifyStockByIDResponse) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -2236,14 +2238,14 @@ func (p *ModifyStockResponse) BLength() int {
 	return l
 }
 
-func (p *ModifyStockResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *ModifyStockByIDResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
 	offset += thrift.Binary.WriteI64(buf[offset:], p.Stock)
 	return offset
 }
 
-func (p *ModifyStockResponse) field1Length() int {
+func (p *ModifyStockByIDResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
@@ -2494,7 +2496,7 @@ func (p *ProductServiceCreateProductResult) field1Length() int {
 	return l
 }
 
-func (p *ProductServiceGetProductArgs) FastRead(buf []byte) (int, error) {
+func (p *ProductServiceGetProductByIDArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2537,14 +2539,14 @@ func (p *ProductServiceGetProductArgs) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceGetProductArgs[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceGetProductByIDArgs[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *ProductServiceGetProductArgs) FastReadField1(buf []byte) (int, error) {
+func (p *ProductServiceGetProductByIDArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
-	_field := NewGetProductRequest()
+	_field := NewGetProductByIDRequest()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2555,11 +2557,11 @@ func (p *ProductServiceGetProductArgs) FastReadField1(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *ProductServiceGetProductArgs) FastWrite(buf []byte) int {
+func (p *ProductServiceGetProductByIDArgs) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *ProductServiceGetProductArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceGetProductByIDArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -2568,7 +2570,7 @@ func (p *ProductServiceGetProductArgs) FastWriteNocopy(buf []byte, w thrift.Noco
 	return offset
 }
 
-func (p *ProductServiceGetProductArgs) BLength() int {
+func (p *ProductServiceGetProductByIDArgs) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -2577,21 +2579,21 @@ func (p *ProductServiceGetProductArgs) BLength() int {
 	return l
 }
 
-func (p *ProductServiceGetProductArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceGetProductByIDArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
 	offset += p.Req.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
-func (p *ProductServiceGetProductArgs) field1Length() int {
+func (p *ProductServiceGetProductByIDArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += p.Req.BLength()
 	return l
 }
 
-func (p *ProductServiceGetProductResult) FastRead(buf []byte) (int, error) {
+func (p *ProductServiceGetProductByIDResult) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2648,14 +2650,14 @@ func (p *ProductServiceGetProductResult) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceGetProductResult[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceGetProductByIDResult[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *ProductServiceGetProductResult) FastReadField0(buf []byte) (int, error) {
+func (p *ProductServiceGetProductByIDResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
-	_field := NewGetProductResponse()
+	_field := NewGetProductByIDResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2665,7 +2667,7 @@ func (p *ProductServiceGetProductResult) FastReadField0(buf []byte) (int, error)
 	return offset, nil
 }
 
-func (p *ProductServiceGetProductResult) FastReadField1(buf []byte) (int, error) {
+func (p *ProductServiceGetProductByIDResult) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 	_field := base.NewErrorResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -2678,11 +2680,11 @@ func (p *ProductServiceGetProductResult) FastReadField1(buf []byte) (int, error)
 }
 
 // for compatibility
-func (p *ProductServiceGetProductResult) FastWrite(buf []byte) int {
+func (p *ProductServiceGetProductByIDResult) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *ProductServiceGetProductResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceGetProductByIDResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField0(buf[offset:], w)
@@ -2692,7 +2694,7 @@ func (p *ProductServiceGetProductResult) FastWriteNocopy(buf []byte, w thrift.No
 	return offset
 }
 
-func (p *ProductServiceGetProductResult) BLength() int {
+func (p *ProductServiceGetProductByIDResult) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field0Length()
@@ -2702,7 +2704,7 @@ func (p *ProductServiceGetProductResult) BLength() int {
 	return l
 }
 
-func (p *ProductServiceGetProductResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceGetProductByIDResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetSuccess() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 0)
@@ -2711,7 +2713,7 @@ func (p *ProductServiceGetProductResult) fastWriteField0(buf []byte, w thrift.No
 	return offset
 }
 
-func (p *ProductServiceGetProductResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceGetProductByIDResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetErr() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
@@ -2720,7 +2722,7 @@ func (p *ProductServiceGetProductResult) fastWriteField1(buf []byte, w thrift.No
 	return offset
 }
 
-func (p *ProductServiceGetProductResult) field0Length() int {
+func (p *ProductServiceGetProductByIDResult) field0Length() int {
 	l := 0
 	if p.IsSetSuccess() {
 		l += thrift.Binary.FieldBeginLength()
@@ -2729,7 +2731,7 @@ func (p *ProductServiceGetProductResult) field0Length() int {
 	return l
 }
 
-func (p *ProductServiceGetProductResult) field1Length() int {
+func (p *ProductServiceGetProductByIDResult) field1Length() int {
 	l := 0
 	if p.IsSetErr() {
 		l += thrift.Binary.FieldBeginLength()
@@ -2738,7 +2740,7 @@ func (p *ProductServiceGetProductResult) field1Length() int {
 	return l
 }
 
-func (p *ProductServiceUpdateProductArgs) FastRead(buf []byte) (int, error) {
+func (p *ProductServiceUpdateProductByIDArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2781,14 +2783,14 @@ func (p *ProductServiceUpdateProductArgs) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceUpdateProductArgs[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceUpdateProductByIDArgs[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *ProductServiceUpdateProductArgs) FastReadField1(buf []byte) (int, error) {
+func (p *ProductServiceUpdateProductByIDArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
-	_field := NewUpdateProductRequest()
+	_field := NewUpdateProductByIDRequest()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2799,11 +2801,11 @@ func (p *ProductServiceUpdateProductArgs) FastReadField1(buf []byte) (int, error
 }
 
 // for compatibility
-func (p *ProductServiceUpdateProductArgs) FastWrite(buf []byte) int {
+func (p *ProductServiceUpdateProductByIDArgs) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *ProductServiceUpdateProductArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceUpdateProductByIDArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -2812,7 +2814,7 @@ func (p *ProductServiceUpdateProductArgs) FastWriteNocopy(buf []byte, w thrift.N
 	return offset
 }
 
-func (p *ProductServiceUpdateProductArgs) BLength() int {
+func (p *ProductServiceUpdateProductByIDArgs) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -2821,21 +2823,21 @@ func (p *ProductServiceUpdateProductArgs) BLength() int {
 	return l
 }
 
-func (p *ProductServiceUpdateProductArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceUpdateProductByIDArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
 	offset += p.Req.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
-func (p *ProductServiceUpdateProductArgs) field1Length() int {
+func (p *ProductServiceUpdateProductByIDArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += p.Req.BLength()
 	return l
 }
 
-func (p *ProductServiceUpdateProductResult) FastRead(buf []byte) (int, error) {
+func (p *ProductServiceUpdateProductByIDResult) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2892,14 +2894,14 @@ func (p *ProductServiceUpdateProductResult) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceUpdateProductResult[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceUpdateProductByIDResult[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *ProductServiceUpdateProductResult) FastReadField0(buf []byte) (int, error) {
+func (p *ProductServiceUpdateProductByIDResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
-	_field := NewUpdateProductResponse()
+	_field := NewUpdateProductByIDResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2909,7 +2911,7 @@ func (p *ProductServiceUpdateProductResult) FastReadField0(buf []byte) (int, err
 	return offset, nil
 }
 
-func (p *ProductServiceUpdateProductResult) FastReadField1(buf []byte) (int, error) {
+func (p *ProductServiceUpdateProductByIDResult) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 	_field := base.NewErrorResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -2922,11 +2924,11 @@ func (p *ProductServiceUpdateProductResult) FastReadField1(buf []byte) (int, err
 }
 
 // for compatibility
-func (p *ProductServiceUpdateProductResult) FastWrite(buf []byte) int {
+func (p *ProductServiceUpdateProductByIDResult) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *ProductServiceUpdateProductResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceUpdateProductByIDResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField0(buf[offset:], w)
@@ -2936,7 +2938,7 @@ func (p *ProductServiceUpdateProductResult) FastWriteNocopy(buf []byte, w thrift
 	return offset
 }
 
-func (p *ProductServiceUpdateProductResult) BLength() int {
+func (p *ProductServiceUpdateProductByIDResult) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field0Length()
@@ -2946,7 +2948,7 @@ func (p *ProductServiceUpdateProductResult) BLength() int {
 	return l
 }
 
-func (p *ProductServiceUpdateProductResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceUpdateProductByIDResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetSuccess() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 0)
@@ -2955,7 +2957,7 @@ func (p *ProductServiceUpdateProductResult) fastWriteField0(buf []byte, w thrift
 	return offset
 }
 
-func (p *ProductServiceUpdateProductResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceUpdateProductByIDResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetErr() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
@@ -2964,7 +2966,7 @@ func (p *ProductServiceUpdateProductResult) fastWriteField1(buf []byte, w thrift
 	return offset
 }
 
-func (p *ProductServiceUpdateProductResult) field0Length() int {
+func (p *ProductServiceUpdateProductByIDResult) field0Length() int {
 	l := 0
 	if p.IsSetSuccess() {
 		l += thrift.Binary.FieldBeginLength()
@@ -2973,7 +2975,7 @@ func (p *ProductServiceUpdateProductResult) field0Length() int {
 	return l
 }
 
-func (p *ProductServiceUpdateProductResult) field1Length() int {
+func (p *ProductServiceUpdateProductByIDResult) field1Length() int {
 	l := 0
 	if p.IsSetErr() {
 		l += thrift.Binary.FieldBeginLength()
@@ -3226,7 +3228,7 @@ func (p *ProductServiceListProductsResult) field1Length() int {
 	return l
 }
 
-func (p *ProductServiceDeleteProductArgs) FastRead(buf []byte) (int, error) {
+func (p *ProductServiceDeleteProductByIDArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -3269,14 +3271,14 @@ func (p *ProductServiceDeleteProductArgs) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceDeleteProductArgs[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceDeleteProductByIDArgs[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *ProductServiceDeleteProductArgs) FastReadField1(buf []byte) (int, error) {
+func (p *ProductServiceDeleteProductByIDArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
-	_field := NewDeleteProductRequest()
+	_field := NewDeleteProductByIDRequest()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -3287,11 +3289,11 @@ func (p *ProductServiceDeleteProductArgs) FastReadField1(buf []byte) (int, error
 }
 
 // for compatibility
-func (p *ProductServiceDeleteProductArgs) FastWrite(buf []byte) int {
+func (p *ProductServiceDeleteProductByIDArgs) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *ProductServiceDeleteProductArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceDeleteProductByIDArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -3300,7 +3302,7 @@ func (p *ProductServiceDeleteProductArgs) FastWriteNocopy(buf []byte, w thrift.N
 	return offset
 }
 
-func (p *ProductServiceDeleteProductArgs) BLength() int {
+func (p *ProductServiceDeleteProductByIDArgs) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -3309,21 +3311,21 @@ func (p *ProductServiceDeleteProductArgs) BLength() int {
 	return l
 }
 
-func (p *ProductServiceDeleteProductArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceDeleteProductByIDArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
 	offset += p.Req.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
-func (p *ProductServiceDeleteProductArgs) field1Length() int {
+func (p *ProductServiceDeleteProductByIDArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += p.Req.BLength()
 	return l
 }
 
-func (p *ProductServiceDeleteProductResult) FastRead(buf []byte) (int, error) {
+func (p *ProductServiceDeleteProductByIDResult) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -3380,14 +3382,14 @@ func (p *ProductServiceDeleteProductResult) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceDeleteProductResult[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceDeleteProductByIDResult[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *ProductServiceDeleteProductResult) FastReadField0(buf []byte) (int, error) {
+func (p *ProductServiceDeleteProductByIDResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
-	_field := NewDeleteProductResponse()
+	_field := NewDeleteProductByIDResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -3397,7 +3399,7 @@ func (p *ProductServiceDeleteProductResult) FastReadField0(buf []byte) (int, err
 	return offset, nil
 }
 
-func (p *ProductServiceDeleteProductResult) FastReadField1(buf []byte) (int, error) {
+func (p *ProductServiceDeleteProductByIDResult) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 	_field := base.NewErrorResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -3410,11 +3412,11 @@ func (p *ProductServiceDeleteProductResult) FastReadField1(buf []byte) (int, err
 }
 
 // for compatibility
-func (p *ProductServiceDeleteProductResult) FastWrite(buf []byte) int {
+func (p *ProductServiceDeleteProductByIDResult) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *ProductServiceDeleteProductResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceDeleteProductByIDResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField0(buf[offset:], w)
@@ -3424,7 +3426,7 @@ func (p *ProductServiceDeleteProductResult) FastWriteNocopy(buf []byte, w thrift
 	return offset
 }
 
-func (p *ProductServiceDeleteProductResult) BLength() int {
+func (p *ProductServiceDeleteProductByIDResult) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field0Length()
@@ -3434,7 +3436,7 @@ func (p *ProductServiceDeleteProductResult) BLength() int {
 	return l
 }
 
-func (p *ProductServiceDeleteProductResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceDeleteProductByIDResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetSuccess() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 0)
@@ -3443,7 +3445,7 @@ func (p *ProductServiceDeleteProductResult) fastWriteField0(buf []byte, w thrift
 	return offset
 }
 
-func (p *ProductServiceDeleteProductResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *ProductServiceDeleteProductByIDResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetErr() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
@@ -3452,7 +3454,7 @@ func (p *ProductServiceDeleteProductResult) fastWriteField1(buf []byte, w thrift
 	return offset
 }
 
-func (p *ProductServiceDeleteProductResult) field0Length() int {
+func (p *ProductServiceDeleteProductByIDResult) field0Length() int {
 	l := 0
 	if p.IsSetSuccess() {
 		l += thrift.Binary.FieldBeginLength()
@@ -3461,7 +3463,7 @@ func (p *ProductServiceDeleteProductResult) field0Length() int {
 	return l
 }
 
-func (p *ProductServiceDeleteProductResult) field1Length() int {
+func (p *ProductServiceDeleteProductByIDResult) field1Length() int {
 	l := 0
 	if p.IsSetErr() {
 		l += thrift.Binary.FieldBeginLength()
@@ -3520,7 +3522,7 @@ SkipFieldError:
 
 func (p *ProductServiceModifyStockArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
-	_field := NewModifyStockRequest()
+	_field := NewModifyStockByIDRequest()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -3631,7 +3633,7 @@ SkipFieldError:
 
 func (p *ProductServiceModifyStockResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
-	_field := NewModifyStockResponse()
+	_field := NewModifyStockByIDResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -3722,19 +3724,19 @@ func (p *ProductServiceCreateProductResult) GetResult() interface{} {
 	return p.Success
 }
 
-func (p *ProductServiceGetProductArgs) GetFirstArgument() interface{} {
+func (p *ProductServiceGetProductByIDArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-func (p *ProductServiceGetProductResult) GetResult() interface{} {
+func (p *ProductServiceGetProductByIDResult) GetResult() interface{} {
 	return p.Success
 }
 
-func (p *ProductServiceUpdateProductArgs) GetFirstArgument() interface{} {
+func (p *ProductServiceUpdateProductByIDArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-func (p *ProductServiceUpdateProductResult) GetResult() interface{} {
+func (p *ProductServiceUpdateProductByIDResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -3746,11 +3748,11 @@ func (p *ProductServiceListProductsResult) GetResult() interface{} {
 	return p.Success
 }
 
-func (p *ProductServiceDeleteProductArgs) GetFirstArgument() interface{} {
+func (p *ProductServiceDeleteProductByIDArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-func (p *ProductServiceDeleteProductResult) GetResult() interface{} {
+func (p *ProductServiceDeleteProductByIDResult) GetResult() interface{} {
 	return p.Success
 }
 

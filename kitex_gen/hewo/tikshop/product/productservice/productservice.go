@@ -21,17 +21,17 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"GetProduct": kitex.NewMethodInfo(
-		getProductHandler,
-		newProductServiceGetProductArgs,
-		newProductServiceGetProductResult,
+	"GetProductByID": kitex.NewMethodInfo(
+		getProductByIDHandler,
+		newProductServiceGetProductByIDArgs,
+		newProductServiceGetProductByIDResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"UpdateProduct": kitex.NewMethodInfo(
-		updateProductHandler,
-		newProductServiceUpdateProductArgs,
-		newProductServiceUpdateProductResult,
+	"UpdateProductByID": kitex.NewMethodInfo(
+		updateProductByIDHandler,
+		newProductServiceUpdateProductByIDArgs,
+		newProductServiceUpdateProductByIDResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -42,10 +42,10 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"DeleteProduct": kitex.NewMethodInfo(
-		deleteProductHandler,
-		newProductServiceDeleteProductArgs,
-		newProductServiceDeleteProductResult,
+	"DeleteProductByID": kitex.NewMethodInfo(
+		deleteProductByIDHandler,
+		newProductServiceDeleteProductByIDArgs,
+		newProductServiceDeleteProductByIDResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -146,10 +146,10 @@ func newProductServiceCreateProductResult() interface{} {
 	return product.NewProductServiceCreateProductResult()
 }
 
-func getProductHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*product.ProductServiceGetProductArgs)
-	realResult := result.(*product.ProductServiceGetProductResult)
-	success, err := handler.(product.ProductService).GetProduct(ctx, realArg.Req)
+func getProductByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*product.ProductServiceGetProductByIDArgs)
+	realResult := result.(*product.ProductServiceGetProductByIDResult)
+	success, err := handler.(product.ProductService).GetProductByID(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -162,18 +162,18 @@ func getProductHandler(ctx context.Context, handler interface{}, arg, result int
 	}
 	return nil
 }
-func newProductServiceGetProductArgs() interface{} {
-	return product.NewProductServiceGetProductArgs()
+func newProductServiceGetProductByIDArgs() interface{} {
+	return product.NewProductServiceGetProductByIDArgs()
 }
 
-func newProductServiceGetProductResult() interface{} {
-	return product.NewProductServiceGetProductResult()
+func newProductServiceGetProductByIDResult() interface{} {
+	return product.NewProductServiceGetProductByIDResult()
 }
 
-func updateProductHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*product.ProductServiceUpdateProductArgs)
-	realResult := result.(*product.ProductServiceUpdateProductResult)
-	success, err := handler.(product.ProductService).UpdateProduct(ctx, realArg.Req)
+func updateProductByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*product.ProductServiceUpdateProductByIDArgs)
+	realResult := result.(*product.ProductServiceUpdateProductByIDResult)
+	success, err := handler.(product.ProductService).UpdateProductByID(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -186,12 +186,12 @@ func updateProductHandler(ctx context.Context, handler interface{}, arg, result 
 	}
 	return nil
 }
-func newProductServiceUpdateProductArgs() interface{} {
-	return product.NewProductServiceUpdateProductArgs()
+func newProductServiceUpdateProductByIDArgs() interface{} {
+	return product.NewProductServiceUpdateProductByIDArgs()
 }
 
-func newProductServiceUpdateProductResult() interface{} {
-	return product.NewProductServiceUpdateProductResult()
+func newProductServiceUpdateProductByIDResult() interface{} {
+	return product.NewProductServiceUpdateProductByIDResult()
 }
 
 func listProductsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -218,10 +218,10 @@ func newProductServiceListProductsResult() interface{} {
 	return product.NewProductServiceListProductsResult()
 }
 
-func deleteProductHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*product.ProductServiceDeleteProductArgs)
-	realResult := result.(*product.ProductServiceDeleteProductResult)
-	success, err := handler.(product.ProductService).DeleteProduct(ctx, realArg.Req)
+func deleteProductByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*product.ProductServiceDeleteProductByIDArgs)
+	realResult := result.(*product.ProductServiceDeleteProductByIDResult)
+	success, err := handler.(product.ProductService).DeleteProductByID(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -234,12 +234,12 @@ func deleteProductHandler(ctx context.Context, handler interface{}, arg, result 
 	}
 	return nil
 }
-func newProductServiceDeleteProductArgs() interface{} {
-	return product.NewProductServiceDeleteProductArgs()
+func newProductServiceDeleteProductByIDArgs() interface{} {
+	return product.NewProductServiceDeleteProductByIDArgs()
 }
 
-func newProductServiceDeleteProductResult() interface{} {
-	return product.NewProductServiceDeleteProductResult()
+func newProductServiceDeleteProductByIDResult() interface{} {
+	return product.NewProductServiceDeleteProductByIDResult()
 }
 
 func modifyStockHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -290,11 +290,11 @@ func (p *kClient) CreateProduct(ctx context.Context, req *product.CreateProductR
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetProduct(ctx context.Context, req *product.GetProductRequest) (r *product.GetProductResponse, err error) {
-	var _args product.ProductServiceGetProductArgs
+func (p *kClient) GetProductByID(ctx context.Context, req *product.GetProductByIDRequest) (r *product.GetProductByIDResponse, err error) {
+	var _args product.ProductServiceGetProductByIDArgs
 	_args.Req = req
-	var _result product.ProductServiceGetProductResult
-	if err = p.c.Call(ctx, "GetProduct", &_args, &_result); err != nil {
+	var _result product.ProductServiceGetProductByIDResult
+	if err = p.c.Call(ctx, "GetProductByID", &_args, &_result); err != nil {
 		return
 	}
 	switch {
@@ -304,11 +304,11 @@ func (p *kClient) GetProduct(ctx context.Context, req *product.GetProductRequest
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdateProduct(ctx context.Context, req *product.UpdateProductRequest) (r *product.UpdateProductResponse, err error) {
-	var _args product.ProductServiceUpdateProductArgs
+func (p *kClient) UpdateProductByID(ctx context.Context, req *product.UpdateProductByIDRequest) (r *product.UpdateProductByIDResponse, err error) {
+	var _args product.ProductServiceUpdateProductByIDArgs
 	_args.Req = req
-	var _result product.ProductServiceUpdateProductResult
-	if err = p.c.Call(ctx, "UpdateProduct", &_args, &_result); err != nil {
+	var _result product.ProductServiceUpdateProductByIDResult
+	if err = p.c.Call(ctx, "UpdateProductByID", &_args, &_result); err != nil {
 		return
 	}
 	switch {
@@ -332,11 +332,11 @@ func (p *kClient) ListProducts(ctx context.Context, req *product.ListProductsReq
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) DeleteProduct(ctx context.Context, req *product.DeleteProductRequest) (r *product.DeleteProductResponse, err error) {
-	var _args product.ProductServiceDeleteProductArgs
+func (p *kClient) DeleteProductByID(ctx context.Context, req *product.DeleteProductByIDRequest) (r *product.DeleteProductByIDResponse, err error) {
+	var _args product.ProductServiceDeleteProductByIDArgs
 	_args.Req = req
-	var _result product.ProductServiceDeleteProductResult
-	if err = p.c.Call(ctx, "DeleteProduct", &_args, &_result); err != nil {
+	var _result product.ProductServiceDeleteProductByIDResult
+	if err = p.c.Call(ctx, "DeleteProductByID", &_args, &_result); err != nil {
 		return
 	}
 	switch {
@@ -346,7 +346,7 @@ func (p *kClient) DeleteProduct(ctx context.Context, req *product.DeleteProductR
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ModifyStock(ctx context.Context, req *product.ModifyStockRequest) (r *product.ModifyStockResponse, err error) {
+func (p *kClient) ModifyStock(ctx context.Context, req *product.ModifyStockByIDRequest) (r *product.ModifyStockByIDResponse, err error) {
 	var _args product.ProductServiceModifyStockArgs
 	_args.Req = req
 	var _result product.ProductServiceModifyStockResult

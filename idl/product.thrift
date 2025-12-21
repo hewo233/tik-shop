@@ -23,20 +23,20 @@ struct CreateProductRequest {
 }
 
 struct CreateProductResponse {
-    1: Product product,
+    1: i64 product_id,
 }
 
 // 查询单个商品
-struct GetProductRequest {
+struct GetProductByIDRequest {
     1: required i64 product_id,
 }
 
-struct GetProductResponse {
+struct GetProductByIDResponse {
     1: Product product,
 }
 
 // 更新商品
-struct UpdateProductRequest {
+struct UpdateProductByIDRequest {
     1: required i64    product_id,
     2: optional string name,
     3: optional string description,
@@ -44,7 +44,7 @@ struct UpdateProductRequest {
     5: optional i8     status,
 }
 
-struct UpdateProductResponse {
+struct UpdateProductByIDResponse {
     1: Product product,
 }
 
@@ -62,30 +62,30 @@ struct ListProductsResponse {
 }
 
 // 删除商品
-struct DeleteProductRequest {
+struct DeleteProductByIDRequest {
     1: required i64 product_id,
 }
 
-struct DeleteProductResponse {
+struct DeleteProductByIDResponse {
     1: bool success,
 }
 
 // 修改库存
-struct ModifyStockRequest {
+struct ModifyStockByIDRequest {
     1: required i64 product_id,
     2: required i64 delta,  // 正数增加,负数减少
 }
 
-struct ModifyStockResponse {
+struct ModifyStockByIDResponse {
     1: i64 stock,  // 返回修改后的库存
 }
 
 // 商品服务
 service ProductService {
     CreateProductResponse CreateProduct(1: CreateProductRequest req) throws (1: base.ErrorResponse err);
-    GetProductResponse GetProduct(1: GetProductRequest req) throws (1: base.ErrorResponse err);
-    UpdateProductResponse UpdateProduct(1: UpdateProductRequest req) throws (1: base.ErrorResponse err);
+    GetProductByIDResponse GetProductByID(1: GetProductByIDRequest req) throws (1: base.ErrorResponse err);
+    UpdateProductByIDResponse UpdateProductByID(1: UpdateProductByIDRequest req) throws (1: base.ErrorResponse err);
     ListProductsResponse ListProducts(1: ListProductsRequest req) throws (1: base.ErrorResponse err);
-    DeleteProductResponse DeleteProduct(1: DeleteProductRequest req) throws (1: base.ErrorResponse err);
-    ModifyStockResponse ModifyStock(1: ModifyStockRequest req) throws (1: base.ErrorResponse err);
+    DeleteProductByIDResponse DeleteProductByID(1: DeleteProductByIDRequest req) throws (1: base.ErrorResponse err);
+    ModifyStockByIDResponse ModifyStock(1: ModifyStockByIDRequest req) throws (1: base.ErrorResponse err);
 }

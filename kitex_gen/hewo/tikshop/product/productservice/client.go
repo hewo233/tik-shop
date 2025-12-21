@@ -12,11 +12,11 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	CreateProduct(ctx context.Context, req *product.CreateProductRequest, callOptions ...callopt.Option) (r *product.CreateProductResponse, err error)
-	GetProduct(ctx context.Context, req *product.GetProductRequest, callOptions ...callopt.Option) (r *product.GetProductResponse, err error)
-	UpdateProduct(ctx context.Context, req *product.UpdateProductRequest, callOptions ...callopt.Option) (r *product.UpdateProductResponse, err error)
+	GetProductByID(ctx context.Context, req *product.GetProductByIDRequest, callOptions ...callopt.Option) (r *product.GetProductByIDResponse, err error)
+	UpdateProductByID(ctx context.Context, req *product.UpdateProductByIDRequest, callOptions ...callopt.Option) (r *product.UpdateProductByIDResponse, err error)
 	ListProducts(ctx context.Context, req *product.ListProductsRequest, callOptions ...callopt.Option) (r *product.ListProductsResponse, err error)
-	DeleteProduct(ctx context.Context, req *product.DeleteProductRequest, callOptions ...callopt.Option) (r *product.DeleteProductResponse, err error)
-	ModifyStock(ctx context.Context, req *product.ModifyStockRequest, callOptions ...callopt.Option) (r *product.ModifyStockResponse, err error)
+	DeleteProductByID(ctx context.Context, req *product.DeleteProductByIDRequest, callOptions ...callopt.Option) (r *product.DeleteProductByIDResponse, err error)
+	ModifyStock(ctx context.Context, req *product.ModifyStockByIDRequest, callOptions ...callopt.Option) (r *product.ModifyStockByIDResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -53,14 +53,14 @@ func (p *kProductServiceClient) CreateProduct(ctx context.Context, req *product.
 	return p.kClient.CreateProduct(ctx, req)
 }
 
-func (p *kProductServiceClient) GetProduct(ctx context.Context, req *product.GetProductRequest, callOptions ...callopt.Option) (r *product.GetProductResponse, err error) {
+func (p *kProductServiceClient) GetProductByID(ctx context.Context, req *product.GetProductByIDRequest, callOptions ...callopt.Option) (r *product.GetProductByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetProduct(ctx, req)
+	return p.kClient.GetProductByID(ctx, req)
 }
 
-func (p *kProductServiceClient) UpdateProduct(ctx context.Context, req *product.UpdateProductRequest, callOptions ...callopt.Option) (r *product.UpdateProductResponse, err error) {
+func (p *kProductServiceClient) UpdateProductByID(ctx context.Context, req *product.UpdateProductByIDRequest, callOptions ...callopt.Option) (r *product.UpdateProductByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateProduct(ctx, req)
+	return p.kClient.UpdateProductByID(ctx, req)
 }
 
 func (p *kProductServiceClient) ListProducts(ctx context.Context, req *product.ListProductsRequest, callOptions ...callopt.Option) (r *product.ListProductsResponse, err error) {
@@ -68,12 +68,12 @@ func (p *kProductServiceClient) ListProducts(ctx context.Context, req *product.L
 	return p.kClient.ListProducts(ctx, req)
 }
 
-func (p *kProductServiceClient) DeleteProduct(ctx context.Context, req *product.DeleteProductRequest, callOptions ...callopt.Option) (r *product.DeleteProductResponse, err error) {
+func (p *kProductServiceClient) DeleteProductByID(ctx context.Context, req *product.DeleteProductByIDRequest, callOptions ...callopt.Option) (r *product.DeleteProductByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DeleteProduct(ctx, req)
+	return p.kClient.DeleteProductByID(ctx, req)
 }
 
-func (p *kProductServiceClient) ModifyStock(ctx context.Context, req *product.ModifyStockRequest, callOptions ...callopt.Option) (r *product.ModifyStockResponse, err error) {
+func (p *kProductServiceClient) ModifyStock(ctx context.Context, req *product.ModifyStockByIDRequest, callOptions ...callopt.Option) (r *product.ModifyStockByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ModifyStock(ctx, req)
 }

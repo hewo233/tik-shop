@@ -70,3 +70,23 @@ func _products0Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _deleteproductbyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _modifystockbyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getproductbyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _updateproductbyidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

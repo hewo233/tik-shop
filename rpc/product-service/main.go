@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/hewo/tik-shop/db/superquery"
 	"log"
 	"net"
 
@@ -18,7 +19,9 @@ func main() {
 	}
 
 	addr, _ := net.ResolveTCPAddr("tcp", "127.0.0.1:8892")
-	svr := product.NewServer(new(ProductServiceImpl),
+	svr := product.NewServer(&ProductServiceImpl{
+		ProductSqlManage: superquery.NewProductSqlManageImpl(),
+	},
 		server.WithServiceAddr(addr),
 		// 指定 Registry 与服务基本信息
 		server.WithRegistry(r),

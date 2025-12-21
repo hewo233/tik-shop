@@ -10,7 +10,7 @@ import (
 )
 
 // NormalFuncChecker : self and admin can pass
-func NormalFuncChecker[T any](ctx context.Context, c *app.RequestContext, id int64, buildResp func(response *base.BaseResponse) T) bool {
+func NormalFuncChecker[T any](ctx context.Context, c *app.RequestContext, id int64, buildResp func(response *base.BaseResponse) T) bool  {
 	idStr := strconv.FormatInt(id, 10)
 	idCtx, exi := c.Get(consts.AccountID)
 	if !exi {

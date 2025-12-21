@@ -4,9 +4,14 @@ package product
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/hewo/tik-shop/route/init/rpc"
+	"github.com/hewo/tik-shop/route/utils"
+	"github.com/jinzhu/copier"
+	"net/http"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	productrpc "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/product"
 	base "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/base"
 	product "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/product"
 )
@@ -26,17 +31,51 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 	var req product.CreateProductRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, product.CreateProductResponse{
+			Base: &base.BaseResponse{
+				Code:    40010,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	resp := new(product.CreateProductResponse)
+	rpcReq := productrpc.NewCreateProductRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(http.StatusBadRequest, product.CreateProductResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+		return
+	}
+
+	rpcResp, err := rpc.ProductClient.CreateProduct(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+	resp := &product.CreateProductResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Created Product successfully",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(http.StatusBadRequest, product.CreateProductResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
 
-// GetProduct .
-// @Summary GetProduct
+// GetProductByID .
+// @Summary GetProductByID
 // @Description 根据产品 ID 获取单个产品的详细信息。
 // @Tags product
 // @Accept json
@@ -46,82 +85,55 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 // @Success 200 {object} base.Product "Product details"
 // @Failure 400 {string} string "Invalid request"
 // @router /api/product/:id [GET]
-func GetProduct(ctx context.Context, c *app.RequestContext) {
+func GetProductByID(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req product.GetProductRequest
+	var req product.GetProductByIDResponse
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, product.GetProductByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40010,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	resp := new(base.Product)
+	// Everybody can Get
 
-	c.JSON(consts.StatusOK, resp)
-}
-
-// UpdateProduct .
-// @Summary UpdateProduct
-// @Description 根据产品 ID 更新产品的详细信息。
-// @Tags product
-// @Accept json
-// @Produce json
-// @Param id path string true "Product ID" // 路径参数，指定需要更新的产品 ID
-// @Param request body product.UpdateProductRequest true "Request body with updated product details"
-// @Success 200 {object} product.UpdateProductResponse "Product updated successfully"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/product/:id [PUT]
-func UpdateProduct(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req product.UpdateProductRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	rpcReq := productrpc.NewGetProductByIDRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(http.StatusBadRequest, product.GetProductByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
 
-	resp := new(product.UpdateProductResponse)
+	rpcResp, err := rpc.ProductClient.GetProductByID(ctx, rpcReq)
 
-	c.JSON(consts.StatusOK, resp)
-}
-
-// DeleteProduct .
-// @Summary DeleteProduct
-// @Description 根据产品 ID 删除指定的产品。
-// @Tags product
-// @Accept json
-// @Produce json
-// @Param id path string true "Product ID" // 路径参数，用于指定需要删除的产品 ID
-// @Param request body product.DeleteProductRequest true "Request body with product ID"
-// @Success 200 {object} product.DeleteProductResponse "Product deleted successfully"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/product/:id [DELETE]
-func DeleteProduct(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req product.DeleteProductRequest
-	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		utils.HandleRPCError(c, err)
 		return
 	}
 
-	resp := new(product.DeleteProductResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// ModifyStock .
-// @router /api/product/:id/stock [PUT]
-func ModifyStock(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req product.ModifyStockRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	resp := &product.GetProductByIDResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Get Product successfully",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(http.StatusBadRequest, product.GetProductByIDResponse{
+			Base: &base.BaseResponse{
+				Code:    40090,
+				Message: err.Error(),
+			},
+		})
 		return
 	}
-
-	resp := new(product.ModifyStockResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -133,11 +145,79 @@ func ListProducts(ctx context.Context, c *app.RequestContext) {
 	var req product.ListProductsRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	rpcReq := productrpc.NewListProductsRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	rpcResp, err := rpc.ProductClient.ListProducts(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &product.ListProductsResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "List Products successfully",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	c.JSON(consts.StatusOK, resp)
+}
+
+// UpdateProductByID .
+// @router /product/:id [PUT]
+func UpdateProductByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.UpdateProductByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(product.ListProductsResponse)
+	resp := new(product.UpdateProductByIDResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// DeleteProductByID .
+// @router /product/:id [DELETE]
+func DeleteProductByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.DeleteProductByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(product.DeleteProductByIDResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// ModifyStockByID .
+// @router /product/:id/stock [PUT]
+func ModifyStockByID(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ModifyStockByIDRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(product.ModifyStockByIDResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }

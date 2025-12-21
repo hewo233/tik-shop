@@ -1,43 +1,43 @@
 package superquery
 
 import (
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
+	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 )
 
 var p = &query.Q.Product
 
-/*
-func GetProducts(page, limit int64) (products []*product.Product, err error) {
-	ps, err := p.Limit(int(limit)).Offset(int(limit) * int(page)).Find()
-	if err != nil {
-		return nil, fmt.Errorf("products can't be fetched from db: %v", err)
-	}
-	products = make([]*product.Product, len(ps))
-	err = copier.Copy(&products, ps)
-	if err != nil {
-		return nil, fmt.Errorf("products fetched from db can be copied: %v", err)
-	}
-	return
+type ProductSqlManageImpl struct{}
+
+func NewProductSqlManageImpl() *ProductSqlManageImpl {
+	return &ProductSqlManageImpl{}
 }
 
-func GetProductById(id int64) (product *product.Product, err error) {
-	tmp, err := p.Where(p.Id.Eq(id)).Find()
+func (m *ProductSqlManageImpl) CreateProduct(product *model.Product) (productID int64, err error) {
+	err = p.Create(product)
 	if err != nil {
-		return nil, err
+		return -1, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
-	err = copier.Copy(&product, tmp)
-	if err != nil {
-		return nil, err
-	}
-	return
+	return product.ID, nil
 }
 
-func CreateProduct(product *model.Product) error {
-	err := p.Create(product)
+func (m *ProductSqlManageImpl) GetProductByID(id int64) (productRet *model.Product, err error) {
+	productRet, err = p.Preload(p.Merchant).Where(p.ID.Eq(id)).First()
 	if err != nil {
-		return err
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
-	return nil
+
+	return productRet, nil
+}
+
+func (m *ProductSqlManageImpl) ListProducts(merchantID int64, offset int, limit int) (products []*model.Product, err error) {
+	productsRet, err := p.Preload(p.Merchant).Offset(offset).Limit(limit).Where(p.ID.Eq(merchantID)).Find()
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
+	return productsRet, nil
 }
 
 func UpdateProduct(product *model.Product) error {

@@ -3,12 +3,13 @@ namespace go hewo.tikshop.route.product
 include "./base.thrift"
 
 // 获取单个商品
-struct GetProductRequest {
+struct GetProductByIDRequest {
     1: i64 product_id (api.path = "id", api.vd = "$>0");
 }
 
-struct GetProductResponse {
-    1: base.Product product;
+struct GetProductByIDResponse {
+    1: base.BaseResponse base;
+    2: optional base.Product product;
 }
 
 // 创建商品
@@ -21,11 +22,12 @@ struct CreateProductRequest {
 }
 
 struct CreateProductResponse {
-    1: base.Product product;
+    1: base.BaseResponse base;
+    2: optional i64 product_id;
 }
 
 // 更新商品
-struct UpdateProductRequest {
+struct UpdateProductByIDRequest {
     1: i64 product_id (api.path = "id", api.vd = "$>0");
     2: optional string name (api.body = "name", api.vd = "len($) > 0 && len($) < 255");
     3: optional string description (api.body = "description");
@@ -33,47 +35,51 @@ struct UpdateProductRequest {
     5: optional i8 status (api.body = "status", api.vd = "$>=0 && $<=3");
 }
 
-struct UpdateProductResponse {
-    1: base.Product product;
+struct UpdateProductByIDResponse{
+    1: base.BaseResponse base;
+    2: optional base.Product product;
 }
 
 // 获取商品列表
 struct ListProductsRequest {
-    1: i64 merchant_id (api.query="merchant_id");
+    1: i64 merchant_id (api.query="merchant_id", api.vd = "$>0");
     2: i8  status (api.query="status");
     3: i64 page (api.query="page", api.vd = "$>0");
     4: i64 page_size (api.query="page_size", api.vd = "$>0 && $<=100");
 }
 
 struct ListProductsResponse {
-    1: list<base.Product> products;
-    2: i64 total;
+    1: base.BaseResponse base;
+    2: optional list<base.Product> products;
+    3: optional i64 total;
 }
 
 // 删除商品
-struct DeleteProductRequest {
+struct DeleteProductByIDRequest {
     1: i64 product_id (api.path = "id", api.vd = "$>0");
 }
 
-struct DeleteProductResponse {
-    1: bool success;
+struct DeleteProductByIDResponse {
+    1: base.BaseResponse base;
+    2: optional bool success;
 }
 
 // 修改库存
-struct ModifyStockRequest {
+struct ModifyStockByIDRequest {
     1: i64 product_id (api.path = "id", api.vd = "$>0");
     2: i64 delta (api.body = "delta", api.vd = "$!=0");
 }
 
-struct ModifyStockResponse {
-    1: i64 stock;
+struct ModifyStockByIDResponse {
+    1: base.BaseResponse base;
+    2: optional i64 stock;
 }
 
 service ProductService {
     CreateProductResponse CreateProduct(1: CreateProductRequest req) (api.post="/product");
-    GetProductResponse GetProduct(1: GetProductRequest req) (api.get="/product/:id");
-    UpdateProductResponse UpdateProduct(1: UpdateProductRequest req) (api.put="/product/:id");
+    GetProductByIDResponse GetProductByID(1: GetProductByIDRequest req) (api.get="/product/:id");
+    UpdateProductByIDResponse UpdateProductByID(1: UpdateProductByIDRequest req) (api.put="/product/:id");
     ListProductsResponse ListProducts(1: ListProductsRequest req) (api.get="/product/list");
-    DeleteProductResponse DeleteProduct(1: DeleteProductRequest req) (api.delete="/product/:id");
-    ModifyStockResponse ModifyStock(1: ModifyStockRequest req) (api.put="/product/:id/stock");
+    DeleteProductByIDResponse DeleteProductByID(1: DeleteProductByIDRequest req) (api.delete="/product/:id");
+    ModifyStockByIDResponse ModifyStockByID(1: ModifyStockByIDRequest req) (api.put="/product/:id/stock");
 }

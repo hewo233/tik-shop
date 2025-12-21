@@ -12,48 +12,74 @@ import (
 )
 
 // ProductServiceImpl implements the last service interface defined in the IDL.
-type ProductServiceImpl struct{}
-
-// GetProducts implements the ProductServiceImpl interface.
-func (s *ProductServiceImpl) GetProducts(ctx context.Context, request *product.GetProductsRequest) (resp *product.GetProductsReqsponse, err error) {
-	products, err := superquery.GetProducts(request.Page, request.Limit)
-	if err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
-	}
-	resp = &product.GetProductsReqsponse{
-		Products: products,
-	}
-	return resp, nil
+type ProductServiceImpl struct {
+	ProductSqlManage
 }
 
-// GetProductById implements the ProductServiceImpl interface.
-func (s *ProductServiceImpl) GetProductById(ctx context.Context, request *product.GetProductByIdRequest) (resp *product.GetProductByIdResponse, err error) {
-	p, err := superquery.GetProductById(request.Id)
-	if err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
-	}
-	resp = &product.GetProductByIdResponse{
-		Product: p,
-	}
-	return resp, nil
+type ProductSqlManage interface {
+	CreateProduct(product *model.Product) (productID int64, err error)
+	GetProductByID(id int64) (productRet *model.Product, err error)
+	ListProducts(merchantID int64, offset int, limit int) (products []*model.Product, err error)
 }
 
 // CreateProduct implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) CreateProduct(ctx context.Context, request *product.CreateProductRequest) (resp *product.CreateProductResponse, err error) {
 	p := &model.Product{}
-	err = copier.Copy(&p, request)
+
+	err = copier.Copy(p, request)
 	if err != nil {
 		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
-	err = superquery.CreateProduct(p)
+	p.Status = 1 // 默认上架状态
+
+	id, err := s.ProductSqlManage.CreateProduct(p)
+
 	if err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		return nil, err
 	}
 	resp = &product.CreateProductResponse{
-		Message:   "Product created successfully",
-		ProductId: -1, // I mean, maybe we dont need to return id?
+		ProductId: id,
 	}
-	return
+	return resp, nil
+}
+
+// GetProductByID implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) GetProductByID(ctx context.Context, req *product.GetProductByIDRequest) (resp *product.GetProductByIDResponse, err error) {
+	pro, err := s.ProductSqlManage.GetProductByID(req.ProductId)
+	if err = copier.Copy(resp, pro); err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
+
+	if err = copier.Copy(req, pro); err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
+
+	return resp, nil
+}
+
+// ListProducts implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) ListProducts(ctx context.Context, req *product.ListProductsRequest) (resp *product.ListProductsResponse, err error) {
+	offset := int((req.Page - 1) * req.PageSize)
+	limit := int(req.PageSize)
+
+	products, err := s.ProductSqlManage.ListProducts(req.MerchantId, offset, limit)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
+
+	resp = &product.ListProductsResponse{
+		Products: make([]*product.Product, len(products)),
+	}
+	for i, pro := range products {
+		p := &product.Product{}
+		err = copier.Copy(p, pro)
+		if err != nil {
+			return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+		}
+		resp.Products[i] = p
+	}
+
+	return resp, nil
 }
 
 // UpdateProduct implements the ProductServiceImpl interface.
@@ -85,20 +111,20 @@ func (s *ProductServiceImpl) DeleteProduct(ctx context.Context, request *product
 	return
 }
 
-// GetProduct implements the ProductServiceImpl interface.
-func (s *ProductServiceImpl) GetProduct(ctx context.Context, req *product.GetProductRequest) (resp *product.GetProductResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
-// ListProducts implements the ProductServiceImpl interface.
-func (s *ProductServiceImpl) ListProducts(ctx context.Context, req *product.ListProductsRequest) (resp *product.ListProductsResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
 // ModifyStock implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) ModifyStock(ctx context.Context, req *product.ModifyStockRequest) (resp *product.ModifyStockResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// UpdateProductByID implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) UpdateProductByID(ctx context.Context, req *product.UpdateProductByIDRequest) (resp *product.UpdateProductByIDResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// DeleteProductByID implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) DeleteProductByID(ctx context.Context, req *product.DeleteProductByIDRequest) (resp *product.DeleteProductByIDResponse, err error) {
 	// TODO: Your code here...
 	return
 }
