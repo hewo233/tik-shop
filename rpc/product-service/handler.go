@@ -20,7 +20,7 @@ type ProductSqlManage interface {
 	ListProducts(merchantID int64, offset int, limit int) (products []*model.Product, err error)
 	CheckAndGetProduct(productID int64, merchantID int64) (*model.Product, error)
 	UpdateProductByID(product *model.Product) error
-	DeleteProductByID(productID int64) (err error)
+	DeleteProductByID(productID int64, merchantID int64) (err error)
 	ModifyStockByID(product *model.Product) error
 }
 
@@ -48,11 +48,14 @@ func (s *ProductServiceImpl) CreateProduct(ctx context.Context, request *product
 // GetProductByID implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) GetProductByID(ctx context.Context, req *product.GetProductByIDRequest) (resp *product.GetProductByIDResponse, err error) {
 	pro, err := s.ProductSqlManage.GetProductByID(req.ProductId)
-	if err = copier.Copy(resp, pro); err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	if err != nil {
+		return nil, err
 	}
 
-	if err = copier.Copy(req, pro); err != nil {
+	resp = &product.GetProductByIDResponse{}
+	resp.Product = &product.Product{}
+
+	if err = copier.Copy(resp.Product, pro); err != nil {
 		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
 
@@ -71,6 +74,7 @@ func (s *ProductServiceImpl) ListProducts(ctx context.Context, req *product.List
 
 	resp = &product.ListProductsResponse{
 		Products: make([]*product.Product, len(products)),
+		Total:    int64(len(products)),
 	}
 	for i, pro := range products {
 		p := &product.Product{}
@@ -90,7 +94,7 @@ func (s *ProductServiceImpl) UpdateProductByID(ctx context.Context, req *product
 		return nil, &base.ErrorResponse{Code: consts.StatusBadRequest, Message: "invalid merchant id or product id"}
 	}
 
-	existed, err := s.ProductSqlManage.CheckAndGetProduct(req.MerchantId, req.ProductId)
+	existed, err := s.ProductSqlManage.CheckAndGetProduct(req.ProductId, req.MerchantId)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +118,8 @@ func (s *ProductServiceImpl) UpdateProductByID(ctx context.Context, req *product
 	}
 
 	resp = &product.UpdateProductByIDResponse{}
-	err = copier.Copy(resp, existed)
+	resp.Product = &product.Product{}
+	err = copier.Copy(resp.Product, existed)
 	if err != nil {
 		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
@@ -129,12 +134,7 @@ func (s *ProductServiceImpl) DeleteProductByID(ctx context.Context, req *product
 		return nil, &base.ErrorResponse{Code: consts.StatusBadRequest, Message: "invalid merchant id or product id"}
 	}
 
-	_, err = s.ProductSqlManage.CheckAndGetProduct(req.MerchantId, req.ProductId)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.ProductSqlManage.DeleteProductByID(req.ProductId)
+	err = s.ProductSqlManage.DeleteProductByID(req.ProductId, req.MerchantId)
 	if err != nil {
 		return nil, err
 	}

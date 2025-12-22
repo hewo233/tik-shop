@@ -1675,9 +1675,6 @@
                 },
                 "delta": {
                     "type": "integer"
-                },
-                "product_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -1702,9 +1699,6 @@
                     "type": "string"
                 },
                 "price": {
-                    "type": "integer"
-                },
-                "product_id": {
                     "type": "integer"
                 },
                 "status": {

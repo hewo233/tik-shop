@@ -234,8 +234,6 @@ definitions:
         type: integer
       delta:
         type: integer
-      product_id:
-        type: integer
     type: object
   product.ModifyStockByIDResponse:
     properties:
@@ -251,8 +249,6 @@ definitions:
       name:
         type: string
       price:
-        type: integer
-      product_id:
         type: integer
       status:
         type: integer

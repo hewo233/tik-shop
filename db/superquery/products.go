@@ -5,6 +5,7 @@ import (
 	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/db/query"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
+	"log"
 )
 
 var p = &query.Q.Product
@@ -34,7 +35,7 @@ func (m *ProductSqlManageImpl) GetProductByID(id int64) (productRet *model.Produ
 }
 
 func (m *ProductSqlManageImpl) ListProducts(merchantID int64, offset int, limit int) (products []*model.Product, err error) {
-	productsRet, err := p.Preload(p.Merchant).Offset(offset).Limit(limit).Where(p.ID.Eq(merchantID)).Where(p.Status.Neq(0)).Find()
+	productsRet, err := p.Preload(p.Merchant).Offset(offset).Limit(limit).Where(p.MerchantID.Eq(merchantID)).Where(p.Status.Neq(0)).Find()
 	if err != nil {
 		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
@@ -47,6 +48,7 @@ func (m *ProductSqlManageImpl) CheckAndGetProduct(productID int64, merchantID in
 		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
 	if existed.MerchantID != merchantID {
+		log.Println("product is not owned by merchant:", existed.MerchantID, " requested by:", merchantID)
 		return nil, &base.ErrorResponse{Code: consts.StatusForbidden, Message: "permission denied: not the owner of the product"}
 	}
 	return existed, nil
@@ -63,9 +65,9 @@ func (m *ProductSqlManageImpl) UpdateProductByID(product *model.Product) error {
 	return nil
 }
 
-func (m *ProductSqlManageImpl) DeleteProductByID(productID int64) (err error) {
+func (m *ProductSqlManageImpl) DeleteProductByID(productID int64, merchantID int64) (err error) {
 
-	result, err := p.Where(p.ID.Eq(productID)).Delete()
+	result, err := p.Where(p.ID.Eq(productID)).Where(p.MerchantID.Eq(merchantID)).Update(p.Status, 0)
 	if err != nil {
 		return err
 	}

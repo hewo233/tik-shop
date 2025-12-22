@@ -1678,9 +1678,6 @@ const docTemplate = `{
                 },
                 "delta": {
                     "type": "integer"
-                },
-                "product_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -1705,9 +1702,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "price": {
-                    "type": "integer"
-                },
-                "product_id": {
                     "type": "integer"
                 },
                 "status": {

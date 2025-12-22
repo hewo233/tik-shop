@@ -4,7 +4,7 @@ include "./base.thrift"
 
 // 获取单个商品
 struct GetProductByIDRequest {
-    1: i64 product_id (api.path = "id", api.vd = "$>0");
+    1: i64 product_id (api.path = "id", api.vd = "$>0", api.body = '-');
 }
 
 struct GetProductByIDResponse {
@@ -27,7 +27,7 @@ struct CreateProductResponse {
 
 // 更新商品
 struct UpdateProductByIDRequest {
-    1: i64 product_id (api.path = "id", api.vd = "$>0");
+    1: i64 product_id (api.path = "id", api.vd = "$>0", api.body = '-');
     2: optional string name (api.body = "name", api.vd = "len($) > 0 && len($) < 255");
     3: optional string description (api.body = "description");
     4: optional i64 price (api.body = "price", api.vd = "$>0");
@@ -42,9 +42,8 @@ struct UpdateProductByIDResponse{
 // 获取商品列表
 struct ListProductsRequest {
     1: i64 merchant_id (api.query="merchant_id", api.vd = "$>0");
-    2: i8  status (api.query="status");
-    3: i64 page (api.query="page", api.vd = "$>0");
-    4: i64 page_size (api.query="page_size", api.vd = "$>0 && $<=100");
+    2: i64 page (api.query="page", api.vd = "$>0");
+    3: i64 page_size (api.query="page_size", api.vd = "$>0 && $<=100");
 }
 
 struct ListProductsResponse {
@@ -55,7 +54,7 @@ struct ListProductsResponse {
 
 // 删除商品
 struct DeleteProductByIDRequest {
-    1: i64 product_id (api.path = "id", api.vd = "$>0");
+    1: i64 product_id (api.path = "id", api.vd = "$>0", api.body = '-');
 }
 
 struct DeleteProductByIDResponse {
@@ -65,7 +64,7 @@ struct DeleteProductByIDResponse {
 
 // 修改库存
 struct ModifyStockByIDRequest {
-    1: i64 product_id (api.path = "id", api.vd = "$>0");
+    1: i64 product_id (api.path = "id", api.vd = "$>0", api.body = '-');
     2: i64 delta (api.body = "delta", api.vd = "$!=0");
     3: i64 currentStock (api.body = "current_stock", api.vd = "$>=0");
 }

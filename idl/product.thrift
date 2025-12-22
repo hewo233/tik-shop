@@ -52,9 +52,8 @@ struct UpdateProductByIDResponse {
 // 商品列表查询
 struct ListProductsRequest {
     1: i64 merchant_id,
-    2: i8  status,
-    3: i64 page = 1,
-    4: i64 page_size = 10,
+    2: i64 page = 1,
+    3: i64 page_size = 10,
 }
 
 struct ListProductsResponse {

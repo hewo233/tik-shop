@@ -97,7 +97,7 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 // @Router /product/{id} [GET]
 func GetProductByID(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req product.GetProductByIDResponse
+	var req product.GetProductByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, product.GetProductByIDResponse{
@@ -296,7 +296,12 @@ func DeleteProductByID(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := &product.DeleteProductByIDResponse{}
+	resp := &product.DeleteProductByIDResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Delete Product successfully",
+		},
+	}
 	if err = copier.Copy(resp, rpcResp); err != nil {
 		c.JSON(consts.StatusBadRequest, err.Error())
 		return
