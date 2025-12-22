@@ -38,10 +38,11 @@ struct GetProductByIDResponse {
 // 更新商品
 struct UpdateProductByIDRequest {
     1: required i64    product_id,
-    2: optional string name,
-    3: optional string description,
-    4: optional i64    price,
-    5: optional i8     status,
+    2: required i64    merchant_id,
+    3: optional string name,
+    4: optional string description,
+    5: optional i64    price,
+    6: optional i8     status,
 }
 
 struct UpdateProductByIDResponse {
@@ -64,6 +65,7 @@ struct ListProductsResponse {
 // 删除商品
 struct DeleteProductByIDRequest {
     1: required i64 product_id,
+    2: required i64 merchant_id,
 }
 
 struct DeleteProductByIDResponse {
@@ -74,6 +76,8 @@ struct DeleteProductByIDResponse {
 struct ModifyStockByIDRequest {
     1: required i64 product_id,
     2: required i64 delta,  // 正数增加,负数减少
+    3: required i64 currentStock, // 当前库存
+    4: required i64 merchant_id,
 }
 
 struct ModifyStockByIDResponse {

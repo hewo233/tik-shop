@@ -181,11 +181,44 @@ func UpdateProductByID(ctx context.Context, c *app.RequestContext) {
 	var req product.UpdateProductByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(product.UpdateProductByIDResponse)
+	merchantID, ok := NormalMerchantChecker(ctx, c, func(response *base.BaseResponse) *product.UpdateProductByIDResponse {
+		return &product.UpdateProductByIDResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
+
+	rpcReq := productrpc.NewUpdateProductByIDRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	rpcReq.MerchantId = merchantID
+
+	rpcResp, err := rpc.ProductClient.UpdateProductByID(ctx, rpcReq)
+
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &product.UpdateProductByIDResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Update Product successfully",
+		},
+	}
+
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -197,11 +230,37 @@ func DeleteProductByID(ctx context.Context, c *app.RequestContext) {
 	var req product.DeleteProductByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(product.DeleteProductByIDResponse)
+	merchantID, ok := NormalMerchantChecker(ctx, c, func(response *base.BaseResponse) *product.DeleteProductByIDResponse {
+		return &product.DeleteProductByIDResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
+
+	rpcReq := productrpc.NewDeleteProductByIDRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	rpcReq.MerchantId = merchantID
+
+	rpcResp, err := rpc.ProductClient.DeleteProductByID(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &product.DeleteProductByIDResponse{}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -213,11 +272,42 @@ func ModifyStockByID(ctx context.Context, c *app.RequestContext) {
 	var req product.ModifyStockByIDRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(product.ModifyStockByIDResponse)
+	merchantID, ok := NormalMerchantChecker(ctx, c, func(response *base.BaseResponse) *product.ModifyStockByIDResponse {
+		return &product.ModifyStockByIDResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
+
+	rpcReq := productrpc.NewModifyStockByIDRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	rpcReq.MerchantId = merchantID
+
+	rpcResp, err := rpc.ProductClient.ModifyStock(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &product.ModifyStockByIDResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Modify Stock successfully",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }

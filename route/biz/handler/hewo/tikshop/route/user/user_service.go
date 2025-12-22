@@ -209,7 +209,7 @@ func GetUserInfoByID(ctx context.Context, c *app.RequestContext) {
 		return &user.GetUserInfoByIDResponse{
 			Base: response,
 		}
-	}) {
+	})	 {
 		return
 	}
 

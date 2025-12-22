@@ -32,7 +32,7 @@ struct UpdateProductByIDRequest {
     2: optional string name (api.body = "name", api.vd = "len($) > 0 && len($) < 255");
     3: optional string description (api.body = "description");
     4: optional i64 price (api.body = "price", api.vd = "$>0");
-    5: optional i8 status (api.body = "status", api.vd = "$>=0 && $<=3");
+    5: optional i8 status (api.body = "status", api.vd = "$>0 && $<3");
 }
 
 struct UpdateProductByIDResponse{
@@ -68,6 +68,7 @@ struct DeleteProductByIDResponse {
 struct ModifyStockByIDRequest {
     1: i64 product_id (api.path = "id", api.vd = "$>0");
     2: i64 delta (api.body = "delta", api.vd = "$!=0");
+    3: i64 currentStock (api.body = "current_stock", api.vd = "$>=0");
 }
 
 struct ModifyStockByIDResponse {

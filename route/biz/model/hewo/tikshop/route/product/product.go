@@ -910,7 +910,7 @@ type UpdateProductByIDRequest struct {
 	Name        *string `thrift:"name,2,optional" form:"name" json:"name,omitempty" vd:"len($) > 0 && len($) < 255"`
 	Description *string `thrift:"description,3,optional" form:"description" json:"description,omitempty"`
 	Price       *int64  `thrift:"price,4,optional" form:"price" json:"price,omitempty" vd:"$>0"`
-	Status      *int8   `thrift:"status,5,optional" form:"status" json:"status,omitempty" vd:"$>=0 && $<=3"`
+	Status      *int8   `thrift:"status,5,optional" form:"status" json:"status,omitempty" vd:"$>0 && $<3"`
 }
 
 func NewUpdateProductByIDRequest() *UpdateProductByIDRequest {
@@ -2384,8 +2384,9 @@ func (p *DeleteProductByIDResponse) String() string {
 
 // 修改库存
 type ModifyStockByIDRequest struct {
-	ProductID int64 `thrift:"product_id,1" json:"product_id" path:"id" vd:"$>0"`
-	Delta     int64 `thrift:"delta,2" form:"delta" json:"delta" vd:"$!=0"`
+	ProductID    int64 `thrift:"product_id,1" json:"product_id" path:"id" vd:"$>0"`
+	Delta        int64 `thrift:"delta,2" form:"delta" json:"delta" vd:"$!=0"`
+	CurrentStock int64 `thrift:"currentStock,3" form:"current_stock" json:"current_stock" vd:"$>=0"`
 }
 
 func NewModifyStockByIDRequest() *ModifyStockByIDRequest {
@@ -2403,9 +2404,14 @@ func (p *ModifyStockByIDRequest) GetDelta() (v int64) {
 	return p.Delta
 }
 
+func (p *ModifyStockByIDRequest) GetCurrentStock() (v int64) {
+	return p.CurrentStock
+}
+
 var fieldIDToName_ModifyStockByIDRequest = map[int16]string{
 	1: "product_id",
 	2: "delta",
+	3: "currentStock",
 }
 
 func (p *ModifyStockByIDRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -2438,6 +2444,14 @@ func (p *ModifyStockByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -2494,6 +2508,17 @@ func (p *ModifyStockByIDRequest) ReadField2(iprot thrift.TProtocol) error {
 	p.Delta = _field
 	return nil
 }
+func (p *ModifyStockByIDRequest) ReadField3(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.CurrentStock = _field
+	return nil
+}
 
 func (p *ModifyStockByIDRequest) Write(oprot thrift.TProtocol) (err error) {
 
@@ -2508,6 +2533,10 @@ func (p *ModifyStockByIDRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 	}
@@ -2560,6 +2589,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *ModifyStockByIDRequest) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("currentStock", thrift.I64, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.CurrentStock); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *ModifyStockByIDRequest) String() string {

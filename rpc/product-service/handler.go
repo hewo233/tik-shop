@@ -5,7 +5,6 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/hewo/tik-shop/db/model"
-	"github.com/hewo/tik-shop/db/superquery"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
 	product "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/product"
 	"github.com/jinzhu/copier"
@@ -20,6 +19,9 @@ type ProductSqlManage interface {
 	CreateProduct(product *model.Product) (productID int64, err error)
 	GetProductByID(id int64) (productRet *model.Product, err error)
 	ListProducts(merchantID int64, offset int, limit int) (products []*model.Product, err error)
+	CheckAndGetProduct(productID int64, merchantID int64) (*model.Product, error)
+	UpdateProductByID(product *model.Product) error
+	DeleteProductByID(productID int64) (err error)
 }
 
 // CreateProduct implements the ProductServiceImpl interface.
@@ -82,49 +84,92 @@ func (s *ProductServiceImpl) ListProducts(ctx context.Context, req *product.List
 	return resp, nil
 }
 
-// UpdateProduct implements the ProductServiceImpl interface.
-func (s *ProductServiceImpl) UpdateProduct(ctx context.Context, request *product.UpdateProductRequest) (resp *product.UpdateProductResponse, err error) {
-	p := &model.Product{}
-	err = copier.Copy(&p, request)
-	if err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
-	}
-	err = superquery.UpdateProduct(p)
-	if err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
-	}
-	resp = &product.UpdateProductResponse{
-		Message: "Product updated successfully",
-	}
-	return
-}
-
-// DeleteProduct implements the ProductServiceImpl interface.
-func (s *ProductServiceImpl) DeleteProduct(ctx context.Context, request *product.DeleteProductRequest) (resp *product.DeleteProductResponse, err error) {
-	err = superquery.DeleteProduct(request.Id)
-	if err != nil {
-		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
-	}
-	resp = &product.DeleteProductResponse{
-		Message: "Product deleted successfully",
-	}
-	return
-}
-
-// ModifyStock implements the ProductServiceImpl interface.
-func (s *ProductServiceImpl) ModifyStock(ctx context.Context, req *product.ModifyStockRequest) (resp *product.ModifyStockResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
 // UpdateProductByID implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) UpdateProductByID(ctx context.Context, req *product.UpdateProductByIDRequest) (resp *product.UpdateProductByIDResponse, err error) {
-	// TODO: Your code here...
-	return
+	if req.MerchantId <= 0 || req.ProductId <= 0 {
+		return nil, &base.ErrorResponse{Code: consts.StatusBadRequest, Message: "invalid merchant id or product id"}
+	}
+
+	existed, err := s.ProductSqlManage.CheckAndGetProduct(req.MerchantId, req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.Name != nil {
+		existed.Name = *req.Name
+	}
+	if req.Description != nil {
+		existed.Description = *req.Description
+	}
+	if req.Price != nil {
+		existed.Price = *req.Price
+	}
+	if req.Status != nil {
+		existed.Status = *req.Status
+	}
+
+	err = s.ProductSqlManage.UpdateProductByID(existed)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &product.UpdateProductByIDResponse{}
+	err = copier.Copy(resp, existed)
+	if err != nil {
+		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
+	}
+
+	return resp, nil
+
 }
 
 // DeleteProductByID implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) DeleteProductByID(ctx context.Context, req *product.DeleteProductByIDRequest) (resp *product.DeleteProductByIDResponse, err error) {
-	// TODO: Your code here...
-	return
+	if req.MerchantId <= 0 || req.ProductId <= 0 {
+		return nil, &base.ErrorResponse{Code: consts.StatusBadRequest, Message: "invalid merchant id or product id"}
+	}
+
+	_, err = s.ProductSqlManage.CheckAndGetProduct(req.MerchantId, req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.ProductSqlManage.DeleteProductByID(req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &product.DeleteProductByIDResponse{
+		Success: true,
+	}
+
+	return resp, nil
+}
+
+// ModifyStockByID implements the ProductServiceImpl interface.
+func (s *ProductServiceImpl) ModifyStockByID(ctx context.Context, req *product.ModifyStockByIDRequest) (resp *product.ModifyStockByIDResponse, err error) {
+	if req.MerchantId <= 0 || req.ProductId <= 0 {
+		return nil, &base.ErrorResponse{Code: consts.StatusBadRequest, Message: "invalid merchant id or product id"}
+	}
+
+	existed, err := s.ProductSqlManage.CheckAndGetProduct(req.MerchantId, req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed.Stock != req.CurrentStock {
+		return nil, &base.ErrorResponse{Code: consts.StatusConflict, Message: "stock mismatch"}
+	}
+
+	existed.Stock += req.Delta
+	err = s.ProductSqlManage.UpdateProductByID(existed)
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &product.ModifyStockByIDResponse{
+		Stock: existed.Stock,
+	}
+
+	return resp, nil
 }

@@ -9,7 +9,7 @@ type Product struct {
 	Description string `gorm:"column:description;type:text" json:"description"`
 
 	Price  int64 `gorm:"column:price;not null" json:"price"`
-	Stock  int   `gorm:"column:stock;default:0" json:"stock"`
+	Stock  int64 `gorm:"column:stock;default:0" json:"stock"`
 	Status int8  `gorm:"column:status;default:1;index" json:"status"` // 1:上架, 0:删除 2:下架 3:售罄
 
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`

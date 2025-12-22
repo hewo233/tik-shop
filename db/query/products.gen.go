@@ -32,7 +32,7 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 	_product.Name = field.NewString(tableName, "name")
 	_product.Description = field.NewString(tableName, "description")
 	_product.Price = field.NewInt64(tableName, "price")
-	_product.Stock = field.NewInt(tableName, "stock")
+	_product.Stock = field.NewInt64(tableName, "stock")
 	_product.Status = field.NewInt8(tableName, "status")
 	_product.CreatedAt = field.NewTime(tableName, "created_at")
 	_product.UpdatedAt = field.NewTime(tableName, "updated_at")
@@ -244,7 +244,7 @@ type product struct {
 	Name        field.String
 	Description field.String
 	Price       field.Int64
-	Stock       field.Int
+	Stock       field.Int64
 	Status      field.Int8
 	CreatedAt   field.Time
 	UpdatedAt   field.Time
@@ -270,7 +270,7 @@ func (p *product) updateTableName(table string) *product {
 	p.Name = field.NewString(table, "name")
 	p.Description = field.NewString(table, "description")
 	p.Price = field.NewInt64(table, "price")
-	p.Stock = field.NewInt(table, "stock")
+	p.Stock = field.NewInt64(table, "stock")
 	p.Status = field.NewInt8(table, "status")
 	p.CreatedAt = field.NewTime(table, "created_at")
 	p.UpdatedAt = field.NewTime(table, "updated_at")

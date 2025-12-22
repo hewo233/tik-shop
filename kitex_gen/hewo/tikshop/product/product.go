@@ -1489,10 +1489,11 @@ func (p *GetProductByIDResponse) Field1DeepEqual(src *Product) bool {
 
 type UpdateProductByIDRequest struct {
 	ProductId   int64   `thrift:"product_id,1,required" frugal:"1,required,i64" json:"product_id"`
-	Name        *string `thrift:"name,2,optional" frugal:"2,optional,string" json:"name,omitempty"`
-	Description *string `thrift:"description,3,optional" frugal:"3,optional,string" json:"description,omitempty"`
-	Price       *int64  `thrift:"price,4,optional" frugal:"4,optional,i64" json:"price,omitempty"`
-	Status      *int8   `thrift:"status,5,optional" frugal:"5,optional,i8" json:"status,omitempty"`
+	MerchantId  int64   `thrift:"merchant_id,2,required" frugal:"2,required,i64" json:"merchant_id"`
+	Name        *string `thrift:"name,3,optional" frugal:"3,optional,string" json:"name,omitempty"`
+	Description *string `thrift:"description,4,optional" frugal:"4,optional,string" json:"description,omitempty"`
+	Price       *int64  `thrift:"price,5,optional" frugal:"5,optional,i64" json:"price,omitempty"`
+	Status      *int8   `thrift:"status,6,optional" frugal:"6,optional,i8" json:"status,omitempty"`
 }
 
 func NewUpdateProductByIDRequest() *UpdateProductByIDRequest {
@@ -1504,6 +1505,10 @@ func (p *UpdateProductByIDRequest) InitDefault() {
 
 func (p *UpdateProductByIDRequest) GetProductId() (v int64) {
 	return p.ProductId
+}
+
+func (p *UpdateProductByIDRequest) GetMerchantId() (v int64) {
+	return p.MerchantId
 }
 
 var UpdateProductByIDRequest_Name_DEFAULT string
@@ -1544,6 +1549,9 @@ func (p *UpdateProductByIDRequest) GetStatus() (v int8) {
 func (p *UpdateProductByIDRequest) SetProductId(val int64) {
 	p.ProductId = val
 }
+func (p *UpdateProductByIDRequest) SetMerchantId(val int64) {
+	p.MerchantId = val
+}
 func (p *UpdateProductByIDRequest) SetName(val *string) {
 	p.Name = val
 }
@@ -1559,10 +1567,11 @@ func (p *UpdateProductByIDRequest) SetStatus(val *int8) {
 
 var fieldIDToName_UpdateProductByIDRequest = map[int16]string{
 	1: "product_id",
-	2: "name",
-	3: "description",
-	4: "price",
-	5: "status",
+	2: "merchant_id",
+	3: "name",
+	4: "description",
+	5: "price",
+	6: "status",
 }
 
 func (p *UpdateProductByIDRequest) IsSetName() bool {
@@ -1586,6 +1595,7 @@ func (p *UpdateProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetProductId bool = false
+	var issetMerchantId bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1611,10 +1621,11 @@ func (p *UpdateProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetMerchantId = true
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
@@ -1627,7 +1638,7 @@ func (p *UpdateProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 4:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1635,8 +1646,16 @@ func (p *UpdateProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 5:
-			if fieldTypeId == thrift.BYTE {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 6:
+			if fieldTypeId == thrift.BYTE {
+				if err = p.ReadField6(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -1657,6 +1676,11 @@ func (p *UpdateProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	if !issetProductId {
 		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetMerchantId {
+		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -1690,13 +1714,13 @@ func (p *UpdateProductByIDRequest) ReadField1(iprot thrift.TProtocol) error {
 }
 func (p *UpdateProductByIDRequest) ReadField2(iprot thrift.TProtocol) error {
 
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
-	p.Name = _field
+	p.MerchantId = _field
 	return nil
 }
 func (p *UpdateProductByIDRequest) ReadField3(iprot thrift.TProtocol) error {
@@ -1707,10 +1731,21 @@ func (p *UpdateProductByIDRequest) ReadField3(iprot thrift.TProtocol) error {
 	} else {
 		_field = &v
 	}
-	p.Description = _field
+	p.Name = _field
 	return nil
 }
 func (p *UpdateProductByIDRequest) ReadField4(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.Description = _field
+	return nil
+}
+func (p *UpdateProductByIDRequest) ReadField5(iprot thrift.TProtocol) error {
 
 	var _field *int64
 	if v, err := iprot.ReadI64(); err != nil {
@@ -1721,7 +1756,7 @@ func (p *UpdateProductByIDRequest) ReadField4(iprot thrift.TProtocol) error {
 	p.Price = _field
 	return nil
 }
-func (p *UpdateProductByIDRequest) ReadField5(iprot thrift.TProtocol) error {
+func (p *UpdateProductByIDRequest) ReadField6(iprot thrift.TProtocol) error {
 
 	var _field *int8
 	if v, err := iprot.ReadByte(); err != nil {
@@ -1760,6 +1795,10 @@ func (p *UpdateProductByIDRequest) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 5
 			goto WriteFieldError
 		}
+		if err = p.writeField6(oprot); err != nil {
+			fieldId = 6
+			goto WriteFieldError
+		}
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
 		goto WriteFieldStopError
@@ -1796,16 +1835,14 @@ WriteFieldEndError:
 }
 
 func (p *UpdateProductByIDRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetName() {
-		if err = oprot.WriteFieldBegin("name", thrift.STRING, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.Name); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("merchant_id", thrift.I64, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.MerchantId); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:
@@ -1815,11 +1852,11 @@ WriteFieldEndError:
 }
 
 func (p *UpdateProductByIDRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if p.IsSetDescription() {
-		if err = oprot.WriteFieldBegin("description", thrift.STRING, 3); err != nil {
+	if p.IsSetName() {
+		if err = oprot.WriteFieldBegin("name", thrift.STRING, 3); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Description); err != nil {
+		if err := oprot.WriteString(*p.Name); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1834,11 +1871,11 @@ WriteFieldEndError:
 }
 
 func (p *UpdateProductByIDRequest) writeField4(oprot thrift.TProtocol) (err error) {
-	if p.IsSetPrice() {
-		if err = oprot.WriteFieldBegin("price", thrift.I64, 4); err != nil {
+	if p.IsSetDescription() {
+		if err = oprot.WriteFieldBegin("description", thrift.STRING, 4); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.Price); err != nil {
+		if err := oprot.WriteString(*p.Description); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1853,11 +1890,11 @@ WriteFieldEndError:
 }
 
 func (p *UpdateProductByIDRequest) writeField5(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStatus() {
-		if err = oprot.WriteFieldBegin("status", thrift.BYTE, 5); err != nil {
+	if p.IsSetPrice() {
+		if err = oprot.WriteFieldBegin("price", thrift.I64, 5); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteByte(*p.Status); err != nil {
+		if err := oprot.WriteI64(*p.Price); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -1869,6 +1906,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
+func (p *UpdateProductByIDRequest) writeField6(oprot thrift.TProtocol) (err error) {
+	if p.IsSetStatus() {
+		if err = oprot.WriteFieldBegin("status", thrift.BYTE, 6); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteByte(*p.Status); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
 }
 
 func (p *UpdateProductByIDRequest) String() string {
@@ -1888,16 +1944,19 @@ func (p *UpdateProductByIDRequest) DeepEqual(ano *UpdateProductByIDRequest) bool
 	if !p.Field1DeepEqual(ano.ProductId) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Name) {
+	if !p.Field2DeepEqual(ano.MerchantId) {
 		return false
 	}
-	if !p.Field3DeepEqual(ano.Description) {
+	if !p.Field3DeepEqual(ano.Name) {
 		return false
 	}
-	if !p.Field4DeepEqual(ano.Price) {
+	if !p.Field4DeepEqual(ano.Description) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.Status) {
+	if !p.Field5DeepEqual(ano.Price) {
+		return false
+	}
+	if !p.Field6DeepEqual(ano.Status) {
 		return false
 	}
 	return true
@@ -1910,7 +1969,14 @@ func (p *UpdateProductByIDRequest) Field1DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *UpdateProductByIDRequest) Field2DeepEqual(src *string) bool {
+func (p *UpdateProductByIDRequest) Field2DeepEqual(src int64) bool {
+
+	if p.MerchantId != src {
+		return false
+	}
+	return true
+}
+func (p *UpdateProductByIDRequest) Field3DeepEqual(src *string) bool {
 
 	if p.Name == src {
 		return true
@@ -1922,7 +1988,7 @@ func (p *UpdateProductByIDRequest) Field2DeepEqual(src *string) bool {
 	}
 	return true
 }
-func (p *UpdateProductByIDRequest) Field3DeepEqual(src *string) bool {
+func (p *UpdateProductByIDRequest) Field4DeepEqual(src *string) bool {
 
 	if p.Description == src {
 		return true
@@ -1934,7 +2000,7 @@ func (p *UpdateProductByIDRequest) Field3DeepEqual(src *string) bool {
 	}
 	return true
 }
-func (p *UpdateProductByIDRequest) Field4DeepEqual(src *int64) bool {
+func (p *UpdateProductByIDRequest) Field5DeepEqual(src *int64) bool {
 
 	if p.Price == src {
 		return true
@@ -1946,7 +2012,7 @@ func (p *UpdateProductByIDRequest) Field4DeepEqual(src *int64) bool {
 	}
 	return true
 }
-func (p *UpdateProductByIDRequest) Field5DeepEqual(src *int8) bool {
+func (p *UpdateProductByIDRequest) Field6DeepEqual(src *int8) bool {
 
 	if p.Status == src {
 		return true
@@ -2726,7 +2792,8 @@ func (p *ListProductsResponse) Field2DeepEqual(src int64) bool {
 }
 
 type DeleteProductByIDRequest struct {
-	ProductId int64 `thrift:"product_id,1,required" frugal:"1,required,i64" json:"product_id"`
+	ProductId  int64 `thrift:"product_id,1,required" frugal:"1,required,i64" json:"product_id"`
+	MerchantId int64 `thrift:"merchant_id,2,required" frugal:"2,required,i64" json:"merchant_id"`
 }
 
 func NewDeleteProductByIDRequest() *DeleteProductByIDRequest {
@@ -2739,12 +2806,20 @@ func (p *DeleteProductByIDRequest) InitDefault() {
 func (p *DeleteProductByIDRequest) GetProductId() (v int64) {
 	return p.ProductId
 }
+
+func (p *DeleteProductByIDRequest) GetMerchantId() (v int64) {
+	return p.MerchantId
+}
 func (p *DeleteProductByIDRequest) SetProductId(val int64) {
 	p.ProductId = val
+}
+func (p *DeleteProductByIDRequest) SetMerchantId(val int64) {
+	p.MerchantId = val
 }
 
 var fieldIDToName_DeleteProductByIDRequest = map[int16]string{
 	1: "product_id",
+	2: "merchant_id",
 }
 
 func (p *DeleteProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -2752,6 +2827,7 @@ func (p *DeleteProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetProductId bool = false
+	var issetMerchantId bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -2776,6 +2852,15 @@ func (p *DeleteProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 2:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetMerchantId = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -2791,6 +2876,11 @@ func (p *DeleteProductByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	if !issetProductId {
 		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetMerchantId {
+		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -2822,6 +2912,17 @@ func (p *DeleteProductByIDRequest) ReadField1(iprot thrift.TProtocol) error {
 	p.ProductId = _field
 	return nil
 }
+func (p *DeleteProductByIDRequest) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.MerchantId = _field
+	return nil
+}
 
 func (p *DeleteProductByIDRequest) Write(oprot thrift.TProtocol) (err error) {
 
@@ -2832,6 +2933,10 @@ func (p *DeleteProductByIDRequest) Write(oprot thrift.TProtocol) (err error) {
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
 			goto WriteFieldError
 		}
 	}
@@ -2869,6 +2974,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
+func (p *DeleteProductByIDRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("merchant_id", thrift.I64, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.MerchantId); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
 func (p *DeleteProductByIDRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -2886,12 +3008,22 @@ func (p *DeleteProductByIDRequest) DeepEqual(ano *DeleteProductByIDRequest) bool
 	if !p.Field1DeepEqual(ano.ProductId) {
 		return false
 	}
+	if !p.Field2DeepEqual(ano.MerchantId) {
+		return false
+	}
 	return true
 }
 
 func (p *DeleteProductByIDRequest) Field1DeepEqual(src int64) bool {
 
 	if p.ProductId != src {
+		return false
+	}
+	return true
+}
+func (p *DeleteProductByIDRequest) Field2DeepEqual(src int64) bool {
+
+	if p.MerchantId != src {
 		return false
 	}
 	return true
@@ -3062,8 +3194,10 @@ func (p *DeleteProductByIDResponse) Field1DeepEqual(src bool) bool {
 }
 
 type ModifyStockByIDRequest struct {
-	ProductId int64 `thrift:"product_id,1,required" frugal:"1,required,i64" json:"product_id"`
-	Delta     int64 `thrift:"delta,2,required" frugal:"2,required,i64" json:"delta"`
+	ProductId    int64 `thrift:"product_id,1,required" frugal:"1,required,i64" json:"product_id"`
+	Delta        int64 `thrift:"delta,2,required" frugal:"2,required,i64" json:"delta"`
+	CurrentStock int64 `thrift:"currentStock,3,required" frugal:"3,required,i64" json:"currentStock"`
+	MerchantId   int64 `thrift:"merchant_id,4,required" frugal:"4,required,i64" json:"merchant_id"`
 }
 
 func NewModifyStockByIDRequest() *ModifyStockByIDRequest {
@@ -3080,16 +3214,32 @@ func (p *ModifyStockByIDRequest) GetProductId() (v int64) {
 func (p *ModifyStockByIDRequest) GetDelta() (v int64) {
 	return p.Delta
 }
+
+func (p *ModifyStockByIDRequest) GetCurrentStock() (v int64) {
+	return p.CurrentStock
+}
+
+func (p *ModifyStockByIDRequest) GetMerchantId() (v int64) {
+	return p.MerchantId
+}
 func (p *ModifyStockByIDRequest) SetProductId(val int64) {
 	p.ProductId = val
 }
 func (p *ModifyStockByIDRequest) SetDelta(val int64) {
 	p.Delta = val
 }
+func (p *ModifyStockByIDRequest) SetCurrentStock(val int64) {
+	p.CurrentStock = val
+}
+func (p *ModifyStockByIDRequest) SetMerchantId(val int64) {
+	p.MerchantId = val
+}
 
 var fieldIDToName_ModifyStockByIDRequest = map[int16]string{
 	1: "product_id",
 	2: "delta",
+	3: "currentStock",
+	4: "merchant_id",
 }
 
 func (p *ModifyStockByIDRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -3098,6 +3248,8 @@ func (p *ModifyStockByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	var issetProductId bool = false
 	var issetDelta bool = false
+	var issetCurrentStock bool = false
+	var issetMerchantId bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -3131,6 +3283,24 @@ func (p *ModifyStockByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetCurrentStock = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetMerchantId = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -3151,6 +3321,16 @@ func (p *ModifyStockByIDRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	if !issetDelta {
 		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetCurrentStock {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetMerchantId {
+		fieldId = 4
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -3193,6 +3373,28 @@ func (p *ModifyStockByIDRequest) ReadField2(iprot thrift.TProtocol) error {
 	p.Delta = _field
 	return nil
 }
+func (p *ModifyStockByIDRequest) ReadField3(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.CurrentStock = _field
+	return nil
+}
+func (p *ModifyStockByIDRequest) ReadField4(iprot thrift.TProtocol) error {
+
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.MerchantId = _field
+	return nil
+}
 
 func (p *ModifyStockByIDRequest) Write(oprot thrift.TProtocol) (err error) {
 
@@ -3207,6 +3409,14 @@ func (p *ModifyStockByIDRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 	}
@@ -3261,6 +3471,40 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *ModifyStockByIDRequest) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("currentStock", thrift.I64, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.CurrentStock); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *ModifyStockByIDRequest) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("merchant_id", thrift.I64, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.MerchantId); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
 func (p *ModifyStockByIDRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -3281,6 +3525,12 @@ func (p *ModifyStockByIDRequest) DeepEqual(ano *ModifyStockByIDRequest) bool {
 	if !p.Field2DeepEqual(ano.Delta) {
 		return false
 	}
+	if !p.Field3DeepEqual(ano.CurrentStock) {
+		return false
+	}
+	if !p.Field4DeepEqual(ano.MerchantId) {
+		return false
+	}
 	return true
 }
 
@@ -3294,6 +3544,20 @@ func (p *ModifyStockByIDRequest) Field1DeepEqual(src int64) bool {
 func (p *ModifyStockByIDRequest) Field2DeepEqual(src int64) bool {
 
 	if p.Delta != src {
+		return false
+	}
+	return true
+}
+func (p *ModifyStockByIDRequest) Field3DeepEqual(src int64) bool {
+
+	if p.CurrentStock != src {
+		return false
+	}
+	return true
+}
+func (p *ModifyStockByIDRequest) Field4DeepEqual(src int64) bool {
+
+	if p.MerchantId != src {
 		return false
 	}
 	return true
