@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
-
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/hewo/tik-shop/db/model"
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
@@ -35,8 +33,6 @@ func (s *ProductServiceImpl) CreateProduct(ctx context.Context, request *product
 		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
 	p.Status = 1 // 默认上架状态
-
-	log.Println(p)
 
 	id, err := s.ProductSqlManage.CreateProduct(p)
 

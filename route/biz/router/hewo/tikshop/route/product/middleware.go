@@ -4,6 +4,8 @@ package product
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/common"
+	"github.com/hewo/tik-shop/shared/consts"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -22,8 +24,9 @@ func _getproductsMw() []app.HandlerFunc {
 }
 
 func _createproductMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleMerchant),
+	}
 }
 
 func _productMw() []app.HandlerFunc {
@@ -72,21 +75,23 @@ func _products0Mw() []app.HandlerFunc {
 }
 
 func _deleteproductbyidMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleMerchant),
+	}
 }
 
 func _modifystockbyidMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleMerchant),
+	}
 }
 
 func _getproductbyidMw() []app.HandlerFunc {
-	// your code...
 	return nil
 }
 
 func _updateproductbyidMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleMerchant),
+	}
 }

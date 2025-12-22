@@ -16,6 +16,7 @@ func NewProductSqlManageImpl() *ProductSqlManageImpl {
 }
 
 func (m *ProductSqlManageImpl) CreateProduct(product *model.Product) (productID int64, err error) {
+	//log.Println(product)
 	err = p.Create(product)
 	if err != nil {
 		return -1, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}

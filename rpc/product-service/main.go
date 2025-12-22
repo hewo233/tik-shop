@@ -1,7 +1,10 @@
 package main
 
 import (
+	"github.com/hewo/tik-shop/db/connectDB"
+	"github.com/hewo/tik-shop/db/query"
 	"github.com/hewo/tik-shop/db/superquery"
+	"github.com/hewo/tik-shop/shared/consts"
 	"log"
 	"net"
 
@@ -12,6 +15,12 @@ import (
 )
 
 func main() {
+
+	database, err := connectDB.ConnectDB(consts.RpcDBEnvPath)
+	if err != nil {
+		log.Println(err)
+	}
+	query.SetDefault(database)
 
 	r, err := etcd.NewEtcdRegistry([]string{"127.0.0.1:2379"})
 	if err != nil {
@@ -31,8 +40,6 @@ func main() {
 			},
 		),
 	)
-
-	//svr := product.NewServer(new(ProductServiceImpl))
 
 	err = svr.Run()
 
