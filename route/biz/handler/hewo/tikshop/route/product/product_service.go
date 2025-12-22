@@ -16,16 +16,17 @@ import (
 	product "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/product"
 )
 
-// CreateProduct .
-// @Summary CreateProduct
-// @Description 创建一个新的产品，包含产品的详细信息。
-// @Tags product
+// CreateProduct
+// @Summary 创建商品
+// @Description 创建一个新的商品,包含商品的详细信息
+// @Tags 商品管理
 // @Accept json
 // @Produce json
-// @Param request body product.CreateProductRequest true "Request body with product details"
+// @Param request body product.CreateProductRequest true "创建商品请求参数"
+// @Param Authorization header string true "Bearer token"
 // @Success 200 {object} product.CreateProductResponse "Product created successfully"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/products [POST]
+// @Failure 400 {object} product.CreateProductResponse "Invalid request or validation failed"
+// @Router /product [POST]
 func CreateProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.CreateProductRequest
@@ -33,10 +34,19 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, product.CreateProductResponse{
 			Base: &base.BaseResponse{
-				Code:    40010,
+				Code:    40012,
 				Message: err.Error(),
 			},
 		})
+		return
+	}
+
+	merchantID, ok := NormalMerchantChecker(ctx, c, func(response *base.BaseResponse) *product.CreateProductResponse {
+		return &product.CreateProductResponse{
+			Base: response,
+		}
+	})
+	if !ok {
 		return
 	}
 
@@ -50,6 +60,7 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
+	rpcReq.MerchantId = merchantID
 
 	rpcResp, err := rpc.ProductClient.CreateProduct(ctx, rpcReq)
 	if err != nil {
@@ -74,17 +85,16 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// GetProductByID .
-// @Summary GetProductByID
-// @Description 根据产品 ID 获取单个产品的详细信息。
-// @Tags product
+// GetProductByID
+// @Summary 获取商品信息
+// @Description 根据商品 ID 获取商品的详细信息
+// @Tags 商品管理
 // @Accept json
 // @Produce json
-// @Param id path string true "Product ID" // URL 路径参数
-// @Param request query product.GetProductRequest true "Request params" // 查询参数
-// @Success 200 {object} base.Product "Product details"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/product/:id [GET]
+// @Param id path int true "商品ID"
+// @Success 200 {object} product.GetProductByIDResponse "Product details retrieved successfully"
+// @Failure 400 {object} product.GetProductByIDResponse "Invalid request or product not found"
+// @Router /product/{id} [GET]
 func GetProductByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.GetProductByIDResponse
@@ -138,8 +148,19 @@ func GetProductByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// ListProducts .
-// @router /products [GET]
+// ListProducts
+// @Summary 获取商品列表
+// @Description 分页获取商品列表,支持按商家和状态筛选
+// @Tags 商品管理
+// @Accept json
+// @Produce json
+// @Param merchant_id query int true "商家ID" minimum(1)
+// @Param status query int false "商品状态(0:全部,1:上架,2:下架)"
+// @Param page query int true "页码" minimum(1)
+// @Param page_size query int true "每页大小" minimum(1) maximum(100)
+// @Success 200 {object} product.ListProductsResponse "Products retrieved successfully"
+// @Failure 400 {object} product.ListProductsResponse "Invalid request"
+// @Router /product/list [GET]
 func ListProducts(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.ListProductsRequest
@@ -174,8 +195,18 @@ func ListProducts(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// UpdateProductByID .
-// @router /product/:id [PUT]
+// UpdateProductByID
+// @Summary 更新商品信息
+// @Description 根据商品 ID 更新商品的基本信息(名称、描述、价格、状态)
+// @Tags 商品管理
+// @Accept json
+// @Produce json
+// @Param id path int true "商品ID"
+// @Param request body product.UpdateProductByIDRequest true "更新商品请求参数"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} product.UpdateProductByIDResponse "Product updated successfully"
+// @Failure 400 {object} product.UpdateProductByIDResponse "Invalid request or validation failed"
+// @Router /product/{id} [PUT]
 func UpdateProductByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.UpdateProductByIDRequest
@@ -223,8 +254,17 @@ func UpdateProductByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// DeleteProductByID .
-// @router /product/:id [DELETE]
+// DeleteProductByID
+// @Summary 删除商品
+// @Description 根据商品 ID 删除商品(软删除)
+// @Tags 商品管理
+// @Accept json
+// @Produce json
+// @Param id path int true "商品ID"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} product.DeleteProductByIDResponse "Product deleted successfully"
+// @Failure 400 {object} product.DeleteProductByIDResponse "Invalid request"
+// @Router /product/{id} [DELETE]
 func DeleteProductByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.DeleteProductByIDRequest
@@ -265,8 +305,19 @@ func DeleteProductByID(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// ModifyStockByID .
-// @router /product/:id/stock [PUT]
+// ModifyStockByID
+// @Summary 修改商品库存
+// @Description 根据商品 ID 增加或减少库存,支持乐观锁
+// @Tags 商品管理
+// @Accept json
+// @Produce json
+// @Param id path int true "商品ID"
+// @Param request body product.ModifyStockByIDRequest true "修改库存请求参数"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} product.ModifyStockByIDResponse "Stock modified successfully"
+// @Failure 400 {object} product.ModifyStockByIDResponse "Invalid request or insufficient stock"
+// @Failure 409 {object} product.ModifyStockByIDResponse "Stock version conflict, please retry"
+// @Router /product/{id}/stock [PUT]
 func ModifyStockByID(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.ModifyStockByIDRequest
@@ -292,7 +343,7 @@ func ModifyStockByID(ctx context.Context, c *app.RequestContext) {
 	}
 	rpcReq.MerchantId = merchantID
 
-	rpcResp, err := rpc.ProductClient.ModifyStock(ctx, rpcReq)
+	rpcResp, err := rpc.ProductClient.ModifyStockByID(ctx, rpcReq)
 	if err != nil {
 		utils.HandleRPCError(c, err)
 		return

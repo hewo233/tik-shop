@@ -3738,7 +3738,7 @@ type ProductService interface {
 
 	DeleteProductByID(ctx context.Context, req *DeleteProductByIDRequest) (r *DeleteProductByIDResponse, err error)
 
-	ModifyStock(ctx context.Context, req *ModifyStockByIDRequest) (r *ModifyStockByIDResponse, err error)
+	ModifyStockByID(ctx context.Context, req *ModifyStockByIDRequest) (r *ModifyStockByIDResponse, err error)
 }
 
 type ProductServiceCreateProductArgs struct {
@@ -5786,38 +5786,38 @@ func (p *ProductServiceDeleteProductByIDResult) Field1DeepEqual(src *base.ErrorR
 	return true
 }
 
-type ProductServiceModifyStockArgs struct {
+type ProductServiceModifyStockByIDArgs struct {
 	Req *ModifyStockByIDRequest `thrift:"req,1" frugal:"1,default,ModifyStockByIDRequest" json:"req"`
 }
 
-func NewProductServiceModifyStockArgs() *ProductServiceModifyStockArgs {
-	return &ProductServiceModifyStockArgs{}
+func NewProductServiceModifyStockByIDArgs() *ProductServiceModifyStockByIDArgs {
+	return &ProductServiceModifyStockByIDArgs{}
 }
 
-func (p *ProductServiceModifyStockArgs) InitDefault() {
+func (p *ProductServiceModifyStockByIDArgs) InitDefault() {
 }
 
-var ProductServiceModifyStockArgs_Req_DEFAULT *ModifyStockByIDRequest
+var ProductServiceModifyStockByIDArgs_Req_DEFAULT *ModifyStockByIDRequest
 
-func (p *ProductServiceModifyStockArgs) GetReq() (v *ModifyStockByIDRequest) {
+func (p *ProductServiceModifyStockByIDArgs) GetReq() (v *ModifyStockByIDRequest) {
 	if !p.IsSetReq() {
-		return ProductServiceModifyStockArgs_Req_DEFAULT
+		return ProductServiceModifyStockByIDArgs_Req_DEFAULT
 	}
 	return p.Req
 }
-func (p *ProductServiceModifyStockArgs) SetReq(val *ModifyStockByIDRequest) {
+func (p *ProductServiceModifyStockByIDArgs) SetReq(val *ModifyStockByIDRequest) {
 	p.Req = val
 }
 
-var fieldIDToName_ProductServiceModifyStockArgs = map[int16]string{
+var fieldIDToName_ProductServiceModifyStockByIDArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *ProductServiceModifyStockArgs) IsSetReq() bool {
+func (p *ProductServiceModifyStockByIDArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *ProductServiceModifyStockArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *ProductServiceModifyStockByIDArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -5863,7 +5863,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceModifyStockArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceModifyStockByIDArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -5873,7 +5873,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *ProductServiceModifyStockArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *ProductServiceModifyStockByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	_field := NewModifyStockByIDRequest()
 	if err := _field.Read(iprot); err != nil {
 		return err
@@ -5882,10 +5882,10 @@ func (p *ProductServiceModifyStockArgs) ReadField1(iprot thrift.TProtocol) error
 	return nil
 }
 
-func (p *ProductServiceModifyStockArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *ProductServiceModifyStockByIDArgs) Write(oprot thrift.TProtocol) (err error) {
 
 	var fieldId int16
-	if err = oprot.WriteStructBegin("ModifyStock_args"); err != nil {
+	if err = oprot.WriteStructBegin("ModifyStockByID_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -5911,7 +5911,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *ProductServiceModifyStockArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *ProductServiceModifyStockByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -5928,15 +5928,15 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *ProductServiceModifyStockArgs) String() string {
+func (p *ProductServiceModifyStockByIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("ProductServiceModifyStockArgs(%+v)", *p)
+	return fmt.Sprintf("ProductServiceModifyStockByIDArgs(%+v)", *p)
 
 }
 
-func (p *ProductServiceModifyStockArgs) DeepEqual(ano *ProductServiceModifyStockArgs) bool {
+func (p *ProductServiceModifyStockByIDArgs) DeepEqual(ano *ProductServiceModifyStockByIDArgs) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -5948,7 +5948,7 @@ func (p *ProductServiceModifyStockArgs) DeepEqual(ano *ProductServiceModifyStock
 	return true
 }
 
-func (p *ProductServiceModifyStockArgs) Field1DeepEqual(src *ModifyStockByIDRequest) bool {
+func (p *ProductServiceModifyStockByIDArgs) Field1DeepEqual(src *ModifyStockByIDRequest) bool {
 
 	if !p.Req.DeepEqual(src) {
 		return false
@@ -5956,56 +5956,56 @@ func (p *ProductServiceModifyStockArgs) Field1DeepEqual(src *ModifyStockByIDRequ
 	return true
 }
 
-type ProductServiceModifyStockResult struct {
+type ProductServiceModifyStockByIDResult struct {
 	Success *ModifyStockByIDResponse `thrift:"success,0,optional" frugal:"0,optional,ModifyStockByIDResponse" json:"success,omitempty"`
 	Err     *base.ErrorResponse      `thrift:"err,1,optional" frugal:"1,optional,base.ErrorResponse" json:"err,omitempty"`
 }
 
-func NewProductServiceModifyStockResult() *ProductServiceModifyStockResult {
-	return &ProductServiceModifyStockResult{}
+func NewProductServiceModifyStockByIDResult() *ProductServiceModifyStockByIDResult {
+	return &ProductServiceModifyStockByIDResult{}
 }
 
-func (p *ProductServiceModifyStockResult) InitDefault() {
+func (p *ProductServiceModifyStockByIDResult) InitDefault() {
 }
 
-var ProductServiceModifyStockResult_Success_DEFAULT *ModifyStockByIDResponse
+var ProductServiceModifyStockByIDResult_Success_DEFAULT *ModifyStockByIDResponse
 
-func (p *ProductServiceModifyStockResult) GetSuccess() (v *ModifyStockByIDResponse) {
+func (p *ProductServiceModifyStockByIDResult) GetSuccess() (v *ModifyStockByIDResponse) {
 	if !p.IsSetSuccess() {
-		return ProductServiceModifyStockResult_Success_DEFAULT
+		return ProductServiceModifyStockByIDResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-var ProductServiceModifyStockResult_Err_DEFAULT *base.ErrorResponse
+var ProductServiceModifyStockByIDResult_Err_DEFAULT *base.ErrorResponse
 
-func (p *ProductServiceModifyStockResult) GetErr() (v *base.ErrorResponse) {
+func (p *ProductServiceModifyStockByIDResult) GetErr() (v *base.ErrorResponse) {
 	if !p.IsSetErr() {
-		return ProductServiceModifyStockResult_Err_DEFAULT
+		return ProductServiceModifyStockByIDResult_Err_DEFAULT
 	}
 	return p.Err
 }
-func (p *ProductServiceModifyStockResult) SetSuccess(x interface{}) {
+func (p *ProductServiceModifyStockByIDResult) SetSuccess(x interface{}) {
 	p.Success = x.(*ModifyStockByIDResponse)
 }
-func (p *ProductServiceModifyStockResult) SetErr(val *base.ErrorResponse) {
+func (p *ProductServiceModifyStockByIDResult) SetErr(val *base.ErrorResponse) {
 	p.Err = val
 }
 
-var fieldIDToName_ProductServiceModifyStockResult = map[int16]string{
+var fieldIDToName_ProductServiceModifyStockByIDResult = map[int16]string{
 	0: "success",
 	1: "err",
 }
 
-func (p *ProductServiceModifyStockResult) IsSetSuccess() bool {
+func (p *ProductServiceModifyStockByIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *ProductServiceModifyStockResult) IsSetErr() bool {
+func (p *ProductServiceModifyStockByIDResult) IsSetErr() bool {
 	return p.Err != nil
 }
 
-func (p *ProductServiceModifyStockResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *ProductServiceModifyStockByIDResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -6059,7 +6059,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceModifyStockResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ProductServiceModifyStockByIDResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -6069,7 +6069,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *ProductServiceModifyStockResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *ProductServiceModifyStockByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	_field := NewModifyStockByIDResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
@@ -6077,7 +6077,7 @@ func (p *ProductServiceModifyStockResult) ReadField0(iprot thrift.TProtocol) err
 	p.Success = _field
 	return nil
 }
-func (p *ProductServiceModifyStockResult) ReadField1(iprot thrift.TProtocol) error {
+func (p *ProductServiceModifyStockByIDResult) ReadField1(iprot thrift.TProtocol) error {
 	_field := base.NewErrorResponse()
 	if err := _field.Read(iprot); err != nil {
 		return err
@@ -6086,10 +6086,10 @@ func (p *ProductServiceModifyStockResult) ReadField1(iprot thrift.TProtocol) err
 	return nil
 }
 
-func (p *ProductServiceModifyStockResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *ProductServiceModifyStockByIDResult) Write(oprot thrift.TProtocol) (err error) {
 
 	var fieldId int16
-	if err = oprot.WriteStructBegin("ModifyStock_result"); err != nil {
+	if err = oprot.WriteStructBegin("ModifyStockByID_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -6119,7 +6119,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *ProductServiceModifyStockResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *ProductServiceModifyStockByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -6138,7 +6138,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *ProductServiceModifyStockResult) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *ProductServiceModifyStockByIDResult) writeField1(oprot thrift.TProtocol) (err error) {
 	if p.IsSetErr() {
 		if err = oprot.WriteFieldBegin("err", thrift.STRUCT, 1); err != nil {
 			goto WriteFieldBeginError
@@ -6157,15 +6157,15 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *ProductServiceModifyStockResult) String() string {
+func (p *ProductServiceModifyStockByIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("ProductServiceModifyStockResult(%+v)", *p)
+	return fmt.Sprintf("ProductServiceModifyStockByIDResult(%+v)", *p)
 
 }
 
-func (p *ProductServiceModifyStockResult) DeepEqual(ano *ProductServiceModifyStockResult) bool {
+func (p *ProductServiceModifyStockByIDResult) DeepEqual(ano *ProductServiceModifyStockByIDResult) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -6180,14 +6180,14 @@ func (p *ProductServiceModifyStockResult) DeepEqual(ano *ProductServiceModifySto
 	return true
 }
 
-func (p *ProductServiceModifyStockResult) Field0DeepEqual(src *ModifyStockByIDResponse) bool {
+func (p *ProductServiceModifyStockByIDResult) Field0DeepEqual(src *ModifyStockByIDResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false
 	}
 	return true
 }
-func (p *ProductServiceModifyStockResult) Field1DeepEqual(src *base.ErrorResponse) bool {
+func (p *ProductServiceModifyStockByIDResult) Field1DeepEqual(src *base.ErrorResponse) bool {
 
 	if !p.Err.DeepEqual(src) {
 		return false

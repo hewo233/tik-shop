@@ -14,11 +14,10 @@ struct GetProductByIDResponse {
 
 // 创建商品
 struct CreateProductRequest {
-    1: i64 merchant_id (api.body = "merchant_id", api.vd = "$>0");
-    2: string name (api.body = "name", api.vd = "len($) > 0 && len($) < 255");
-    3: optional string description (api.body = "description");
-    4: i64 price (api.body = "price", api.vd = "$>0");
-    5: optional i64 stock (api.body = "stock");
+    1: string name (api.body = "name", api.vd = "len($) > 0 && len($) < 255");
+    2: optional string description (api.body = "description");
+    3: i64 price (api.body = "price", api.vd = "$>0");
+    4: optional i64 stock (api.body = "stock");
 }
 
 struct CreateProductResponse {

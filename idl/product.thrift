@@ -91,5 +91,5 @@ service ProductService {
     UpdateProductByIDResponse UpdateProductByID(1: UpdateProductByIDRequest req) throws (1: base.ErrorResponse err);
     ListProductsResponse ListProducts(1: ListProductsRequest req) throws (1: base.ErrorResponse err);
     DeleteProductByIDResponse DeleteProductByID(1: DeleteProductByIDRequest req) throws (1: base.ErrorResponse err);
-    ModifyStockByIDResponse ModifyStock(1: ModifyStockByIDRequest req) throws (1: base.ErrorResponse err);
+    ModifyStockByIDResponse ModifyStockByID(1: ModifyStockByIDRequest req) throws (1: base.ErrorResponse err);
 }

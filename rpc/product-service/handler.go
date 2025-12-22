@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/hewo/tik-shop/db/model"
@@ -22,6 +23,7 @@ type ProductSqlManage interface {
 	CheckAndGetProduct(productID int64, merchantID int64) (*model.Product, error)
 	UpdateProductByID(product *model.Product) error
 	DeleteProductByID(productID int64) (err error)
+	ModifyStockByID(product *model.Product) error
 }
 
 // CreateProduct implements the ProductServiceImpl interface.
@@ -33,6 +35,8 @@ func (s *ProductServiceImpl) CreateProduct(ctx context.Context, request *product
 		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
 	p.Status = 1 // 默认上架状态
+
+	log.Println(p)
 
 	id, err := s.ProductSqlManage.CreateProduct(p)
 
@@ -162,7 +166,7 @@ func (s *ProductServiceImpl) ModifyStockByID(ctx context.Context, req *product.M
 	}
 
 	existed.Stock += req.Delta
-	err = s.ProductSqlManage.UpdateProductByID(existed)
+	err = s.ProductSqlManage.ModifyStockByID(existed)
 	if err != nil {
 		return nil, err
 	}

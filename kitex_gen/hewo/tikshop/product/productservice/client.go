@@ -16,7 +16,7 @@ type Client interface {
 	UpdateProductByID(ctx context.Context, req *product.UpdateProductByIDRequest, callOptions ...callopt.Option) (r *product.UpdateProductByIDResponse, err error)
 	ListProducts(ctx context.Context, req *product.ListProductsRequest, callOptions ...callopt.Option) (r *product.ListProductsResponse, err error)
 	DeleteProductByID(ctx context.Context, req *product.DeleteProductByIDRequest, callOptions ...callopt.Option) (r *product.DeleteProductByIDResponse, err error)
-	ModifyStock(ctx context.Context, req *product.ModifyStockByIDRequest, callOptions ...callopt.Option) (r *product.ModifyStockByIDResponse, err error)
+	ModifyStockByID(ctx context.Context, req *product.ModifyStockByIDRequest, callOptions ...callopt.Option) (r *product.ModifyStockByIDResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -73,7 +73,7 @@ func (p *kProductServiceClient) DeleteProductByID(ctx context.Context, req *prod
 	return p.kClient.DeleteProductByID(ctx, req)
 }
 
-func (p *kProductServiceClient) ModifyStock(ctx context.Context, req *product.ModifyStockByIDRequest, callOptions ...callopt.Option) (r *product.ModifyStockByIDResponse, err error) {
+func (p *kProductServiceClient) ModifyStockByID(ctx context.Context, req *product.ModifyStockByIDRequest, callOptions ...callopt.Option) (r *product.ModifyStockByIDResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ModifyStock(ctx, req)
+	return p.kClient.ModifyStockByID(ctx, req)
 }

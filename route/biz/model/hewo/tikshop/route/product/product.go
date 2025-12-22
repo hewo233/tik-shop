@@ -354,11 +354,10 @@ func (p *GetProductByIDResponse) String() string {
 
 // 创建商品
 type CreateProductRequest struct {
-	MerchantID  int64   `thrift:"merchant_id,1" form:"merchant_id" json:"merchant_id" vd:"$>0"`
-	Name        string  `thrift:"name,2" form:"name" json:"name" vd:"len($) > 0 && len($) < 255"`
-	Description *string `thrift:"description,3,optional" form:"description" json:"description,omitempty"`
-	Price       int64   `thrift:"price,4" form:"price" json:"price" vd:"$>0"`
-	Stock       *int64  `thrift:"stock,5,optional" form:"stock" json:"stock,omitempty"`
+	Name        string  `thrift:"name,1" form:"name" json:"name" vd:"len($) > 0 && len($) < 255"`
+	Description *string `thrift:"description,2,optional" form:"description" json:"description,omitempty"`
+	Price       int64   `thrift:"price,3" form:"price" json:"price" vd:"$>0"`
+	Stock       *int64  `thrift:"stock,4,optional" form:"stock" json:"stock,omitempty"`
 }
 
 func NewCreateProductRequest() *CreateProductRequest {
@@ -366,10 +365,6 @@ func NewCreateProductRequest() *CreateProductRequest {
 }
 
 func (p *CreateProductRequest) InitDefault() {
-}
-
-func (p *CreateProductRequest) GetMerchantID() (v int64) {
-	return p.MerchantID
 }
 
 func (p *CreateProductRequest) GetName() (v string) {
@@ -399,11 +394,10 @@ func (p *CreateProductRequest) GetStock() (v int64) {
 }
 
 var fieldIDToName_CreateProductRequest = map[int16]string{
-	1: "merchant_id",
-	2: "name",
-	3: "description",
-	4: "price",
-	5: "stock",
+	1: "name",
+	2: "description",
+	3: "price",
+	4: "stock",
 }
 
 func (p *CreateProductRequest) IsSetDescription() bool {
@@ -434,7 +428,7 @@ func (p *CreateProductRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -450,7 +444,7 @@ func (p *CreateProductRequest) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 3:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -460,14 +454,6 @@ func (p *CreateProductRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 4:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField4(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 5:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -504,17 +490,6 @@ ReadStructEndError:
 
 func (p *CreateProductRequest) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field int64
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		_field = v
-	}
-	p.MerchantID = _field
-	return nil
-}
-func (p *CreateProductRequest) ReadField2(iprot thrift.TProtocol) error {
-
 	var _field string
 	if v, err := iprot.ReadString(); err != nil {
 		return err
@@ -524,7 +499,7 @@ func (p *CreateProductRequest) ReadField2(iprot thrift.TProtocol) error {
 	p.Name = _field
 	return nil
 }
-func (p *CreateProductRequest) ReadField3(iprot thrift.TProtocol) error {
+func (p *CreateProductRequest) ReadField2(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -535,7 +510,7 @@ func (p *CreateProductRequest) ReadField3(iprot thrift.TProtocol) error {
 	p.Description = _field
 	return nil
 }
-func (p *CreateProductRequest) ReadField4(iprot thrift.TProtocol) error {
+func (p *CreateProductRequest) ReadField3(iprot thrift.TProtocol) error {
 
 	var _field int64
 	if v, err := iprot.ReadI64(); err != nil {
@@ -546,7 +521,7 @@ func (p *CreateProductRequest) ReadField4(iprot thrift.TProtocol) error {
 	p.Price = _field
 	return nil
 }
-func (p *CreateProductRequest) ReadField5(iprot thrift.TProtocol) error {
+func (p *CreateProductRequest) ReadField4(iprot thrift.TProtocol) error {
 
 	var _field *int64
 	if v, err := iprot.ReadI64(); err != nil {
@@ -581,10 +556,6 @@ func (p *CreateProductRequest) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 4
 			goto WriteFieldError
 		}
-		if err = p.writeField5(oprot); err != nil {
-			fieldId = 5
-			goto WriteFieldError
-		}
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
 		goto WriteFieldStopError
@@ -604,10 +575,10 @@ WriteStructEndError:
 }
 
 func (p *CreateProductRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("merchant_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("name", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.MerchantID); err != nil {
+	if err := oprot.WriteString(p.Name); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -621,25 +592,8 @@ WriteFieldEndError:
 }
 
 func (p *CreateProductRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("name", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Name); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *CreateProductRequest) writeField3(oprot thrift.TProtocol) (err error) {
 	if p.IsSetDescription() {
-		if err = oprot.WriteFieldBegin("description", thrift.STRING, 3); err != nil {
+		if err = oprot.WriteFieldBegin("description", thrift.STRING, 2); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.Description); err != nil {
@@ -651,13 +605,13 @@ func (p *CreateProductRequest) writeField3(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *CreateProductRequest) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("price", thrift.I64, 4); err != nil {
+func (p *CreateProductRequest) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("price", thrift.I64, 3); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteI64(p.Price); err != nil {
@@ -668,14 +622,14 @@ func (p *CreateProductRequest) writeField4(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
-func (p *CreateProductRequest) writeField5(oprot thrift.TProtocol) (err error) {
+func (p *CreateProductRequest) writeField4(oprot thrift.TProtocol) (err error) {
 	if p.IsSetStock() {
-		if err = oprot.WriteFieldBegin("stock", thrift.I64, 5); err != nil {
+		if err = oprot.WriteFieldBegin("stock", thrift.I64, 4); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteI64(*p.Stock); err != nil {
@@ -687,9 +641,9 @@ func (p *CreateProductRequest) writeField5(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *CreateProductRequest) String() string {

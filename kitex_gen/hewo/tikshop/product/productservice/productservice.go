@@ -49,10 +49,10 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"ModifyStock": kitex.NewMethodInfo(
-		modifyStockHandler,
-		newProductServiceModifyStockArgs,
-		newProductServiceModifyStockResult,
+	"ModifyStockByID": kitex.NewMethodInfo(
+		modifyStockByIDHandler,
+		newProductServiceModifyStockByIDArgs,
+		newProductServiceModifyStockByIDResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -242,10 +242,10 @@ func newProductServiceDeleteProductByIDResult() interface{} {
 	return product.NewProductServiceDeleteProductByIDResult()
 }
 
-func modifyStockHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*product.ProductServiceModifyStockArgs)
-	realResult := result.(*product.ProductServiceModifyStockResult)
-	success, err := handler.(product.ProductService).ModifyStock(ctx, realArg.Req)
+func modifyStockByIDHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*product.ProductServiceModifyStockByIDArgs)
+	realResult := result.(*product.ProductServiceModifyStockByIDResult)
+	success, err := handler.(product.ProductService).ModifyStockByID(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
@@ -258,12 +258,12 @@ func modifyStockHandler(ctx context.Context, handler interface{}, arg, result in
 	}
 	return nil
 }
-func newProductServiceModifyStockArgs() interface{} {
-	return product.NewProductServiceModifyStockArgs()
+func newProductServiceModifyStockByIDArgs() interface{} {
+	return product.NewProductServiceModifyStockByIDArgs()
 }
 
-func newProductServiceModifyStockResult() interface{} {
-	return product.NewProductServiceModifyStockResult()
+func newProductServiceModifyStockByIDResult() interface{} {
+	return product.NewProductServiceModifyStockByIDResult()
 }
 
 type kClient struct {
@@ -346,11 +346,11 @@ func (p *kClient) DeleteProductByID(ctx context.Context, req *product.DeleteProd
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ModifyStock(ctx context.Context, req *product.ModifyStockByIDRequest) (r *product.ModifyStockByIDResponse, err error) {
-	var _args product.ProductServiceModifyStockArgs
+func (p *kClient) ModifyStockByID(ctx context.Context, req *product.ModifyStockByIDRequest) (r *product.ModifyStockByIDResponse, err error) {
+	var _args product.ProductServiceModifyStockByIDArgs
 	_args.Req = req
-	var _result product.ProductServiceModifyStockResult
-	if err = p.c.Call(ctx, "ModifyStock", &_args, &_result); err != nil {
+	var _result product.ProductServiceModifyStockByIDResult
+	if err = p.c.Call(ctx, "ModifyStockByID", &_args, &_result); err != nil {
 		return
 	}
 	switch {

@@ -75,7 +75,7 @@ func (m *ProductSqlManageImpl) DeleteProductByID(productID int64) (err error) {
 	return nil
 }
 
-func (m *ProductSqlManageImpl) UpdateStockByID(product *model.Product) error {
+func (m *ProductSqlManageImpl) ModifyStockByID(product *model.Product) error {
 	// 乐观锁
 	oldUpdatedAt := product.UpdatedAt
 	result, err := p.Where(p.ID.Eq(product.ID)).Where(p.UpdatedAt.Eq(oldUpdatedAt)).Updates(product)
