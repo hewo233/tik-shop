@@ -11,6 +11,11 @@ definitions:
       street:
         type: string
     type: object
+  base.Admin:
+    properties:
+      level:
+        type: integer
+    type: object
   base.BaseResponse:
     properties:
       code:
@@ -25,6 +30,20 @@ definitions:
         type: integer
       quantity:
         type: integer
+    type: object
+  base.Customer:
+    properties:
+      address:
+        type: string
+      phone:
+        type: string
+    type: object
+  base.Merchant:
+    properties:
+      address:
+        type: string
+      shop_name:
+        type: string
     type: object
   base.MessageResponse:
     properties:
@@ -71,15 +90,48 @@ definitions:
     properties:
       description:
         type: string
+      id:
+        type: integer
+      merchant_id:
+        type: integer
       name:
         type: string
       price:
+        description: 价格(分为单位)
         type: integer
-      productId:
+      status:
+        description: 0=删除, 1=上架, 2=下架, 3=售罄
         type: integer
       stock:
         type: integer
     type: object
+  base.User:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      id:
+        description: 用户 ID
+        type: integer
+      role:
+        type: string
+      status:
+        $ref: '#/definitions/base.UserStatus'
+      username:
+        description: 用户名
+        type: string
+    type: object
+  base.UserStatus:
+    enum:
+    - 0
+    - 1
+    - 2
+    format: int64
+    type: integer
+    x-enum-varnames:
+    - UserStatus_DELETED
+    - UserStatus_ACTIVE
+    - UserStatus_BANNED
   cart.AddToCartRequest:
     properties:
       productId:
@@ -146,54 +198,71 @@ definitions:
     type: object
   product.CreateProductResponse:
     properties:
-      message:
-        type: string
-      productId:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      product_id:
         type: integer
     type: object
-  product.DeleteProductRequest:
+  product.DeleteProductByIDResponse:
     properties:
-      id:
-        type: integer
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      success:
+        type: boolean
     type: object
-  product.DeleteProductResponse:
+  product.GetProductByIDResponse:
     properties:
-      message:
-        type: string
-      productId:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      product:
+        $ref: '#/definitions/base.Product'
+    type: object
+  product.ListProductsResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      products:
+        items:
+          $ref: '#/definitions/base.Product'
+        type: array
+      total:
         type: integer
     type: object
-  product.UpdateProductRequest:
+  product.ModifyStockByIDRequest:
+    properties:
+      current_stock:
+        type: integer
+      delta:
+        type: integer
+      product_id:
+        type: integer
+    type: object
+  product.ModifyStockByIDResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      stock:
+        type: integer
+    type: object
+  product.UpdateProductByIDRequest:
     properties:
       description:
         type: string
-      id:
-        type: integer
       name:
         type: string
       price:
         type: integer
-      stock:
+      product_id:
+        type: integer
+      status:
         type: integer
     type: object
-  product.UpdateProductResponse:
+  product.UpdateProductByIDResponse:
     properties:
-      message:
-        type: string
-      productId:
-        type: integer
-    type: object
-  user.Admin:
-    properties:
-      level:
-        type: integer
-    type: object
-  user.Customer:
-    properties:
-      address:
-        type: string
-      phone:
-        type: string
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      product:
+        $ref: '#/definitions/base.Product'
     type: object
   user.DeleteUserResponse:
     properties:
@@ -205,36 +274,36 @@ definitions:
   user.GetAdminInfoByIDResponse:
     properties:
       admin:
-        $ref: '#/definitions/user.Admin'
+        $ref: '#/definitions/base.Admin'
       base:
         $ref: '#/definitions/base.BaseResponse'
       user:
-        $ref: '#/definitions/user.User'
+        $ref: '#/definitions/base.User'
     type: object
   user.GetCustomerInfoByIDResponse:
     properties:
       base:
         $ref: '#/definitions/base.BaseResponse'
       customer:
-        $ref: '#/definitions/user.Customer'
+        $ref: '#/definitions/base.Customer'
       user:
-        $ref: '#/definitions/user.User'
+        $ref: '#/definitions/base.User'
     type: object
   user.GetMerchantInfoByIDResponse:
     properties:
       base:
         $ref: '#/definitions/base.BaseResponse'
       merchant:
-        $ref: '#/definitions/user.Merchant'
+        $ref: '#/definitions/base.Merchant'
       user:
-        $ref: '#/definitions/user.User'
+        $ref: '#/definitions/base.User'
     type: object
   user.GetUserInfoByIDResponse:
     properties:
       base:
         $ref: '#/definitions/base.BaseResponse'
       user:
-        $ref: '#/definitions/user.User'
+        $ref: '#/definitions/base.User'
     type: object
   user.ListUsersResponse:
     properties:
@@ -244,7 +313,7 @@ definitions:
         type: integer
       users:
         items:
-          $ref: '#/definitions/user.User'
+          $ref: '#/definitions/base.User'
         type: array
     type: object
   user.LoginRequest:
@@ -259,13 +328,6 @@ definitions:
       base:
         $ref: '#/definitions/base.BaseResponse'
       token:
-        type: string
-    type: object
-  user.Merchant:
-    properties:
-      address:
-        type: string
-      shop_name:
         type: string
     type: object
   user.RegisterRequest:
@@ -323,7 +385,7 @@ definitions:
       base:
         $ref: '#/definitions/base.BaseResponse'
       customer:
-        $ref: '#/definitions/user.Customer'
+        $ref: '#/definitions/base.Customer'
     type: object
   user.UpdateMerchantInfoByIDRequest:
     properties:
@@ -339,47 +401,20 @@ definitions:
       base:
         $ref: '#/definitions/base.BaseResponse'
       merchant:
-        $ref: '#/definitions/user.Merchant'
+        $ref: '#/definitions/base.Merchant'
     type: object
   user.UpdateUserRequest:
     properties:
       user:
-        $ref: '#/definitions/user.User'
+        $ref: '#/definitions/base.User'
     type: object
   user.UpdateUserResponse:
     properties:
       base:
         $ref: '#/definitions/base.BaseResponse'
       user:
-        $ref: '#/definitions/user.User'
+        $ref: '#/definitions/base.User'
     type: object
-  user.User:
-    properties:
-      email:
-        description: 邮箱
-        type: string
-      id:
-        description: 用户 ID
-        type: integer
-      role:
-        type: string
-      status:
-        $ref: '#/definitions/user.UserStatus'
-      username:
-        description: 用户名
-        type: string
-    type: object
-  user.UserStatus:
-    enum:
-    - 0
-    - 1
-    - 2
-    format: int64
-    type: integer
-    x-enum-varnames:
-    - UserStatus_DELETED
-    - UserStatus_ACTIVE
-    - UserStatus_BANNED
 host: localhost:8888
 info:
   contact:
@@ -726,147 +761,6 @@ paths:
       summary: CancelOrder
       tags:
       - order
-  /api/product/:id:
-    delete:
-      consumes:
-      - application/json
-      description: 根据产品 ID 删除指定的产品。
-      parameters:
-      - description: Product ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Request body with product ID
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/product.DeleteProductRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Product deleted successfully
-          schema:
-            $ref: '#/definitions/product.DeleteProductResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: DeleteProduct
-      tags:
-      - product
-    get:
-      consumes:
-      - application/json
-      description: 根据产品 ID 获取单个产品的详细信息。
-      parameters:
-      - description: Product ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - in: query
-        name: id
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Product details
-          schema:
-            $ref: '#/definitions/base.Product'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: GetProduct
-      tags:
-      - product
-    put:
-      consumes:
-      - application/json
-      description: 根据产品 ID 更新产品的详细信息。
-      parameters:
-      - description: Product ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Request body with updated product details
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/product.UpdateProductRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Product updated successfully
-          schema:
-            $ref: '#/definitions/product.UpdateProductResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: UpdateProduct
-      tags:
-      - product
-  /api/products:
-    get:
-      consumes:
-      - application/json
-      description: 获取产品列表
-      parameters:
-      - in: query
-        name: limit
-        type: integer
-      - in: query
-        name: page
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: List of products
-          schema:
-            items:
-              $ref: '#/definitions/base.Product'
-            type: array
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: GetProducts
-      tags:
-      - product
-    post:
-      consumes:
-      - application/json
-      description: 创建一个新的产品，包含产品的详细信息。
-      parameters:
-      - description: Request body with product details
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/product.CreateProductRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Product created successfully
-          schema:
-            $ref: '#/definitions/product.CreateProductResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: CreateProduct
-      tags:
-      - product
   /auth/login:
     post:
       consumes:
@@ -1063,6 +957,209 @@ paths:
             additionalProperties: true
             type: object
       summary: 测试接口
+  /product:
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的商品,包含商品的详细信息
+      parameters:
+      - description: 创建商品请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.CreateProductRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product created successfully
+          schema:
+            $ref: '#/definitions/product.CreateProductResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            $ref: '#/definitions/product.CreateProductResponse'
+      summary: 创建商品
+      tags:
+      - 商品管理
+  /product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 根据商品 ID 删除商品(软删除)
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product deleted successfully
+          schema:
+            $ref: '#/definitions/product.DeleteProductByIDResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/product.DeleteProductByIDResponse'
+      summary: 删除商品
+      tags:
+      - 商品管理
+    get:
+      consumes:
+      - application/json
+      description: 根据商品 ID 获取商品的详细信息
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product details retrieved successfully
+          schema:
+            $ref: '#/definitions/product.GetProductByIDResponse'
+        "400":
+          description: Invalid request or product not found
+          schema:
+            $ref: '#/definitions/product.GetProductByIDResponse'
+      summary: 获取商品信息
+      tags:
+      - 商品管理
+    put:
+      consumes:
+      - application/json
+      description: 根据商品 ID 更新商品的基本信息(名称、描述、价格、状态)
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新商品请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.UpdateProductByIDRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product updated successfully
+          schema:
+            $ref: '#/definitions/product.UpdateProductByIDResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            $ref: '#/definitions/product.UpdateProductByIDResponse'
+      summary: 更新商品信息
+      tags:
+      - 商品管理
+  /product/{id}/stock:
+    put:
+      consumes:
+      - application/json
+      description: 根据商品 ID 增加或减少库存,支持乐观锁
+      parameters:
+      - description: 商品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 修改库存请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/product.ModifyStockByIDRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Stock modified successfully
+          schema:
+            $ref: '#/definitions/product.ModifyStockByIDResponse'
+        "400":
+          description: Invalid request or insufficient stock
+          schema:
+            $ref: '#/definitions/product.ModifyStockByIDResponse'
+        "409":
+          description: Stock version conflict, please retry
+          schema:
+            $ref: '#/definitions/product.ModifyStockByIDResponse'
+      summary: 修改商品库存
+      tags:
+      - 商品管理
+  /product/list:
+    get:
+      consumes:
+      - application/json
+      description: 分页获取商品列表,支持按商家和状态筛选
+      parameters:
+      - description: 商家ID
+        in: query
+        minimum: 1
+        name: merchant_id
+        required: true
+        type: integer
+      - description: 商品状态(0:全部,1:上架,2:下架)
+        in: query
+        name: status
+        type: integer
+      - description: 页码
+        in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - description: 每页大小
+        in: query
+        maximum: 100
+        minimum: 1
+        name: page_size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Products retrieved successfully
+          schema:
+            $ref: '#/definitions/product.ListProductsResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/product.ListProductsResponse'
+      summary: 获取商品列表
+      tags:
+      - 商品管理
   /user/{user_id}:
     delete:
       consumes:

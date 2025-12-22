@@ -525,221 +525,6 @@
                 }
             }
         },
-        "/api/product/:id": {
-            "get": {
-                "description": "根据产品 ID 获取单个产品的详细信息。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "product"
-                ],
-                "summary": "GetProduct",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Product details",
-                        "schema": {
-                            "$ref": "#/definitions/base.Product"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "根据产品 ID 更新产品的详细信息。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "product"
-                ],
-                "summary": "UpdateProduct",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Request body with updated product details",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product.UpdateProductRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Product updated successfully",
-                        "schema": {
-                            "$ref": "#/definitions/product.UpdateProductResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "根据产品 ID 删除指定的产品。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "product"
-                ],
-                "summary": "DeleteProduct",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Request body with product ID",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product.DeleteProductRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Product deleted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/product.DeleteProductResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/products": {
-            "get": {
-                "description": "获取产品列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "product"
-                ],
-                "summary": "GetProducts",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "page",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "List of products",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/base.Product"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "创建一个新的产品，包含产品的详细信息。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "product"
-                ],
-                "summary": "CreateProduct",
-                "parameters": [
-                    {
-                        "description": "Request body with product details",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/product.CreateProductRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Product created successfully",
-                        "schema": {
-                            "$ref": "#/definitions/product.CreateProductResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/auth/login": {
             "post": {
                 "description": "通过邮箱和密码进行用户登录,返回 JWT token",
@@ -1035,6 +820,308 @@
                 }
             }
         },
+        "/product": {
+            "post": {
+                "description": "创建一个新的商品,包含商品的详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商品管理"
+                ],
+                "summary": "创建商品",
+                "parameters": [
+                    {
+                        "description": "创建商品请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.CreateProductRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.CreateProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/product.CreateProductResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/list": {
+            "get": {
+                "description": "分页获取商品列表,支持按商家和状态筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商品管理"
+                ],
+                "summary": "获取商品列表",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "商家ID",
+                        "name": "merchant_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "商品状态(0:全部,1:上架,2:下架)",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Products retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.ListProductsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/product.ListProductsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}": {
+            "get": {
+                "description": "根据商品 ID 获取商品的详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商品管理"
+                ],
+                "summary": "获取商品信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "商品ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product details retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.GetProductByIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or product not found",
+                        "schema": {
+                            "$ref": "#/definitions/product.GetProductByIDResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "根据商品 ID 更新商品的基本信息(名称、描述、价格、状态)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商品管理"
+                ],
+                "summary": "更新商品信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "商品ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "更新商品请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.UpdateProductByIDRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.UpdateProductByIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/product.UpdateProductByIDResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "根据商品 ID 删除商品(软删除)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商品管理"
+                ],
+                "summary": "删除商品",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "商品ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.DeleteProductByIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/product.DeleteProductByIDResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}/stock": {
+            "put": {
+                "description": "根据商品 ID 增加或减少库存,支持乐观锁",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "商品管理"
+                ],
+                "summary": "修改商品库存",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "商品ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "修改库存请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.ModifyStockByIDRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Stock modified successfully",
+                        "schema": {
+                            "$ref": "#/definitions/product.ModifyStockByIDResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or insufficient stock",
+                        "schema": {
+                            "$ref": "#/definitions/product.ModifyStockByIDResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Stock version conflict, please retry",
+                        "schema": {
+                            "$ref": "#/definitions/product.ModifyStockByIDResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user/{user_id}": {
             "get": {
                 "description": "根据用户 ID 获取用户基本信息",
@@ -1249,6 +1336,14 @@
                 }
             }
         },
+        "base.Admin": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "type": "integer"
+                }
+            }
+        },
         "base.BaseResponse": {
             "type": "object",
             "properties": {
@@ -1269,6 +1364,28 @@
                 },
                 "quantity": {
                     "type": "integer"
+                }
+            }
+        },
+        "base.Customer": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "base.Merchant": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "shop_name": {
+                    "type": "string"
                 }
             }
         },
@@ -1341,19 +1458,64 @@
                 "description": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                },
+                "merchant_id": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
                 "price": {
+                    "description": "价格(分为单位)",
                     "type": "integer"
                 },
-                "productId": {
+                "status": {
+                    "description": "0=删除, 1=上架, 2=下架, 3=售罄",
                     "type": "integer"
                 },
                 "stock": {
                     "type": "integer"
                 }
             }
+        },
+        "base.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/base.UserStatus"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "base.UserStatus": {
+            "type": "integer",
+            "format": "int64",
+            "enum": [
+                0,
+                1,
+                2
+            ],
+            "x-enum-varnames": [
+                "UserStatus_DELETED",
+                "UserStatus_ACTIVE",
+                "UserStatus_BANNED"
+            ]
         },
         "cart.AddToCartRequest": {
             "type": "object",
@@ -1458,41 +1620,83 @@
         "product.CreateProductResponse": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string"
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
                 },
-                "productId": {
+                "product_id": {
                     "type": "integer"
                 }
             }
         },
-        "product.DeleteProductRequest": {
+        "product.DeleteProductByIDResponse": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "integer"
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
-        "product.DeleteProductResponse": {
+        "product.GetProductByIDResponse": {
             "type": "object",
             "properties": {
-                "message": {
-                    "type": "string"
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
                 },
-                "productId": {
+                "product": {
+                    "$ref": "#/definitions/base.Product"
+                }
+            }
+        },
+        "product.ListProductsResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base.Product"
+                    }
+                },
+                "total": {
                     "type": "integer"
                 }
             }
         },
-        "product.UpdateProductRequest": {
+        "product.ModifyStockByIDRequest": {
+            "type": "object",
+            "properties": {
+                "current_stock": {
+                    "type": "integer"
+                },
+                "delta": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.ModifyStockByIDResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "product.UpdateProductByIDRequest": {
             "type": "object",
             "properties": {
                 "description": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -1500,38 +1704,22 @@
                 "price": {
                     "type": "integer"
                 },
-                "stock": {
+                "product_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "product.UpdateProductResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
                 },
-                "productId": {
+                "status": {
                     "type": "integer"
                 }
             }
         },
-        "user.Admin": {
+        "product.UpdateProductByIDResponse": {
             "type": "object",
             "properties": {
-                "level": {
-                    "type": "integer"
-                }
-            }
-        },
-        "user.Customer": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
                 },
-                "phone": {
-                    "type": "string"
+                "product": {
+                    "$ref": "#/definitions/base.Product"
                 }
             }
         },
@@ -1550,13 +1738,13 @@
             "type": "object",
             "properties": {
                 "admin": {
-                    "$ref": "#/definitions/user.Admin"
+                    "$ref": "#/definitions/base.Admin"
                 },
                 "base": {
                     "$ref": "#/definitions/base.BaseResponse"
                 },
                 "user": {
-                    "$ref": "#/definitions/user.User"
+                    "$ref": "#/definitions/base.User"
                 }
             }
         },
@@ -1567,10 +1755,10 @@
                     "$ref": "#/definitions/base.BaseResponse"
                 },
                 "customer": {
-                    "$ref": "#/definitions/user.Customer"
+                    "$ref": "#/definitions/base.Customer"
                 },
                 "user": {
-                    "$ref": "#/definitions/user.User"
+                    "$ref": "#/definitions/base.User"
                 }
             }
         },
@@ -1581,10 +1769,10 @@
                     "$ref": "#/definitions/base.BaseResponse"
                 },
                 "merchant": {
-                    "$ref": "#/definitions/user.Merchant"
+                    "$ref": "#/definitions/base.Merchant"
                 },
                 "user": {
-                    "$ref": "#/definitions/user.User"
+                    "$ref": "#/definitions/base.User"
                 }
             }
         },
@@ -1595,7 +1783,7 @@
                     "$ref": "#/definitions/base.BaseResponse"
                 },
                 "user": {
-                    "$ref": "#/definitions/user.User"
+                    "$ref": "#/definitions/base.User"
                 }
             }
         },
@@ -1611,7 +1799,7 @@
                 "users": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/user.User"
+                        "$ref": "#/definitions/base.User"
                     }
                 }
             }
@@ -1634,17 +1822,6 @@
                     "$ref": "#/definitions/base.BaseResponse"
                 },
                 "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "user.Merchant": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "shop_name": {
                     "type": "string"
                 }
             }
@@ -1733,7 +1910,7 @@
                     "$ref": "#/definitions/base.BaseResponse"
                 },
                 "customer": {
-                    "$ref": "#/definitions/user.Customer"
+                    "$ref": "#/definitions/base.Customer"
                 }
             }
         },
@@ -1758,7 +1935,7 @@
                     "$ref": "#/definitions/base.BaseResponse"
                 },
                 "merchant": {
-                    "$ref": "#/definitions/user.Merchant"
+                    "$ref": "#/definitions/base.Merchant"
                 }
             }
         },
@@ -1766,7 +1943,7 @@
             "type": "object",
             "properties": {
                 "user": {
-                    "$ref": "#/definitions/user.User"
+                    "$ref": "#/definitions/base.User"
                 }
             }
         },
@@ -1777,46 +1954,9 @@
                     "$ref": "#/definitions/base.BaseResponse"
                 },
                 "user": {
-                    "$ref": "#/definitions/user.User"
+                    "$ref": "#/definitions/base.User"
                 }
             }
-        },
-        "user.User": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "description": "邮箱",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "用户 ID",
-                    "type": "integer"
-                },
-                "role": {
-                    "type": "string"
-                },
-                "status": {
-                    "$ref": "#/definitions/user.UserStatus"
-                },
-                "username": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "user.UserStatus": {
-            "type": "integer",
-            "format": "int64",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "UserStatus_DELETED",
-                "UserStatus_ACTIVE",
-                "UserStatus_BANNED"
-            ]
         }
     }
 }
