@@ -45,3 +45,23 @@ func _addtocartMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _clearcartMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _updatequantityMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _removeitemsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _toggleselectMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

@@ -65,3 +65,21 @@ func (s *CartServiceImpl) ClearCart(ctx context.Context, request *cart.ClearCart
 	}
 	return
 }
+
+// UpdateQuantity implements the CartServiceImpl interface.
+func (s *CartServiceImpl) UpdateQuantity(ctx context.Context, req *cart.UpdateQuantityRequest) (resp *cart.UpdateQuantityResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// ToggleSelect implements the CartServiceImpl interface.
+func (s *CartServiceImpl) ToggleSelect(ctx context.Context, req *cart.ToggleSelectRequest) (resp *cart.ToggleSelectResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// RemoveItems implements the CartServiceImpl interface.
+func (s *CartServiceImpl) RemoveItems(ctx context.Context, req *cart.RemoveItemsRequest) (resp *cart.RemoveItemsResponse, err error) {
+	// TODO: Your code here...
+	return
+}

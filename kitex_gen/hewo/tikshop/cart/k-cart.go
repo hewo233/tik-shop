@@ -11,10 +11,12 @@ import (
 	"github.com/cloudwego/gopkg/protocol/thrift"
 
 	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/base"
+	"github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/product"
 )
 
 var (
 	_ = base.KitexUnusedProtection
+	_ = product.KitexUnusedProtection
 )
 
 // unused protection
@@ -27,369 +29,6 @@ var (
 )
 
 func (p *CartItem) FastRead(buf []byte) (int, error) {
-	var err error
-	var offset int
-	var l int
-	var fieldTypeId thrift.TType
-	var fieldId int16
-	for {
-		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
-		offset += l
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.I64 {
-				l, err = p.FastReadField1(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 2:
-			if fieldTypeId == thrift.I64 {
-				l, err = p.FastReadField2(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		default:
-			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-			offset += l
-			if err != nil {
-				goto SkipFieldError
-			}
-		}
-	}
-
-	return offset, nil
-ReadFieldBeginError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartItem[fieldId]), err)
-SkipFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-}
-
-func (p *CartItem) FastReadField1(buf []byte) (int, error) {
-	offset := 0
-
-	var _field int64
-	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-		_field = v
-	}
-	p.ProductId = _field
-	return offset, nil
-}
-
-func (p *CartItem) FastReadField2(buf []byte) (int, error) {
-	offset := 0
-
-	var _field int64
-	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-		_field = v
-	}
-	p.Quantity = _field
-	return offset, nil
-}
-
-// for compatibility
-func (p *CartItem) FastWrite(buf []byte) int {
-	return 0
-}
-
-func (p *CartItem) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	if p != nil {
-		offset += p.fastWriteField1(buf[offset:], w)
-		offset += p.fastWriteField2(buf[offset:], w)
-	}
-	offset += thrift.Binary.WriteFieldStop(buf[offset:])
-	return offset
-}
-
-func (p *CartItem) BLength() int {
-	l := 0
-	if p != nil {
-		l += p.field1Length()
-		l += p.field2Length()
-	}
-	l += thrift.Binary.FieldStopLength()
-	return l
-}
-
-func (p *CartItem) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
-	return offset
-}
-
-func (p *CartItem) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 2)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
-	return offset
-}
-
-func (p *CartItem) field1Length() int {
-	l := 0
-	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.I64Length()
-	return l
-}
-
-func (p *CartItem) field2Length() int {
-	l := 0
-	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.I64Length()
-	return l
-}
-
-func (p *GetCartRequest) FastRead(buf []byte) (int, error) {
-	var err error
-	var offset int
-	var l int
-	var fieldTypeId thrift.TType
-	var fieldId int16
-	for {
-		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
-		offset += l
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.I64 {
-				l, err = p.FastReadField1(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		default:
-			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-			offset += l
-			if err != nil {
-				goto SkipFieldError
-			}
-		}
-	}
-
-	return offset, nil
-ReadFieldBeginError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetCartRequest[fieldId]), err)
-SkipFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-}
-
-func (p *GetCartRequest) FastReadField1(buf []byte) (int, error) {
-	offset := 0
-
-	var _field int64
-	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-		_field = v
-	}
-	p.UserId = _field
-	return offset, nil
-}
-
-// for compatibility
-func (p *GetCartRequest) FastWrite(buf []byte) int {
-	return 0
-}
-
-func (p *GetCartRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	if p != nil {
-		offset += p.fastWriteField1(buf[offset:], w)
-	}
-	offset += thrift.Binary.WriteFieldStop(buf[offset:])
-	return offset
-}
-
-func (p *GetCartRequest) BLength() int {
-	l := 0
-	if p != nil {
-		l += p.field1Length()
-	}
-	l += thrift.Binary.FieldStopLength()
-	return l
-}
-
-func (p *GetCartRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.UserId)
-	return offset
-}
-
-func (p *GetCartRequest) field1Length() int {
-	l := 0
-	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.I64Length()
-	return l
-}
-
-func (p *GetCartResponse) FastRead(buf []byte) (int, error) {
-	var err error
-	var offset int
-	var l int
-	var fieldTypeId thrift.TType
-	var fieldId int16
-	for {
-		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
-		offset += l
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.LIST {
-				l, err = p.FastReadField1(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		default:
-			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-			offset += l
-			if err != nil {
-				goto SkipFieldError
-			}
-		}
-	}
-
-	return offset, nil
-ReadFieldBeginError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetCartResponse[fieldId]), err)
-SkipFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-}
-
-func (p *GetCartResponse) FastReadField1(buf []byte) (int, error) {
-	offset := 0
-
-	_, size, l, err := thrift.Binary.ReadListBegin(buf[offset:])
-	offset += l
-	if err != nil {
-		return offset, err
-	}
-	_field := make([]*CartItem, 0, size)
-	values := make([]CartItem, size)
-	for i := 0; i < size; i++ {
-		_elem := &values[i]
-		_elem.InitDefault()
-		if l, err := _elem.FastRead(buf[offset:]); err != nil {
-			return offset, err
-		} else {
-			offset += l
-		}
-
-		_field = append(_field, _elem)
-	}
-	p.Items = _field
-	return offset, nil
-}
-
-// for compatibility
-func (p *GetCartResponse) FastWrite(buf []byte) int {
-	return 0
-}
-
-func (p *GetCartResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	if p != nil {
-		offset += p.fastWriteField1(buf[offset:], w)
-	}
-	offset += thrift.Binary.WriteFieldStop(buf[offset:])
-	return offset
-}
-
-func (p *GetCartResponse) BLength() int {
-	l := 0
-	if p != nil {
-		l += p.field1Length()
-	}
-	l += thrift.Binary.FieldStopLength()
-	return l
-}
-
-func (p *GetCartResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.LIST, 1)
-	listBeginOffset := offset
-	offset += thrift.Binary.ListBeginLength()
-	var length int
-	for _, v := range p.Items {
-		length++
-		offset += v.FastWriteNocopy(buf[offset:], w)
-	}
-	thrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRUCT, length)
-	return offset
-}
-
-func (p *GetCartResponse) field1Length() int {
-	l := 0
-	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.ListBeginLength()
-	for _, v := range p.Items {
-		_ = v
-		l += v.BLength()
-	}
-	return l
-}
-
-func (p *AddToCartRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -447,6 +86,62 @@ func (p *AddToCartRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 4:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField4(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 5:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField5(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 6:
+			if fieldTypeId == thrift.BYTE {
+				l, err = p.FastReadField6(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 7:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField7(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -460,9 +155,810 @@ func (p *AddToCartRequest) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartItem[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+}
+
+func (p *CartItem) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.CartItemId = _field
+	return offset, nil
+}
+
+func (p *CartItem) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.CustomerId = _field
+	return offset, nil
+}
+
+func (p *CartItem) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.ProductId = _field
+	return offset, nil
+}
+
+func (p *CartItem) FastReadField4(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.MerchantId = _field
+	return offset, nil
+}
+
+func (p *CartItem) FastReadField5(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.Quantity = _field
+	return offset, nil
+}
+
+func (p *CartItem) FastReadField6(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int8
+	if v, l, err := thrift.Binary.ReadByte(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.Selected = _field
+	return offset, nil
+}
+
+func (p *CartItem) FastReadField7(buf []byte) (int, error) {
+	offset := 0
+	_field := product.NewProduct()
+	if l, err := _field.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.Product = _field
+	return offset, nil
+}
+
+// for compatibility
+func (p *CartItem) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *CartItem) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], w)
+		offset += p.fastWriteField2(buf[offset:], w)
+		offset += p.fastWriteField3(buf[offset:], w)
+		offset += p.fastWriteField4(buf[offset:], w)
+		offset += p.fastWriteField5(buf[offset:], w)
+		offset += p.fastWriteField6(buf[offset:], w)
+		offset += p.fastWriteField7(buf[offset:], w)
+	}
+	offset += thrift.Binary.WriteFieldStop(buf[offset:])
+	return offset
+}
+
+func (p *CartItem) BLength() int {
+	l := 0
+	if p != nil {
+		l += p.field1Length()
+		l += p.field2Length()
+		l += p.field3Length()
+		l += p.field4Length()
+		l += p.field5Length()
+		l += p.field6Length()
+		l += p.field7Length()
+	}
+	l += thrift.Binary.FieldStopLength()
+	return l
+}
+
+func (p *CartItem) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CartItemId)
+	return offset
+}
+
+func (p *CartItem) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 2)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CustomerId)
+	return offset
+}
+
+func (p *CartItem) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 3)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
+	return offset
+}
+
+func (p *CartItem) fastWriteField4(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 4)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.MerchantId)
+	return offset
+}
+
+func (p *CartItem) fastWriteField5(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 5)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
+	return offset
+}
+
+func (p *CartItem) fastWriteField6(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BYTE, 6)
+	offset += thrift.Binary.WriteByte(buf[offset:], p.Selected)
+	return offset
+}
+
+func (p *CartItem) fastWriteField7(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 7)
+	offset += p.Product.FastWriteNocopy(buf[offset:], w)
+	return offset
+}
+
+func (p *CartItem) field1Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *CartItem) field2Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *CartItem) field3Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *CartItem) field4Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *CartItem) field5Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *CartItem) field6Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.ByteLength()
+	return l
+}
+
+func (p *CartItem) field7Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += p.Product.BLength()
+	return l
+}
+
+func (p *MerchantGroup) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	for {
+		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.LIST {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+	}
+
+	return offset, nil
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_MerchantGroup[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+}
+
+func (p *MerchantGroup) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.MerchantId = _field
+	return offset, nil
+}
+
+func (p *MerchantGroup) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	_, size, l, err := thrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	_field := make([]*CartItem, 0, size)
+	values := make([]CartItem, size)
+	for i := 0; i < size; i++ {
+		_elem := &values[i]
+		_elem.InitDefault()
+		if l, err := _elem.FastRead(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+		}
+
+		_field = append(_field, _elem)
+	}
+	p.Items = _field
+	return offset, nil
+}
+
+func (p *MerchantGroup) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.Subtotal = _field
+	return offset, nil
+}
+
+// for compatibility
+func (p *MerchantGroup) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *MerchantGroup) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], w)
+		offset += p.fastWriteField3(buf[offset:], w)
+		offset += p.fastWriteField2(buf[offset:], w)
+	}
+	offset += thrift.Binary.WriteFieldStop(buf[offset:])
+	return offset
+}
+
+func (p *MerchantGroup) BLength() int {
+	l := 0
+	if p != nil {
+		l += p.field1Length()
+		l += p.field2Length()
+		l += p.field3Length()
+	}
+	l += thrift.Binary.FieldStopLength()
+	return l
+}
+
+func (p *MerchantGroup) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.MerchantId)
+	return offset
+}
+
+func (p *MerchantGroup) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.LIST, 2)
+	listBeginOffset := offset
+	offset += thrift.Binary.ListBeginLength()
+	var length int
+	for _, v := range p.Items {
+		length++
+		offset += v.FastWriteNocopy(buf[offset:], w)
+	}
+	thrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRUCT, length)
+	return offset
+}
+
+func (p *MerchantGroup) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 3)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.Subtotal)
+	return offset
+}
+
+func (p *MerchantGroup) field1Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *MerchantGroup) field2Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.ListBeginLength()
+	for _, v := range p.Items {
+		_ = v
+		l += v.BLength()
+	}
+	return l
+}
+
+func (p *MerchantGroup) field3Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *GetCartRequest) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetCustomerId bool = false
+	for {
+		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetCustomerId = true
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+	}
+
+	if !issetCustomerId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+	return offset, nil
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetCartRequest[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+RequiredFieldNotSetError:
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_GetCartRequest[fieldId]))
+}
+
+func (p *GetCartRequest) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.CustomerId = _field
+	return offset, nil
+}
+
+// for compatibility
+func (p *GetCartRequest) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *GetCartRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], w)
+	}
+	offset += thrift.Binary.WriteFieldStop(buf[offset:])
+	return offset
+}
+
+func (p *GetCartRequest) BLength() int {
+	l := 0
+	if p != nil {
+		l += p.field1Length()
+	}
+	l += thrift.Binary.FieldStopLength()
+	return l
+}
+
+func (p *GetCartRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CustomerId)
+	return offset
+}
+
+func (p *GetCartRequest) field1Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *GetCartResponse) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	for {
+		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.LIST {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+	}
+
+	return offset, nil
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_GetCartResponse[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+}
+
+func (p *GetCartResponse) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	_, size, l, err := thrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	_field := make([]*MerchantGroup, 0, size)
+	values := make([]MerchantGroup, size)
+	for i := 0; i < size; i++ {
+		_elem := &values[i]
+		_elem.InitDefault()
+		if l, err := _elem.FastRead(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+		}
+
+		_field = append(_field, _elem)
+	}
+	p.Groups = _field
+	return offset, nil
+}
+
+func (p *GetCartResponse) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.TotalSelected = _field
+	return offset, nil
+}
+
+// for compatibility
+func (p *GetCartResponse) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *GetCartResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p != nil {
+		offset += p.fastWriteField2(buf[offset:], w)
+		offset += p.fastWriteField1(buf[offset:], w)
+	}
+	offset += thrift.Binary.WriteFieldStop(buf[offset:])
+	return offset
+}
+
+func (p *GetCartResponse) BLength() int {
+	l := 0
+	if p != nil {
+		l += p.field1Length()
+		l += p.field2Length()
+	}
+	l += thrift.Binary.FieldStopLength()
+	return l
+}
+
+func (p *GetCartResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.LIST, 1)
+	listBeginOffset := offset
+	offset += thrift.Binary.ListBeginLength()
+	var length int
+	for _, v := range p.Groups {
+		length++
+		offset += v.FastWriteNocopy(buf[offset:], w)
+	}
+	thrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRUCT, length)
+	return offset
+}
+
+func (p *GetCartResponse) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 2)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.TotalSelected)
+	return offset
+}
+
+func (p *GetCartResponse) field1Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.ListBeginLength()
+	for _, v := range p.Groups {
+		_ = v
+		l += v.BLength()
+	}
+	return l
+}
+
+func (p *GetCartResponse) field2Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *AddToCartRequest) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetCustomerId bool = false
+	var issetProductId bool = false
+	for {
+		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetCustomerId = true
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetProductId = true
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+	}
+
+	if !issetCustomerId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetProductId {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+	return offset, nil
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AddToCartRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+RequiredFieldNotSetError:
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_AddToCartRequest[fieldId]))
 }
 
 func (p *AddToCartRequest) FastReadField1(buf []byte) (int, error) {
@@ -475,7 +971,7 @@ func (p *AddToCartRequest) FastReadField1(buf []byte) (int, error) {
 		offset += l
 		_field = v
 	}
-	p.UserId = _field
+	p.CustomerId = _field
 	return offset, nil
 }
 
@@ -537,7 +1033,7 @@ func (p *AddToCartRequest) BLength() int {
 func (p *AddToCartRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.UserId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CustomerId)
 	return offset
 }
 
@@ -550,8 +1046,10 @@ func (p *AddToCartRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) in
 
 func (p *AddToCartRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 3)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
+	if p.IsSetQuantity() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 3)
+		offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
+	}
 	return offset
 }
 
@@ -571,8 +1069,10 @@ func (p *AddToCartRequest) field2Length() int {
 
 func (p *AddToCartRequest) field3Length() int {
 	l := 0
-	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.I64Length()
+	if p.IsSetQuantity() {
+		l += thrift.Binary.FieldBeginLength()
+		l += thrift.Binary.I64Length()
+	}
 	return l
 }
 
@@ -593,7 +1093,7 @@ func (p *AddToCartResponse) FastRead(buf []byte) (int, error) {
 		}
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
@@ -627,14 +1127,14 @@ SkipFieldError:
 func (p *AddToCartResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	var _field string
-	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 		_field = v
 	}
-	p.Message = _field
+	p.CartItemId = _field
 	return offset, nil
 }
 
@@ -663,24 +1163,27 @@ func (p *AddToCartResponse) BLength() int {
 
 func (p *AddToCartResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 1)
-	offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, p.Message)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CartItemId)
 	return offset
 }
 
 func (p *AddToCartResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.StringLengthNocopy(p.Message)
+	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *UpdateCartRequest) FastRead(buf []byte) (int, error) {
+func (p *UpdateQuantityRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetCustomerId bool = false
+	var issetCartItemId bool = false
+	var issetQuantity bool = false
 	for {
 		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
 		offset += l
@@ -698,6 +1201,7 @@ func (p *UpdateCartRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
+				issetCustomerId = true
 			} else {
 				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -712,6 +1216,7 @@ func (p *UpdateCartRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
+				issetCartItemId = true
 			} else {
 				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -726,6 +1231,7 @@ func (p *UpdateCartRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
+				issetQuantity = true
 			} else {
 				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -742,16 +1248,32 @@ func (p *UpdateCartRequest) FastRead(buf []byte) (int, error) {
 		}
 	}
 
+	if !issetCustomerId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetCartItemId {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetQuantity {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
 	return offset, nil
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateCartRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateQuantityRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+RequiredFieldNotSetError:
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_UpdateQuantityRequest[fieldId]))
 }
 
-func (p *UpdateCartRequest) FastReadField1(buf []byte) (int, error) {
+func (p *UpdateQuantityRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -761,11 +1283,11 @@ func (p *UpdateCartRequest) FastReadField1(buf []byte) (int, error) {
 		offset += l
 		_field = v
 	}
-	p.UserId = _field
+	p.CustomerId = _field
 	return offset, nil
 }
 
-func (p *UpdateCartRequest) FastReadField2(buf []byte) (int, error) {
+func (p *UpdateQuantityRequest) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -775,11 +1297,11 @@ func (p *UpdateCartRequest) FastReadField2(buf []byte) (int, error) {
 		offset += l
 		_field = v
 	}
-	p.ProductId = _field
+	p.CartItemId = _field
 	return offset, nil
 }
 
-func (p *UpdateCartRequest) FastReadField3(buf []byte) (int, error) {
+func (p *UpdateQuantityRequest) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int64
@@ -794,11 +1316,11 @@ func (p *UpdateCartRequest) FastReadField3(buf []byte) (int, error) {
 }
 
 // for compatibility
-func (p *UpdateCartRequest) FastWrite(buf []byte) int {
+func (p *UpdateQuantityRequest) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *UpdateCartRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateQuantityRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -809,7 +1331,7 @@ func (p *UpdateCartRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) i
 	return offset
 }
 
-func (p *UpdateCartRequest) BLength() int {
+func (p *UpdateQuantityRequest) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -820,49 +1342,49 @@ func (p *UpdateCartRequest) BLength() int {
 	return l
 }
 
-func (p *UpdateCartRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateQuantityRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.UserId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CustomerId)
 	return offset
 }
 
-func (p *UpdateCartRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateQuantityRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 2)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CartItemId)
 	return offset
 }
 
-func (p *UpdateCartRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateQuantityRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 3)
 	offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
 	return offset
 }
 
-func (p *UpdateCartRequest) field1Length() int {
+func (p *UpdateQuantityRequest) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *UpdateCartRequest) field2Length() int {
+func (p *UpdateQuantityRequest) field2Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *UpdateCartRequest) field3Length() int {
+func (p *UpdateQuantityRequest) field3Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *UpdateCartResponse) FastRead(buf []byte) (int, error) {
+func (p *UpdateQuantityResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -879,7 +1401,7 @@ func (p *UpdateCartResponse) FastRead(buf []byte) (int, error) {
 		}
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.BOOL {
 				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
@@ -905,31 +1427,31 @@ func (p *UpdateCartResponse) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateCartResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_UpdateQuantityResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *UpdateCartResponse) FastReadField1(buf []byte) (int, error) {
+func (p *UpdateQuantityResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	var _field string
-	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+	var _field bool
+	if v, l, err := thrift.Binary.ReadBool(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 		_field = v
 	}
-	p.Message = _field
+	p.Success = _field
 	return offset, nil
 }
 
 // for compatibility
-func (p *UpdateCartResponse) FastWrite(buf []byte) int {
+func (p *UpdateQuantityResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *UpdateCartResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateQuantityResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -938,7 +1460,7 @@ func (p *UpdateCartResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) 
 	return offset
 }
 
-func (p *UpdateCartResponse) BLength() int {
+func (p *UpdateQuantityResponse) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -947,26 +1469,29 @@ func (p *UpdateCartResponse) BLength() int {
 	return l
 }
 
-func (p *UpdateCartResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *UpdateQuantityResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 1)
-	offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, p.Message)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 1)
+	offset += thrift.Binary.WriteBool(buf[offset:], p.Success)
 	return offset
 }
 
-func (p *UpdateCartResponse) field1Length() int {
+func (p *UpdateQuantityResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.StringLengthNocopy(p.Message)
+	l += thrift.Binary.BoolLength()
 	return l
 }
 
-func (p *RemoveFromCartRequest) FastRead(buf []byte) (int, error) {
+func (p *ToggleSelectRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetCustomerId bool = false
+	var issetCartItemIds bool = false
+	var issetSelected bool = false
 	for {
 		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
 		offset += l
@@ -984,6 +1509,7 @@ func (p *RemoveFromCartRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
+				issetCustomerId = true
 			} else {
 				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -992,8 +1518,218 @@ func (p *RemoveFromCartRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetCartItemIds = true
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.BYTE {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetSelected = true
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+	}
+
+	if !issetCustomerId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetCartItemIds {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetSelected {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+	return offset, nil
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ToggleSelectRequest[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+RequiredFieldNotSetError:
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_ToggleSelectRequest[fieldId]))
+}
+
+func (p *ToggleSelectRequest) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.CustomerId = _field
+	return offset, nil
+}
+
+func (p *ToggleSelectRequest) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	_, size, l, err := thrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	_field := make([]int64, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem int64
+		if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+			_elem = v
+		}
+
+		_field = append(_field, _elem)
+	}
+	p.CartItemIds = _field
+	return offset, nil
+}
+
+func (p *ToggleSelectRequest) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int8
+	if v, l, err := thrift.Binary.ReadByte(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.Selected = _field
+	return offset, nil
+}
+
+// for compatibility
+func (p *ToggleSelectRequest) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *ToggleSelectRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], w)
+		offset += p.fastWriteField3(buf[offset:], w)
+		offset += p.fastWriteField2(buf[offset:], w)
+	}
+	offset += thrift.Binary.WriteFieldStop(buf[offset:])
+	return offset
+}
+
+func (p *ToggleSelectRequest) BLength() int {
+	l := 0
+	if p != nil {
+		l += p.field1Length()
+		l += p.field2Length()
+		l += p.field3Length()
+	}
+	l += thrift.Binary.FieldStopLength()
+	return l
+}
+
+func (p *ToggleSelectRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CustomerId)
+	return offset
+}
+
+func (p *ToggleSelectRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.LIST, 2)
+	listBeginOffset := offset
+	offset += thrift.Binary.ListBeginLength()
+	var length int
+	for _, v := range p.CartItemIds {
+		length++
+		offset += thrift.Binary.WriteI64(buf[offset:], v)
+	}
+	thrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.I64, length)
+	return offset
+}
+
+func (p *ToggleSelectRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BYTE, 3)
+	offset += thrift.Binary.WriteByte(buf[offset:], p.Selected)
+	return offset
+}
+
+func (p *ToggleSelectRequest) field1Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
+	return l
+}
+
+func (p *ToggleSelectRequest) field2Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.ListBeginLength()
+	l +=
+		thrift.Binary.I64Length() * len(p.CartItemIds)
+	return l
+}
+
+func (p *ToggleSelectRequest) field3Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.ByteLength()
+	return l
+}
+
+func (p *ToggleSelectResponse) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	for {
+		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.BOOL {
+				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -1018,45 +1754,183 @@ func (p *RemoveFromCartRequest) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RemoveFromCartRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ToggleSelectResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *RemoveFromCartRequest) FastReadField1(buf []byte) (int, error) {
+func (p *ToggleSelectResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	var _field int64
-	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+	var _field bool
+	if v, l, err := thrift.Binary.ReadBool(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 		_field = v
 	}
-	p.UserId = _field
-	return offset, nil
-}
-
-func (p *RemoveFromCartRequest) FastReadField2(buf []byte) (int, error) {
-	offset := 0
-
-	var _field int64
-	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-		_field = v
-	}
-	p.ProductId = _field
+	p.Success = _field
 	return offset, nil
 }
 
 // for compatibility
-func (p *RemoveFromCartRequest) FastWrite(buf []byte) int {
+func (p *ToggleSelectResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *RemoveFromCartRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *ToggleSelectResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], w)
+	}
+	offset += thrift.Binary.WriteFieldStop(buf[offset:])
+	return offset
+}
+
+func (p *ToggleSelectResponse) BLength() int {
+	l := 0
+	if p != nil {
+		l += p.field1Length()
+	}
+	l += thrift.Binary.FieldStopLength()
+	return l
+}
+
+func (p *ToggleSelectResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 1)
+	offset += thrift.Binary.WriteBool(buf[offset:], p.Success)
+	return offset
+}
+
+func (p *ToggleSelectResponse) field1Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.BoolLength()
+	return l
+}
+
+func (p *RemoveItemsRequest) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetCustomerId bool = false
+	var issetCartItemIds bool = false
+	for {
+		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetCustomerId = true
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.LIST {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetCartItemIds = true
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+	}
+
+	if !issetCustomerId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetCartItemIds {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+	return offset, nil
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RemoveItemsRequest[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+RequiredFieldNotSetError:
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_RemoveItemsRequest[fieldId]))
+}
+
+func (p *RemoveItemsRequest) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	var _field int64
+	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = v
+	}
+	p.CustomerId = _field
+	return offset, nil
+}
+
+func (p *RemoveItemsRequest) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	_, size, l, err := thrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	_field := make([]int64, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem int64
+		if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+			_elem = v
+		}
+
+		_field = append(_field, _elem)
+	}
+	p.CartItemIds = _field
+	return offset, nil
+}
+
+// for compatibility
+func (p *RemoveItemsRequest) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *RemoveItemsRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -1066,7 +1940,7 @@ func (p *RemoveFromCartRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWrite
 	return offset
 }
 
-func (p *RemoveFromCartRequest) BLength() int {
+func (p *RemoveItemsRequest) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -1076,35 +1950,44 @@ func (p *RemoveFromCartRequest) BLength() int {
 	return l
 }
 
-func (p *RemoveFromCartRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *RemoveItemsRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.UserId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CustomerId)
 	return offset
 }
 
-func (p *RemoveFromCartRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+func (p *RemoveItemsRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 2)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.LIST, 2)
+	listBeginOffset := offset
+	offset += thrift.Binary.ListBeginLength()
+	var length int
+	for _, v := range p.CartItemIds {
+		length++
+		offset += thrift.Binary.WriteI64(buf[offset:], v)
+	}
+	thrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.I64, length)
 	return offset
 }
 
-func (p *RemoveFromCartRequest) field1Length() int {
+func (p *RemoveItemsRequest) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.I64Length()
 	return l
 }
 
-func (p *RemoveFromCartRequest) field2Length() int {
+func (p *RemoveItemsRequest) field2Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.I64Length()
+	l += thrift.Binary.ListBeginLength()
+	l +=
+		thrift.Binary.I64Length() * len(p.CartItemIds)
 	return l
 }
 
-func (p *RemoveFromCartResponse) FastRead(buf []byte) (int, error) {
+func (p *RemoveItemsResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -1121,7 +2004,7 @@ func (p *RemoveFromCartResponse) FastRead(buf []byte) (int, error) {
 		}
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.BOOL {
 				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1147,31 +2030,31 @@ func (p *RemoveFromCartResponse) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RemoveFromCartResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RemoveItemsResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *RemoveFromCartResponse) FastReadField1(buf []byte) (int, error) {
+func (p *RemoveItemsResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	var _field string
-	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+	var _field bool
+	if v, l, err := thrift.Binary.ReadBool(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 		_field = v
 	}
-	p.Message = _field
+	p.Success = _field
 	return offset, nil
 }
 
 // for compatibility
-func (p *RemoveFromCartResponse) FastWrite(buf []byte) int {
+func (p *RemoveItemsResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *RemoveFromCartResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *RemoveItemsResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -1180,7 +2063,7 @@ func (p *RemoveFromCartResponse) FastWriteNocopy(buf []byte, w thrift.NocopyWrit
 	return offset
 }
 
-func (p *RemoveFromCartResponse) BLength() int {
+func (p *RemoveItemsResponse) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -1189,17 +2072,17 @@ func (p *RemoveFromCartResponse) BLength() int {
 	return l
 }
 
-func (p *RemoveFromCartResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *RemoveItemsResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 1)
-	offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, p.Message)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 1)
+	offset += thrift.Binary.WriteBool(buf[offset:], p.Success)
 	return offset
 }
 
-func (p *RemoveFromCartResponse) field1Length() int {
+func (p *RemoveItemsResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.StringLengthNocopy(p.Message)
+	l += thrift.Binary.BoolLength()
 	return l
 }
 
@@ -1209,6 +2092,7 @@ func (p *ClearCartRequest) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetCustomerId bool = false
 	for {
 		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
 		offset += l
@@ -1226,6 +2110,7 @@ func (p *ClearCartRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
+				issetCustomerId = true
 			} else {
 				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1242,6 +2127,10 @@ func (p *ClearCartRequest) FastRead(buf []byte) (int, error) {
 		}
 	}
 
+	if !issetCustomerId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
 	return offset, nil
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
@@ -1249,6 +2138,8 @@ ReadFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ClearCartRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+RequiredFieldNotSetError:
+	return offset, thrift.NewProtocolException(thrift.INVALID_DATA, fmt.Sprintf("required field %s is not set", fieldIDToName_ClearCartRequest[fieldId]))
 }
 
 func (p *ClearCartRequest) FastReadField1(buf []byte) (int, error) {
@@ -1261,7 +2152,7 @@ func (p *ClearCartRequest) FastReadField1(buf []byte) (int, error) {
 		offset += l
 		_field = v
 	}
-	p.UserId = _field
+	p.CustomerId = _field
 	return offset, nil
 }
 
@@ -1291,7 +2182,7 @@ func (p *ClearCartRequest) BLength() int {
 func (p *ClearCartRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.UserId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.CustomerId)
 	return offset
 }
 
@@ -1319,7 +2210,7 @@ func (p *ClearCartResponse) FastRead(buf []byte) (int, error) {
 		}
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.BOOL {
 				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1353,14 +2244,14 @@ SkipFieldError:
 func (p *ClearCartResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	var _field string
-	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+	var _field bool
+	if v, l, err := thrift.Binary.ReadBool(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 		_field = v
 	}
-	p.Message = _field
+	p.Success = _field
 	return offset, nil
 }
 
@@ -1389,15 +2280,15 @@ func (p *ClearCartResponse) BLength() int {
 
 func (p *ClearCartResponse) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 1)
-	offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, p.Message)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 1)
+	offset += thrift.Binary.WriteBool(buf[offset:], p.Success)
 	return offset
 }
 
 func (p *ClearCartResponse) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.StringLengthNocopy(p.Message)
+	l += thrift.Binary.BoolLength()
 	return l
 }
 
@@ -1457,7 +2348,7 @@ func (p *CartServiceGetCartArgs) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 	}
-	p.Request = _field
+	p.Req = _field
 	return offset, nil
 }
 
@@ -1487,14 +2378,14 @@ func (p *CartServiceGetCartArgs) BLength() int {
 func (p *CartServiceGetCartArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-	offset += p.Request.FastWriteNocopy(buf[offset:], w)
+	offset += p.Req.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
 func (p *CartServiceGetCartArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += p.Request.BLength()
+	l += p.Req.BLength()
 	return l
 }
 
@@ -1580,7 +2471,7 @@ func (p *CartServiceGetCartResult) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 	}
-	p.Error = _field
+	p.Err = _field
 	return offset, nil
 }
 
@@ -1620,9 +2511,9 @@ func (p *CartServiceGetCartResult) fastWriteField0(buf []byte, w thrift.NocopyWr
 
 func (p *CartServiceGetCartResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-		offset += p.Error.FastWriteNocopy(buf[offset:], w)
+		offset += p.Err.FastWriteNocopy(buf[offset:], w)
 	}
 	return offset
 }
@@ -1638,9 +2529,9 @@ func (p *CartServiceGetCartResult) field0Length() int {
 
 func (p *CartServiceGetCartResult) field1Length() int {
 	l := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		l += thrift.Binary.FieldBeginLength()
-		l += p.Error.BLength()
+		l += p.Err.BLength()
 	}
 	return l
 }
@@ -1701,7 +2592,7 @@ func (p *CartServiceAddToCartArgs) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 	}
-	p.Request = _field
+	p.Req = _field
 	return offset, nil
 }
 
@@ -1731,14 +2622,14 @@ func (p *CartServiceAddToCartArgs) BLength() int {
 func (p *CartServiceAddToCartArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-	offset += p.Request.FastWriteNocopy(buf[offset:], w)
+	offset += p.Req.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
 func (p *CartServiceAddToCartArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += p.Request.BLength()
+	l += p.Req.BLength()
 	return l
 }
 
@@ -1824,7 +2715,7 @@ func (p *CartServiceAddToCartResult) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 	}
-	p.Error = _field
+	p.Err = _field
 	return offset, nil
 }
 
@@ -1864,9 +2755,9 @@ func (p *CartServiceAddToCartResult) fastWriteField0(buf []byte, w thrift.Nocopy
 
 func (p *CartServiceAddToCartResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-		offset += p.Error.FastWriteNocopy(buf[offset:], w)
+		offset += p.Err.FastWriteNocopy(buf[offset:], w)
 	}
 	return offset
 }
@@ -1882,14 +2773,14 @@ func (p *CartServiceAddToCartResult) field0Length() int {
 
 func (p *CartServiceAddToCartResult) field1Length() int {
 	l := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		l += thrift.Binary.FieldBeginLength()
-		l += p.Error.BLength()
+		l += p.Err.BLength()
 	}
 	return l
 }
 
-func (p *CartServiceUpdateCartArgs) FastRead(buf []byte) (int, error) {
+func (p *CartServiceUpdateQuantityArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -1932,29 +2823,29 @@ func (p *CartServiceUpdateCartArgs) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceUpdateCartArgs[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceUpdateQuantityArgs[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *CartServiceUpdateCartArgs) FastReadField1(buf []byte) (int, error) {
+func (p *CartServiceUpdateQuantityArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
-	_field := NewUpdateCartRequest()
+	_field := NewUpdateQuantityRequest()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 	}
-	p.Request = _field
+	p.Req = _field
 	return offset, nil
 }
 
 // for compatibility
-func (p *CartServiceUpdateCartArgs) FastWrite(buf []byte) int {
+func (p *CartServiceUpdateQuantityArgs) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *CartServiceUpdateCartArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceUpdateQuantityArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -1963,7 +2854,7 @@ func (p *CartServiceUpdateCartArgs) FastWriteNocopy(buf []byte, w thrift.NocopyW
 	return offset
 }
 
-func (p *CartServiceUpdateCartArgs) BLength() int {
+func (p *CartServiceUpdateQuantityArgs) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -1972,21 +2863,21 @@ func (p *CartServiceUpdateCartArgs) BLength() int {
 	return l
 }
 
-func (p *CartServiceUpdateCartArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceUpdateQuantityArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-	offset += p.Request.FastWriteNocopy(buf[offset:], w)
+	offset += p.Req.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
-func (p *CartServiceUpdateCartArgs) field1Length() int {
+func (p *CartServiceUpdateQuantityArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += p.Request.BLength()
+	l += p.Req.BLength()
 	return l
 }
 
-func (p *CartServiceUpdateCartResult) FastRead(buf []byte) (int, error) {
+func (p *CartServiceUpdateQuantityResult) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2043,14 +2934,14 @@ func (p *CartServiceUpdateCartResult) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceUpdateCartResult[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceUpdateQuantityResult[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *CartServiceUpdateCartResult) FastReadField0(buf []byte) (int, error) {
+func (p *CartServiceUpdateQuantityResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
-	_field := NewUpdateCartResponse()
+	_field := NewUpdateQuantityResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2060,7 +2951,7 @@ func (p *CartServiceUpdateCartResult) FastReadField0(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *CartServiceUpdateCartResult) FastReadField1(buf []byte) (int, error) {
+func (p *CartServiceUpdateQuantityResult) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 	_field := base.NewErrorResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -2068,16 +2959,16 @@ func (p *CartServiceUpdateCartResult) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 	}
-	p.Error = _field
+	p.Err = _field
 	return offset, nil
 }
 
 // for compatibility
-func (p *CartServiceUpdateCartResult) FastWrite(buf []byte) int {
+func (p *CartServiceUpdateQuantityResult) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *CartServiceUpdateCartResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceUpdateQuantityResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField0(buf[offset:], w)
@@ -2087,7 +2978,7 @@ func (p *CartServiceUpdateCartResult) FastWriteNocopy(buf []byte, w thrift.Nocop
 	return offset
 }
 
-func (p *CartServiceUpdateCartResult) BLength() int {
+func (p *CartServiceUpdateQuantityResult) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field0Length()
@@ -2097,7 +2988,7 @@ func (p *CartServiceUpdateCartResult) BLength() int {
 	return l
 }
 
-func (p *CartServiceUpdateCartResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceUpdateQuantityResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetSuccess() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 0)
@@ -2106,16 +2997,16 @@ func (p *CartServiceUpdateCartResult) fastWriteField0(buf []byte, w thrift.Nocop
 	return offset
 }
 
-func (p *CartServiceUpdateCartResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceUpdateQuantityResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-		offset += p.Error.FastWriteNocopy(buf[offset:], w)
+		offset += p.Err.FastWriteNocopy(buf[offset:], w)
 	}
 	return offset
 }
 
-func (p *CartServiceUpdateCartResult) field0Length() int {
+func (p *CartServiceUpdateQuantityResult) field0Length() int {
 	l := 0
 	if p.IsSetSuccess() {
 		l += thrift.Binary.FieldBeginLength()
@@ -2124,16 +3015,16 @@ func (p *CartServiceUpdateCartResult) field0Length() int {
 	return l
 }
 
-func (p *CartServiceUpdateCartResult) field1Length() int {
+func (p *CartServiceUpdateQuantityResult) field1Length() int {
 	l := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		l += thrift.Binary.FieldBeginLength()
-		l += p.Error.BLength()
+		l += p.Err.BLength()
 	}
 	return l
 }
 
-func (p *CartServiceRemoveFromCartArgs) FastRead(buf []byte) (int, error) {
+func (p *CartServiceToggleSelectArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2176,29 +3067,29 @@ func (p *CartServiceRemoveFromCartArgs) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceRemoveFromCartArgs[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceToggleSelectArgs[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *CartServiceRemoveFromCartArgs) FastReadField1(buf []byte) (int, error) {
+func (p *CartServiceToggleSelectArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
-	_field := NewRemoveFromCartRequest()
+	_field := NewToggleSelectRequest()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 	}
-	p.Request = _field
+	p.Req = _field
 	return offset, nil
 }
 
 // for compatibility
-func (p *CartServiceRemoveFromCartArgs) FastWrite(buf []byte) int {
+func (p *CartServiceToggleSelectArgs) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *CartServiceRemoveFromCartArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceToggleSelectArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
@@ -2207,7 +3098,7 @@ func (p *CartServiceRemoveFromCartArgs) FastWriteNocopy(buf []byte, w thrift.Noc
 	return offset
 }
 
-func (p *CartServiceRemoveFromCartArgs) BLength() int {
+func (p *CartServiceToggleSelectArgs) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
@@ -2216,21 +3107,21 @@ func (p *CartServiceRemoveFromCartArgs) BLength() int {
 	return l
 }
 
-func (p *CartServiceRemoveFromCartArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceToggleSelectArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-	offset += p.Request.FastWriteNocopy(buf[offset:], w)
+	offset += p.Req.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
-func (p *CartServiceRemoveFromCartArgs) field1Length() int {
+func (p *CartServiceToggleSelectArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += p.Request.BLength()
+	l += p.Req.BLength()
 	return l
 }
 
-func (p *CartServiceRemoveFromCartResult) FastRead(buf []byte) (int, error) {
+func (p *CartServiceToggleSelectResult) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2287,14 +3178,14 @@ func (p *CartServiceRemoveFromCartResult) FastRead(buf []byte) (int, error) {
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceRemoveFromCartResult[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceToggleSelectResult[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 }
 
-func (p *CartServiceRemoveFromCartResult) FastReadField0(buf []byte) (int, error) {
+func (p *CartServiceToggleSelectResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
-	_field := NewRemoveFromCartResponse()
+	_field := NewToggleSelectResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -2304,7 +3195,7 @@ func (p *CartServiceRemoveFromCartResult) FastReadField0(buf []byte) (int, error
 	return offset, nil
 }
 
-func (p *CartServiceRemoveFromCartResult) FastReadField1(buf []byte) (int, error) {
+func (p *CartServiceToggleSelectResult) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 	_field := base.NewErrorResponse()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -2312,16 +3203,16 @@ func (p *CartServiceRemoveFromCartResult) FastReadField1(buf []byte) (int, error
 	} else {
 		offset += l
 	}
-	p.Error = _field
+	p.Err = _field
 	return offset, nil
 }
 
 // for compatibility
-func (p *CartServiceRemoveFromCartResult) FastWrite(buf []byte) int {
+func (p *CartServiceToggleSelectResult) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *CartServiceRemoveFromCartResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceToggleSelectResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField0(buf[offset:], w)
@@ -2331,7 +3222,7 @@ func (p *CartServiceRemoveFromCartResult) FastWriteNocopy(buf []byte, w thrift.N
 	return offset
 }
 
-func (p *CartServiceRemoveFromCartResult) BLength() int {
+func (p *CartServiceToggleSelectResult) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field0Length()
@@ -2341,7 +3232,7 @@ func (p *CartServiceRemoveFromCartResult) BLength() int {
 	return l
 }
 
-func (p *CartServiceRemoveFromCartResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceToggleSelectResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetSuccess() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 0)
@@ -2350,16 +3241,16 @@ func (p *CartServiceRemoveFromCartResult) fastWriteField0(buf []byte, w thrift.N
 	return offset
 }
 
-func (p *CartServiceRemoveFromCartResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+func (p *CartServiceToggleSelectResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-		offset += p.Error.FastWriteNocopy(buf[offset:], w)
+		offset += p.Err.FastWriteNocopy(buf[offset:], w)
 	}
 	return offset
 }
 
-func (p *CartServiceRemoveFromCartResult) field0Length() int {
+func (p *CartServiceToggleSelectResult) field0Length() int {
 	l := 0
 	if p.IsSetSuccess() {
 		l += thrift.Binary.FieldBeginLength()
@@ -2368,11 +3259,255 @@ func (p *CartServiceRemoveFromCartResult) field0Length() int {
 	return l
 }
 
-func (p *CartServiceRemoveFromCartResult) field1Length() int {
+func (p *CartServiceToggleSelectResult) field1Length() int {
 	l := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		l += thrift.Binary.FieldBeginLength()
-		l += p.Error.BLength()
+		l += p.Err.BLength()
+	}
+	return l
+}
+
+func (p *CartServiceRemoveItemsArgs) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	for {
+		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+	}
+
+	return offset, nil
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceRemoveItemsArgs[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+}
+
+func (p *CartServiceRemoveItemsArgs) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+	_field := NewRemoveItemsRequest()
+	if l, err := _field.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.Req = _field
+	return offset, nil
+}
+
+// for compatibility
+func (p *CartServiceRemoveItemsArgs) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *CartServiceRemoveItemsArgs) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], w)
+	}
+	offset += thrift.Binary.WriteFieldStop(buf[offset:])
+	return offset
+}
+
+func (p *CartServiceRemoveItemsArgs) BLength() int {
+	l := 0
+	if p != nil {
+		l += p.field1Length()
+	}
+	l += thrift.Binary.FieldStopLength()
+	return l
+}
+
+func (p *CartServiceRemoveItemsArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
+	offset += p.Req.FastWriteNocopy(buf[offset:], w)
+	return offset
+}
+
+func (p *CartServiceRemoveItemsArgs) field1Length() int {
+	l := 0
+	l += thrift.Binary.FieldBeginLength()
+	l += p.Req.BLength()
+	return l
+}
+
+func (p *CartServiceRemoveItemsResult) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	for {
+		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField0(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+	}
+
+	return offset, nil
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_CartServiceRemoveItemsResult[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+}
+
+func (p *CartServiceRemoveItemsResult) FastReadField0(buf []byte) (int, error) {
+	offset := 0
+	_field := NewRemoveItemsResponse()
+	if l, err := _field.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.Success = _field
+	return offset, nil
+}
+
+func (p *CartServiceRemoveItemsResult) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+	_field := base.NewErrorResponse()
+	if l, err := _field.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.Err = _field
+	return offset, nil
+}
+
+// for compatibility
+func (p *CartServiceRemoveItemsResult) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *CartServiceRemoveItemsResult) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p != nil {
+		offset += p.fastWriteField0(buf[offset:], w)
+		offset += p.fastWriteField1(buf[offset:], w)
+	}
+	offset += thrift.Binary.WriteFieldStop(buf[offset:])
+	return offset
+}
+
+func (p *CartServiceRemoveItemsResult) BLength() int {
+	l := 0
+	if p != nil {
+		l += p.field0Length()
+		l += p.field1Length()
+	}
+	l += thrift.Binary.FieldStopLength()
+	return l
+}
+
+func (p *CartServiceRemoveItemsResult) fastWriteField0(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p.IsSetSuccess() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 0)
+		offset += p.Success.FastWriteNocopy(buf[offset:], w)
+	}
+	return offset
+}
+
+func (p *CartServiceRemoveItemsResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p.IsSetErr() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
+		offset += p.Err.FastWriteNocopy(buf[offset:], w)
+	}
+	return offset
+}
+
+func (p *CartServiceRemoveItemsResult) field0Length() int {
+	l := 0
+	if p.IsSetSuccess() {
+		l += thrift.Binary.FieldBeginLength()
+		l += p.Success.BLength()
+	}
+	return l
+}
+
+func (p *CartServiceRemoveItemsResult) field1Length() int {
+	l := 0
+	if p.IsSetErr() {
+		l += thrift.Binary.FieldBeginLength()
+		l += p.Err.BLength()
 	}
 	return l
 }
@@ -2433,7 +3568,7 @@ func (p *CartServiceClearCartArgs) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 	}
-	p.Request = _field
+	p.Req = _field
 	return offset, nil
 }
 
@@ -2463,14 +3598,14 @@ func (p *CartServiceClearCartArgs) BLength() int {
 func (p *CartServiceClearCartArgs) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-	offset += p.Request.FastWriteNocopy(buf[offset:], w)
+	offset += p.Req.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
 
 func (p *CartServiceClearCartArgs) field1Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += p.Request.BLength()
+	l += p.Req.BLength()
 	return l
 }
 
@@ -2556,7 +3691,7 @@ func (p *CartServiceClearCartResult) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 	}
-	p.Error = _field
+	p.Err = _field
 	return offset, nil
 }
 
@@ -2596,9 +3731,9 @@ func (p *CartServiceClearCartResult) fastWriteField0(buf []byte, w thrift.Nocopy
 
 func (p *CartServiceClearCartResult) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 1)
-		offset += p.Error.FastWriteNocopy(buf[offset:], w)
+		offset += p.Err.FastWriteNocopy(buf[offset:], w)
 	}
 	return offset
 }
@@ -2614,15 +3749,15 @@ func (p *CartServiceClearCartResult) field0Length() int {
 
 func (p *CartServiceClearCartResult) field1Length() int {
 	l := 0
-	if p.IsSetError() {
+	if p.IsSetErr() {
 		l += thrift.Binary.FieldBeginLength()
-		l += p.Error.BLength()
+		l += p.Err.BLength()
 	}
 	return l
 }
 
 func (p *CartServiceGetCartArgs) GetFirstArgument() interface{} {
-	return p.Request
+	return p.Req
 }
 
 func (p *CartServiceGetCartResult) GetResult() interface{} {
@@ -2630,31 +3765,39 @@ func (p *CartServiceGetCartResult) GetResult() interface{} {
 }
 
 func (p *CartServiceAddToCartArgs) GetFirstArgument() interface{} {
-	return p.Request
+	return p.Req
 }
 
 func (p *CartServiceAddToCartResult) GetResult() interface{} {
 	return p.Success
 }
 
-func (p *CartServiceUpdateCartArgs) GetFirstArgument() interface{} {
-	return p.Request
+func (p *CartServiceUpdateQuantityArgs) GetFirstArgument() interface{} {
+	return p.Req
 }
 
-func (p *CartServiceUpdateCartResult) GetResult() interface{} {
+func (p *CartServiceUpdateQuantityResult) GetResult() interface{} {
 	return p.Success
 }
 
-func (p *CartServiceRemoveFromCartArgs) GetFirstArgument() interface{} {
-	return p.Request
+func (p *CartServiceToggleSelectArgs) GetFirstArgument() interface{} {
+	return p.Req
 }
 
-func (p *CartServiceRemoveFromCartResult) GetResult() interface{} {
+func (p *CartServiceToggleSelectResult) GetResult() interface{} {
+	return p.Success
+}
+
+func (p *CartServiceRemoveItemsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+func (p *CartServiceRemoveItemsResult) GetResult() interface{} {
 	return p.Success
 }
 
 func (p *CartServiceClearCartArgs) GetFirstArgument() interface{} {
-	return p.Request
+	return p.Req
 }
 
 func (p *CartServiceClearCartResult) GetResult() interface{} {

@@ -11,11 +11,12 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	GetCart(ctx context.Context, request *cart.GetCartRequest, callOptions ...callopt.Option) (r *cart.GetCartResponse, err error)
-	AddToCart(ctx context.Context, request *cart.AddToCartRequest, callOptions ...callopt.Option) (r *cart.AddToCartResponse, err error)
-	UpdateCart(ctx context.Context, request *cart.UpdateCartRequest, callOptions ...callopt.Option) (r *cart.UpdateCartResponse, err error)
-	RemoveFromCart(ctx context.Context, request *cart.RemoveFromCartRequest, callOptions ...callopt.Option) (r *cart.RemoveFromCartResponse, err error)
-	ClearCart(ctx context.Context, request *cart.ClearCartRequest, callOptions ...callopt.Option) (r *cart.ClearCartResponse, err error)
+	GetCart(ctx context.Context, req *cart.GetCartRequest, callOptions ...callopt.Option) (r *cart.GetCartResponse, err error)
+	AddToCart(ctx context.Context, req *cart.AddToCartRequest, callOptions ...callopt.Option) (r *cart.AddToCartResponse, err error)
+	UpdateQuantity(ctx context.Context, req *cart.UpdateQuantityRequest, callOptions ...callopt.Option) (r *cart.UpdateQuantityResponse, err error)
+	ToggleSelect(ctx context.Context, req *cart.ToggleSelectRequest, callOptions ...callopt.Option) (r *cart.ToggleSelectResponse, err error)
+	RemoveItems(ctx context.Context, req *cart.RemoveItemsRequest, callOptions ...callopt.Option) (r *cart.RemoveItemsResponse, err error)
+	ClearCart(ctx context.Context, req *cart.ClearCartRequest, callOptions ...callopt.Option) (r *cart.ClearCartResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -47,27 +48,32 @@ type kCartServiceClient struct {
 	*kClient
 }
 
-func (p *kCartServiceClient) GetCart(ctx context.Context, request *cart.GetCartRequest, callOptions ...callopt.Option) (r *cart.GetCartResponse, err error) {
+func (p *kCartServiceClient) GetCart(ctx context.Context, req *cart.GetCartRequest, callOptions ...callopt.Option) (r *cart.GetCartResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetCart(ctx, request)
+	return p.kClient.GetCart(ctx, req)
 }
 
-func (p *kCartServiceClient) AddToCart(ctx context.Context, request *cart.AddToCartRequest, callOptions ...callopt.Option) (r *cart.AddToCartResponse, err error) {
+func (p *kCartServiceClient) AddToCart(ctx context.Context, req *cart.AddToCartRequest, callOptions ...callopt.Option) (r *cart.AddToCartResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.AddToCart(ctx, request)
+	return p.kClient.AddToCart(ctx, req)
 }
 
-func (p *kCartServiceClient) UpdateCart(ctx context.Context, request *cart.UpdateCartRequest, callOptions ...callopt.Option) (r *cart.UpdateCartResponse, err error) {
+func (p *kCartServiceClient) UpdateQuantity(ctx context.Context, req *cart.UpdateQuantityRequest, callOptions ...callopt.Option) (r *cart.UpdateQuantityResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateCart(ctx, request)
+	return p.kClient.UpdateQuantity(ctx, req)
 }
 
-func (p *kCartServiceClient) RemoveFromCart(ctx context.Context, request *cart.RemoveFromCartRequest, callOptions ...callopt.Option) (r *cart.RemoveFromCartResponse, err error) {
+func (p *kCartServiceClient) ToggleSelect(ctx context.Context, req *cart.ToggleSelectRequest, callOptions ...callopt.Option) (r *cart.ToggleSelectResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.RemoveFromCart(ctx, request)
+	return p.kClient.ToggleSelect(ctx, req)
 }
 
-func (p *kCartServiceClient) ClearCart(ctx context.Context, request *cart.ClearCartRequest, callOptions ...callopt.Option) (r *cart.ClearCartResponse, err error) {
+func (p *kCartServiceClient) RemoveItems(ctx context.Context, req *cart.RemoveItemsRequest, callOptions ...callopt.Option) (r *cart.RemoveItemsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ClearCart(ctx, request)
+	return p.kClient.RemoveItems(ctx, req)
+}
+
+func (p *kCartServiceClient) ClearCart(ctx context.Context, req *cart.ClearCartRequest, callOptions ...callopt.Option) (r *cart.ClearCartResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ClearCart(ctx, req)
 }

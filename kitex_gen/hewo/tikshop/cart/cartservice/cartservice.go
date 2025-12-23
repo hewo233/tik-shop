@@ -14,35 +14,42 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"getCart": kitex.NewMethodInfo(
+	"GetCart": kitex.NewMethodInfo(
 		getCartHandler,
 		newCartServiceGetCartArgs,
 		newCartServiceGetCartResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"addToCart": kitex.NewMethodInfo(
+	"AddToCart": kitex.NewMethodInfo(
 		addToCartHandler,
 		newCartServiceAddToCartArgs,
 		newCartServiceAddToCartResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"updateCart": kitex.NewMethodInfo(
-		updateCartHandler,
-		newCartServiceUpdateCartArgs,
-		newCartServiceUpdateCartResult,
+	"UpdateQuantity": kitex.NewMethodInfo(
+		updateQuantityHandler,
+		newCartServiceUpdateQuantityArgs,
+		newCartServiceUpdateQuantityResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"removeFromCart": kitex.NewMethodInfo(
-		removeFromCartHandler,
-		newCartServiceRemoveFromCartArgs,
-		newCartServiceRemoveFromCartResult,
+	"ToggleSelect": kitex.NewMethodInfo(
+		toggleSelectHandler,
+		newCartServiceToggleSelectArgs,
+		newCartServiceToggleSelectResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"clearCart": kitex.NewMethodInfo(
+	"RemoveItems": kitex.NewMethodInfo(
+		removeItemsHandler,
+		newCartServiceRemoveItemsArgs,
+		newCartServiceRemoveItemsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"ClearCart": kitex.NewMethodInfo(
 		clearCartHandler,
 		newCartServiceClearCartArgs,
 		newCartServiceClearCartResult,
@@ -118,11 +125,11 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 func getCartHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*cart.CartServiceGetCartArgs)
 	realResult := result.(*cart.CartServiceGetCartResult)
-	success, err := handler.(cart.CartService).GetCart(ctx, realArg.Request)
+	success, err := handler.(cart.CartService).GetCart(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
-			realResult.Error = v
+			realResult.Err = v
 		default:
 			return err
 		}
@@ -142,11 +149,11 @@ func newCartServiceGetCartResult() interface{} {
 func addToCartHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*cart.CartServiceAddToCartArgs)
 	realResult := result.(*cart.CartServiceAddToCartResult)
-	success, err := handler.(cart.CartService).AddToCart(ctx, realArg.Request)
+	success, err := handler.(cart.CartService).AddToCart(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
-			realResult.Error = v
+			realResult.Err = v
 		default:
 			return err
 		}
@@ -163,14 +170,14 @@ func newCartServiceAddToCartResult() interface{} {
 	return cart.NewCartServiceAddToCartResult()
 }
 
-func updateCartHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*cart.CartServiceUpdateCartArgs)
-	realResult := result.(*cart.CartServiceUpdateCartResult)
-	success, err := handler.(cart.CartService).UpdateCart(ctx, realArg.Request)
+func updateQuantityHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*cart.CartServiceUpdateQuantityArgs)
+	realResult := result.(*cart.CartServiceUpdateQuantityResult)
+	success, err := handler.(cart.CartService).UpdateQuantity(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
-			realResult.Error = v
+			realResult.Err = v
 		default:
 			return err
 		}
@@ -179,22 +186,22 @@ func updateCartHandler(ctx context.Context, handler interface{}, arg, result int
 	}
 	return nil
 }
-func newCartServiceUpdateCartArgs() interface{} {
-	return cart.NewCartServiceUpdateCartArgs()
+func newCartServiceUpdateQuantityArgs() interface{} {
+	return cart.NewCartServiceUpdateQuantityArgs()
 }
 
-func newCartServiceUpdateCartResult() interface{} {
-	return cart.NewCartServiceUpdateCartResult()
+func newCartServiceUpdateQuantityResult() interface{} {
+	return cart.NewCartServiceUpdateQuantityResult()
 }
 
-func removeFromCartHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*cart.CartServiceRemoveFromCartArgs)
-	realResult := result.(*cart.CartServiceRemoveFromCartResult)
-	success, err := handler.(cart.CartService).RemoveFromCart(ctx, realArg.Request)
+func toggleSelectHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*cart.CartServiceToggleSelectArgs)
+	realResult := result.(*cart.CartServiceToggleSelectResult)
+	success, err := handler.(cart.CartService).ToggleSelect(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
-			realResult.Error = v
+			realResult.Err = v
 		default:
 			return err
 		}
@@ -203,22 +210,46 @@ func removeFromCartHandler(ctx context.Context, handler interface{}, arg, result
 	}
 	return nil
 }
-func newCartServiceRemoveFromCartArgs() interface{} {
-	return cart.NewCartServiceRemoveFromCartArgs()
+func newCartServiceToggleSelectArgs() interface{} {
+	return cart.NewCartServiceToggleSelectArgs()
 }
 
-func newCartServiceRemoveFromCartResult() interface{} {
-	return cart.NewCartServiceRemoveFromCartResult()
+func newCartServiceToggleSelectResult() interface{} {
+	return cart.NewCartServiceToggleSelectResult()
+}
+
+func removeItemsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*cart.CartServiceRemoveItemsArgs)
+	realResult := result.(*cart.CartServiceRemoveItemsResult)
+	success, err := handler.(cart.CartService).RemoveItems(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newCartServiceRemoveItemsArgs() interface{} {
+	return cart.NewCartServiceRemoveItemsArgs()
+}
+
+func newCartServiceRemoveItemsResult() interface{} {
+	return cart.NewCartServiceRemoveItemsResult()
 }
 
 func clearCartHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*cart.CartServiceClearCartArgs)
 	realResult := result.(*cart.CartServiceClearCartResult)
-	success, err := handler.(cart.CartService).ClearCart(ctx, realArg.Request)
+	success, err := handler.(cart.CartService).ClearCart(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
-			realResult.Error = v
+			realResult.Err = v
 		default:
 			return err
 		}
@@ -245,72 +276,86 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) GetCart(ctx context.Context, request *cart.GetCartRequest) (r *cart.GetCartResponse, err error) {
+func (p *kClient) GetCart(ctx context.Context, req *cart.GetCartRequest) (r *cart.GetCartResponse, err error) {
 	var _args cart.CartServiceGetCartArgs
-	_args.Request = request
+	_args.Req = req
 	var _result cart.CartServiceGetCartResult
-	if err = p.c.Call(ctx, "getCart", &_args, &_result); err != nil {
+	if err = p.c.Call(ctx, "GetCart", &_args, &_result); err != nil {
 		return
 	}
 	switch {
-	case _result.Error != nil:
-		return r, _result.Error
+	case _result.Err != nil:
+		return r, _result.Err
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) AddToCart(ctx context.Context, request *cart.AddToCartRequest) (r *cart.AddToCartResponse, err error) {
+func (p *kClient) AddToCart(ctx context.Context, req *cart.AddToCartRequest) (r *cart.AddToCartResponse, err error) {
 	var _args cart.CartServiceAddToCartArgs
-	_args.Request = request
+	_args.Req = req
 	var _result cart.CartServiceAddToCartResult
-	if err = p.c.Call(ctx, "addToCart", &_args, &_result); err != nil {
+	if err = p.c.Call(ctx, "AddToCart", &_args, &_result); err != nil {
 		return
 	}
 	switch {
-	case _result.Error != nil:
-		return r, _result.Error
+	case _result.Err != nil:
+		return r, _result.Err
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdateCart(ctx context.Context, request *cart.UpdateCartRequest) (r *cart.UpdateCartResponse, err error) {
-	var _args cart.CartServiceUpdateCartArgs
-	_args.Request = request
-	var _result cart.CartServiceUpdateCartResult
-	if err = p.c.Call(ctx, "updateCart", &_args, &_result); err != nil {
+func (p *kClient) UpdateQuantity(ctx context.Context, req *cart.UpdateQuantityRequest) (r *cart.UpdateQuantityResponse, err error) {
+	var _args cart.CartServiceUpdateQuantityArgs
+	_args.Req = req
+	var _result cart.CartServiceUpdateQuantityResult
+	if err = p.c.Call(ctx, "UpdateQuantity", &_args, &_result); err != nil {
 		return
 	}
 	switch {
-	case _result.Error != nil:
-		return r, _result.Error
+	case _result.Err != nil:
+		return r, _result.Err
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) RemoveFromCart(ctx context.Context, request *cart.RemoveFromCartRequest) (r *cart.RemoveFromCartResponse, err error) {
-	var _args cart.CartServiceRemoveFromCartArgs
-	_args.Request = request
-	var _result cart.CartServiceRemoveFromCartResult
-	if err = p.c.Call(ctx, "removeFromCart", &_args, &_result); err != nil {
+func (p *kClient) ToggleSelect(ctx context.Context, req *cart.ToggleSelectRequest) (r *cart.ToggleSelectResponse, err error) {
+	var _args cart.CartServiceToggleSelectArgs
+	_args.Req = req
+	var _result cart.CartServiceToggleSelectResult
+	if err = p.c.Call(ctx, "ToggleSelect", &_args, &_result); err != nil {
 		return
 	}
 	switch {
-	case _result.Error != nil:
-		return r, _result.Error
+	case _result.Err != nil:
+		return r, _result.Err
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ClearCart(ctx context.Context, request *cart.ClearCartRequest) (r *cart.ClearCartResponse, err error) {
+func (p *kClient) RemoveItems(ctx context.Context, req *cart.RemoveItemsRequest) (r *cart.RemoveItemsResponse, err error) {
+	var _args cart.CartServiceRemoveItemsArgs
+	_args.Req = req
+	var _result cart.CartServiceRemoveItemsResult
+	if err = p.c.Call(ctx, "RemoveItems", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ClearCart(ctx context.Context, req *cart.ClearCartRequest) (r *cart.ClearCartResponse, err error) {
 	var _args cart.CartServiceClearCartArgs
-	_args.Request = request
+	_args.Req = req
 	var _result cart.CartServiceClearCartResult
-	if err = p.c.Call(ctx, "clearCart", &_args, &_result); err != nil {
+	if err = p.c.Call(ctx, "ClearCart", &_args, &_result); err != nil {
 		return
 	}
 	switch {
-	case _result.Error != nil:
-		return r, _result.Error
+	case _result.Err != nil:
+		return r, _result.Err
 	}
 	return _result.GetSuccess(), nil
 }
