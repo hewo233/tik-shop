@@ -15,8 +15,16 @@ import (
 	cart "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/cart"
 )
 
-// GetCart .
-// @router /cart [GET]
+// GetCart
+// @Summary 获取购物车
+// @Description 获取当前用户的购物车信息，按商家分组返回
+// @Tags 购物车
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} cart.GetCartResponse "Cart retrieved successfully"
+// @Failure 400 {object} cart.GetCartResponse "Invalid request or validation failed"
+// @Router /cart [GET]
 func GetCart(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req cart.GetCartRequest
@@ -57,8 +65,17 @@ func GetCart(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// AddToCart .
-// @router /cart [POST]
+// AddToCart
+// @Summary 添加商品到购物车
+// @Description 将指定数量的商品添加到购物车
+// @Tags 购物车
+// @Accept json
+// @Produce json
+// @Param request body cart.AddToCartRequest true "添加购物车请求参数"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} cart.AddToCartResponse "Item added successfully"
+// @Failure 400 {object} cart.AddToCartResponse "Invalid request or validation failed"
+// @Router /cart [POST]
 func AddToCart(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req cart.AddToCartRequest
@@ -104,8 +121,18 @@ func AddToCart(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// UpdateQuantity .
-// @router /cart/:id [PUT]
+// UpdateQuantity
+// @Summary 更新购物车商品数量
+// @Description 更新购物车中某项商品的数量，数量为0时表示删除
+// @Tags 购物车
+// @Accept json
+// @Produce json
+// @Param id path int true "购物车项ID"
+// @Param request body cart.UpdateQuantityRequest true "更新数量请求参数"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} cart.UpdateQuantityResponse "Quantity updated successfully"
+// @Failure 400 {object} cart.UpdateQuantityResponse "Invalid request or validation failed"
+// @Router /cart/{id} [PUT]
 func UpdateQuantity(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req cart.UpdateQuantityRequest
@@ -151,8 +178,17 @@ func UpdateQuantity(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// ToggleSelect .
-// @router /cart/select [PUT]
+// ToggleSelect
+// @Summary 切换购物车选中状态
+// @Description 批量选中或取消选中购物车商品
+// @Tags 购物车
+// @Accept json
+// @Produce json
+// @Param request body cart.ToggleSelectRequest true "切换选中状态请求参数"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} cart.ToggleSelectResponse "Selection toggled successfully"
+// @Failure 400 {object} cart.ToggleSelectResponse "Invalid request or validation failed"
+// @Router /cart/select [PUT]
 func ToggleSelect(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req cart.ToggleSelectRequest
@@ -198,8 +234,17 @@ func ToggleSelect(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// RemoveItems .
-// @router /cart/items [DELETE]
+// RemoveItems
+// @Summary 批量删除购物车项
+// @Description 根据ID列表批量删除购物车中的商品
+// @Tags 购物车
+// @Accept json
+// @Produce json
+// @Param request body cart.RemoveItemsRequest true "删除请求参数"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} cart.RemoveItemsResponse "Items removed successfully"
+// @Failure 400 {object} cart.RemoveItemsResponse "Invalid request or validation failed"
+// @Router /cart/items [DELETE]
 func RemoveItems(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req cart.RemoveItemsRequest
@@ -245,8 +290,16 @@ func RemoveItems(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// ClearCart .
-// @router /cart [DELETE]
+// ClearCart
+// @Summary 清空购物车
+// @Description 删除购物车中所有商品
+// @Tags 购物车
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} cart.ClearCartResponse "Cart cleared successfully"
+// @Failure 400 {object} cart.ClearCartResponse "Invalid request or validation failed"
+// @Router /cart [DELETE]
 func ClearCart(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req cart.ClearCartRequest
