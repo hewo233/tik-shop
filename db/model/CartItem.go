@@ -25,5 +25,5 @@ type CartItem struct {
 
 	// 关联
 	Customer *Customer `gorm:"foreignKey:CustomerID;references:UserID" json:"-"`
-	Product  *Product  `gorm:"foreignKey:ProductID;references:ID" json:"product"` // 这里需要 Preload 出来，因为要显示当前图片和标题
+	Product  *Product  `gorm:"foreignKey:ProductID;references:ID" json:"product"` // 这里需要 Preload 出来，因为要显示
 }

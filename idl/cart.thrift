@@ -1,82 +1,94 @@
 namespace go hewo.tikshop.cart
 
 include "base.thrift"
+include "product.thrift"
 
-// 商品项结构（在购物车中）
+// 购物车项(带关联商品)
 struct CartItem {
-    1: i64 productId,    // 商品ID
-    2: i64 quantity      // 商品数量
+    1: i64                 cart_item_id,  // 对应 db.model.CartItem.ID
+    2: i64                 customer_id,
+    3: i64                 product_id,
+    4: i64                 merchant_id,   // 冗余字段,用于前端分组
+    5: i64                 quantity,
+    6: i8                  selected,      // 0=未选中 1=选中
+    7: product.Product     product,       // Preload 出来的商品信息
 }
 
-// 获取购物车请求结构
+// 商家分组(前端按店铺展示)
+struct MerchantGroup {
+    1: i64             merchant_id,
+    2: list<CartItem>  items,
+    3: i64             subtotal,          // 该商家已选中商品小计(分)
+}
+
+// ========== 获取购物车 ==========
 struct GetCartRequest {
-    1: i64 userId        // 用户ID
+    1: required i64 customer_id,
 }
 
-// 获取购物车响应结构
 struct GetCartResponse {
-    1: list<CartItem> items // 购物车商品列表
+    1: list<MerchantGroup> groups,        // 按商家分组
+    2: i64                 total_selected, // 已选中商品总价(分)
 }
 
-// 添加商品到购物车请求结构
+// ========== 添加到购物车 ==========
 struct AddToCartRequest {
-    1: i64 userId,       // 用户ID
-    2: i64 productId,    // 商品ID
-    3: i64 quantity      // 商品数量
+    1: required i64 customer_id,
+    2: required i64 product_id,
+    3: optional i64 quantity = 1,
 }
 
-// 添加商品到购物车响应结构
 struct AddToCartResponse {
-    1: string message    // 成功消息
+    1: i64 cart_item_id,
 }
 
-// 更新购物车商品数量请求结构
-struct UpdateCartRequest {
-    1: i64 userId,       // 用户ID
-    2: i64 productId,    // 商品ID
-    3: i64 quantity      // 更新后的商品数量
+// ========== 更新数量 ==========
+struct UpdateQuantityRequest {
+    1: required i64 customer_id,
+    2: required i64 cart_item_id,
+    3: required i64 quantity,             // 0=删除该项
 }
 
-// 更新购物车商品数量响应结构
-struct UpdateCartResponse {
-    1: string message    // 成功消息
+struct UpdateQuantityResponse {
+    1: bool success,
 }
 
-// 从购物车中移除商品请求结构
-struct RemoveFromCartRequest {
-    1: i64 userId,       // 用户ID
-    2: i64 productId     // 商品ID
+// ========== 切换选中状态 ==========
+struct ToggleSelectRequest {
+    1: required i64      customer_id,
+    2: required list<i64> cart_item_ids,  // 支持批量
+    3: required i8       selected,        // 0=取消 1=选中
 }
 
-// 从购物车中移除商品响应结构
-struct RemoveFromCartResponse {
-    1: string message    // 成功消息
+struct ToggleSelectResponse {
+    1: bool success,
 }
 
-// 清空购物车请求结构
+// ========== 删除购物车项 ==========
+struct RemoveItemsRequest {
+    1: required i64      customer_id,
+    2: required list<i64> cart_item_ids,
+}
+
+struct RemoveItemsResponse {
+    1: bool success,
+}
+
+// ========== 清空购物车 ==========
 struct ClearCartRequest {
-    1: i64 userId        // 用户ID
+    1: required i64 customer_id,
 }
 
-// 清空购物车响应结构
 struct ClearCartResponse {
-    1: string message    // 成功消息
+    1: bool success,
 }
 
-// 购物车服务接口
+// ========== 购物车服务 ==========
 service CartService {
-    // 获取购物车列表
-    GetCartResponse getCart(1: GetCartRequest request) throws (1: base.ErrorResponse error),
-
-    // 添加商品到购物车
-    AddToCartResponse addToCart(1: AddToCartRequest request) throws (1: base.ErrorResponse error),
-
-    // 更新购物车中商品数量
-    UpdateCartResponse updateCart(1: UpdateCartRequest request) throws (1: base.ErrorResponse error),
-
-    // 从购物车中移除商品
-    RemoveFromCartResponse removeFromCart(1: RemoveFromCartRequest request) throws (1: base.ErrorResponse error),
-
-    // 清空购物车
-    ClearCartResponse clearCart(1: ClearCartRequest request) throws (1: base.ErrorResponse error)
+    GetCartResponse GetCart(1: GetCartRequest req) throws (1: base.ErrorResponse err);
+    AddToCartResponse AddToCart(1: AddToCartRequest req) throws (1: base.ErrorResponse err);
+    UpdateQuantityResponse UpdateQuantity(1: UpdateQuantityRequest req) throws (1: base.ErrorResponse err);
+    ToggleSelectResponse ToggleSelect(1: ToggleSelectRequest req) throws (1: base.ErrorResponse err);
+    RemoveItemsResponse RemoveItems(1: RemoveItemsRequest req) throws (1: base.ErrorResponse err);
+    ClearCartResponse ClearCart(1: ClearCartRequest req) throws (1: base.ErrorResponse err);
 }

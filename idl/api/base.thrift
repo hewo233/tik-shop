@@ -42,14 +42,6 @@ struct Admin {
 }
 // user end::
 
-// cart begin::
-struct CartItem {
-    1: i64 productId
-    2: i64 quantity
-}
-
-// cart end::
-
 // product begin::
 struct Product {
     1: i64    id,
@@ -61,6 +53,24 @@ struct Product {
     7: i8     status,       // 0=删除, 1=上架, 2=下架, 3=售罄
 }
 // product end::
+
+// cart begin::
+// ========== 购物车项结构(独立定义) ==========
+struct CartItem {
+    1: i64 cart_item_id,
+    2: i64 product_id,
+    3: i64 merchant_id,
+    4: i64 quantity,
+    5: i8 selected,
+    6: Product product,  // 商品详情
+}
+
+struct MerchantGroup {
+    1: i64 merchant_id,
+    2: list<CartItem> items,
+    3: i64 subtotal,
+}
+// cart end::
 
 // order begin::
 struct OrderItem {
