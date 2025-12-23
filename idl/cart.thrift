@@ -6,12 +6,11 @@ include "product.thrift"
 // 购物车项(带关联商品)
 struct CartItem {
     1: i64                 cart_item_id,  // 对应 db.model.CartItem.ID
-    2: i64                 customer_id,
-    3: i64                 product_id,
-    4: i64                 merchant_id,   // 冗余字段,用于前端分组
-    5: i64                 quantity,
-    6: i8                  selected,      // 0=未选中 1=选中
-    7: product.Product     product,       // Preload 出来的商品信息
+    2: i64                 product_id,
+    3: i64                 merchant_id,   // 冗余字段,用于前端分组
+    4: i64                 quantity,
+    5: bool                  selected,      // 0=未选中 1=选中
+    6: product.Product     product,       // Preload 出来的商品信息
 }
 
 // 商家分组(前端按店铺展示)
@@ -35,7 +34,7 @@ struct GetCartResponse {
 struct AddToCartRequest {
     1: required i64 customer_id,
     2: required i64 product_id,
-    3: optional i64 quantity = 1,
+    3: required i64 quantity = 1,
 }
 
 struct AddToCartResponse {
@@ -57,7 +56,7 @@ struct UpdateQuantityResponse {
 struct ToggleSelectRequest {
     1: required i64      customer_id,
     2: required list<i64> cart_item_ids,  // 支持批量
-    3: required i8       selected,        // 0=取消 1=选中
+    3: required bool selected,        // 0=取消 1=选中
 }
 
 struct ToggleSelectResponse {

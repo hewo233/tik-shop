@@ -4,9 +4,14 @@ package cart
 
 import (
 	"context"
+	"github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/base"
+	"github.com/hewo/tik-shop/route/init/rpc"
+	"github.com/hewo/tik-shop/route/utils"
+	"github.com/jinzhu/copier"
+	"net/http"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	cartrpc "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/cart"
 	cart "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/cart"
 )
 
@@ -17,13 +22,39 @@ func GetCart(ctx context.Context, c *app.RequestContext) {
 	var req cart.GetCartRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(cart.GetCartResponse)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) cart.GetCartResponse {
+		return cart.GetCartResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
+	rpcReq := cartrpc.NewGetCartRequest()
+	rpcReq.CustomerId = customerID
 
-	c.JSON(consts.StatusOK, resp)
+	rpcResp, err := rpc.CartClient.GetCart(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &cart.GetCartResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // AddToCart .
@@ -33,13 +64,44 @@ func AddToCart(ctx context.Context, c *app.RequestContext) {
 	var req cart.AddToCartRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(cart.AddToCartResponse)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) cart.AddToCartResponse {
+		return cart.AddToCartResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	rpcReq := cartrpc.NewAddToCartRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.CartClient.AddToCart(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &cart.AddToCartResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // UpdateQuantity .
@@ -49,13 +111,44 @@ func UpdateQuantity(ctx context.Context, c *app.RequestContext) {
 	var req cart.UpdateQuantityRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(cart.UpdateQuantityResponse)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) cart.UpdateQuantityResponse {
+		return cart.UpdateQuantityResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	rpcReq := cartrpc.NewUpdateQuantityRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.CartClient.UpdateQuantity(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &cart.UpdateQuantityResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // ToggleSelect .
@@ -65,13 +158,44 @@ func ToggleSelect(ctx context.Context, c *app.RequestContext) {
 	var req cart.ToggleSelectRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(cart.ToggleSelectResponse)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) cart.ToggleSelectResponse {
+		return cart.ToggleSelectResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	rpcReq := cartrpc.NewToggleSelectRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.CartClient.ToggleSelect(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &cart.ToggleSelectResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // RemoveItems .
@@ -81,13 +205,44 @@ func RemoveItems(ctx context.Context, c *app.RequestContext) {
 	var req cart.RemoveItemsRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(cart.RemoveItemsResponse)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) cart.RemoveItemsResponse {
+		return cart.RemoveItemsResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	rpcReq := cartrpc.NewRemoveItemsRequest()
+	if err = copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.CartClient.RemoveItems(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &cart.RemoveItemsResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // ClearCart .
@@ -97,11 +252,37 @@ func ClearCart(ctx context.Context, c *app.RequestContext) {
 	var req cart.ClearCartRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(cart.ClearCartResponse)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) cart.ClearCartResponse {
+		return cart.ClearCartResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	rpcReq := cartrpc.NewClearCartRequest()
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.CartClient.ClearCart(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+	resp := &cart.ClearCartResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err = copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }

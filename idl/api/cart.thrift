@@ -14,7 +14,7 @@ struct GetCartResponse {
 // ========== 添加到购物车 ==========
 struct AddToCartRequest {
     1: i64 product_id (api.body = "product_id", api.vd = "$>0"),
-    2: optional i64 quantity (api.body = "quantity", api.vd = "$>0"),
+    2: i64 quantity (api.body = "quantity", api.vd = "$>0", default = "1"),
 }
 
 struct AddToCartResponse {
@@ -36,7 +36,7 @@ struct UpdateQuantityResponse {
 // ========== 切换选中状态 ==========
 struct ToggleSelectRequest {
     1: list<i64> cart_item_ids (api.body = "cart_item_ids"),
-    2: i8 selected (api.body = "selected", api.vd = "$>=0 && $<=1"),
+    2: bool selected (api.body = "selected"),
 }
 
 struct ToggleSelectResponse {

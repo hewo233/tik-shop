@@ -61,7 +61,7 @@ struct CartItem {
     2: i64 product_id,
     3: i64 merchant_id,
     4: i64 quantity,
-    5: i8 selected,
+    5: bool selected,
     6: Product product,  // 商品详情
 }
 

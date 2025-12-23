@@ -15,7 +15,7 @@ type CartItem struct {
 	MerchantID int64 `gorm:"column:merchant_id;index;not null" json:"merchant_id"`
 
 	// 数量
-	Quantity int `gorm:"column:quantity;default:1" json:"quantity"`
+	Quantity int64 `gorm:"column:quantity;default:1" json:"quantity"`
 
 	// 选中状态：很多电商允许购物车里有东西，但下单时只勾选一部分
 	Selected bool `gorm:"column:selected;default:true" json:"selected"`

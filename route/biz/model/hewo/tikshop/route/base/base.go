@@ -1744,7 +1744,7 @@ type CartItem struct {
 	ProductID  int64 `thrift:"product_id,2" form:"product_id" json:"product_id" query:"product_id"`
 	MerchantID int64 `thrift:"merchant_id,3" form:"merchant_id" json:"merchant_id" query:"merchant_id"`
 	Quantity   int64 `thrift:"quantity,4" form:"quantity" json:"quantity" query:"quantity"`
-	Selected   int8  `thrift:"selected,5" form:"selected" json:"selected" query:"selected"`
+	Selected   bool  `thrift:"selected,5" form:"selected" json:"selected" query:"selected"`
 	// 商品详情
 	Product *Product `thrift:"product,6" form:"product" json:"product" query:"product"`
 }
@@ -1772,7 +1772,7 @@ func (p *CartItem) GetQuantity() (v int64) {
 	return p.Quantity
 }
 
-func (p *CartItem) GetSelected() (v int8) {
+func (p *CartItem) GetSelected() (v bool) {
 	return p.Selected
 }
 
@@ -1850,7 +1850,7 @@ func (p *CartItem) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 5:
-			if fieldTypeId == thrift.BYTE {
+			if fieldTypeId == thrift.BOOL {
 				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1940,8 +1940,8 @@ func (p *CartItem) ReadField4(iprot thrift.TProtocol) error {
 }
 func (p *CartItem) ReadField5(iprot thrift.TProtocol) error {
 
-	var _field int8
-	if v, err := iprot.ReadByte(); err != nil {
+	var _field bool
+	if v, err := iprot.ReadBool(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -2076,10 +2076,10 @@ WriteFieldEndError:
 }
 
 func (p *CartItem) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("selected", thrift.BYTE, 5); err != nil {
+	if err = oprot.WriteFieldBegin("selected", thrift.BOOL, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteByte(p.Selected); err != nil {
+	if err := oprot.WriteBool(p.Selected); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

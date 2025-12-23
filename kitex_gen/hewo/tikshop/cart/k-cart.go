@@ -101,7 +101,7 @@ func (p *CartItem) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.BOOL {
 				l, err = p.FastReadField5(buf[offset:])
 				offset += l
 				if err != nil {
@@ -115,22 +115,8 @@ func (p *CartItem) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 6:
-			if fieldTypeId == thrift.BYTE {
-				l, err = p.FastReadField6(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 7:
 			if fieldTypeId == thrift.STRUCT {
-				l, err = p.FastReadField7(buf[offset:])
+				l, err = p.FastReadField6(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -184,7 +170,7 @@ func (p *CartItem) FastReadField2(buf []byte) (int, error) {
 		offset += l
 		_field = v
 	}
-	p.CustomerId = _field
+	p.ProductId = _field
 	return offset, nil
 }
 
@@ -198,7 +184,7 @@ func (p *CartItem) FastReadField3(buf []byte) (int, error) {
 		offset += l
 		_field = v
 	}
-	p.ProductId = _field
+	p.MerchantId = _field
 	return offset, nil
 }
 
@@ -212,29 +198,15 @@ func (p *CartItem) FastReadField4(buf []byte) (int, error) {
 		offset += l
 		_field = v
 	}
-	p.MerchantId = _field
+	p.Quantity = _field
 	return offset, nil
 }
 
 func (p *CartItem) FastReadField5(buf []byte) (int, error) {
 	offset := 0
 
-	var _field int64
-	if v, l, err := thrift.Binary.ReadI64(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-		_field = v
-	}
-	p.Quantity = _field
-	return offset, nil
-}
-
-func (p *CartItem) FastReadField6(buf []byte) (int, error) {
-	offset := 0
-
-	var _field int8
-	if v, l, err := thrift.Binary.ReadByte(buf[offset:]); err != nil {
+	var _field bool
+	if v, l, err := thrift.Binary.ReadBool(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
@@ -244,7 +216,7 @@ func (p *CartItem) FastReadField6(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *CartItem) FastReadField7(buf []byte) (int, error) {
+func (p *CartItem) FastReadField6(buf []byte) (int, error) {
 	offset := 0
 	_field := product.NewProduct()
 	if l, err := _field.FastRead(buf[offset:]); err != nil {
@@ -270,7 +242,6 @@ func (p *CartItem) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 		offset += p.fastWriteField4(buf[offset:], w)
 		offset += p.fastWriteField5(buf[offset:], w)
 		offset += p.fastWriteField6(buf[offset:], w)
-		offset += p.fastWriteField7(buf[offset:], w)
 	}
 	offset += thrift.Binary.WriteFieldStop(buf[offset:])
 	return offset
@@ -285,7 +256,6 @@ func (p *CartItem) BLength() int {
 		l += p.field4Length()
 		l += p.field5Length()
 		l += p.field6Length()
-		l += p.field7Length()
 	}
 	l += thrift.Binary.FieldStopLength()
 	return l
@@ -301,41 +271,34 @@ func (p *CartItem) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 func (p *CartItem) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 2)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.CustomerId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
 	return offset
 }
 
 func (p *CartItem) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 3)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.ProductId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.MerchantId)
 	return offset
 }
 
 func (p *CartItem) fastWriteField4(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 4)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.MerchantId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
 	return offset
 }
 
 func (p *CartItem) fastWriteField5(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 5)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 5)
+	offset += thrift.Binary.WriteBool(buf[offset:], p.Selected)
 	return offset
 }
 
 func (p *CartItem) fastWriteField6(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BYTE, 6)
-	offset += thrift.Binary.WriteByte(buf[offset:], p.Selected)
-	return offset
-}
-
-func (p *CartItem) fastWriteField7(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 7)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRUCT, 6)
 	offset += p.Product.FastWriteNocopy(buf[offset:], w)
 	return offset
 }
@@ -371,18 +334,11 @@ func (p *CartItem) field4Length() int {
 func (p *CartItem) field5Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.I64Length()
+	l += thrift.Binary.BoolLength()
 	return l
 }
 
 func (p *CartItem) field6Length() int {
-	l := 0
-	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.ByteLength()
-	return l
-}
-
-func (p *CartItem) field7Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += p.Product.BLength()
@@ -878,6 +834,7 @@ func (p *AddToCartRequest) FastRead(buf []byte) (int, error) {
 	var fieldId int16
 	var issetCustomerId bool = false
 	var issetProductId bool = false
+	var issetQuantity bool = false
 	for {
 		fieldTypeId, fieldId, l, err = thrift.Binary.ReadFieldBegin(buf[offset:])
 		offset += l
@@ -925,6 +882,7 @@ func (p *AddToCartRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
+				issetQuantity = true
 			} else {
 				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -948,6 +906,11 @@ func (p *AddToCartRequest) FastRead(buf []byte) (int, error) {
 
 	if !issetProductId {
 		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetQuantity {
+		fieldId = 3
 		goto RequiredFieldNotSetError
 	}
 	return offset, nil
@@ -1046,10 +1009,8 @@ func (p *AddToCartRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) in
 
 func (p *AddToCartRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetQuantity() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 3)
-		offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
-	}
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 3)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.Quantity)
 	return offset
 }
 
@@ -1069,10 +1030,8 @@ func (p *AddToCartRequest) field2Length() int {
 
 func (p *AddToCartRequest) field3Length() int {
 	l := 0
-	if p.IsSetQuantity() {
-		l += thrift.Binary.FieldBeginLength()
-		l += thrift.Binary.I64Length()
-	}
+	l += thrift.Binary.FieldBeginLength()
+	l += thrift.Binary.I64Length()
 	return l
 }
 
@@ -1533,7 +1492,7 @@ func (p *ToggleSelectRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.BYTE {
+			if fieldTypeId == thrift.BOOL {
 				l, err = p.FastReadField3(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1622,8 +1581,8 @@ func (p *ToggleSelectRequest) FastReadField2(buf []byte) (int, error) {
 func (p *ToggleSelectRequest) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
-	var _field int8
-	if v, l, err := thrift.Binary.ReadByte(buf[offset:]); err != nil {
+	var _field bool
+	if v, l, err := thrift.Binary.ReadBool(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
@@ -1683,8 +1642,8 @@ func (p *ToggleSelectRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter)
 
 func (p *ToggleSelectRequest) fastWriteField3(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BYTE, 3)
-	offset += thrift.Binary.WriteByte(buf[offset:], p.Selected)
+	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 3)
+	offset += thrift.Binary.WriteBool(buf[offset:], p.Selected)
 	return offset
 }
 
@@ -1707,7 +1666,7 @@ func (p *ToggleSelectRequest) field2Length() int {
 func (p *ToggleSelectRequest) field3Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
-	l += thrift.Binary.ByteLength()
+	l += thrift.Binary.BoolLength()
 	return l
 }
 

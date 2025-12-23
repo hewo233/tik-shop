@@ -377,8 +377,8 @@ func (p *GetCartResponse) String() string {
 
 // ========== 添加到购物车 ==========
 type AddToCartRequest struct {
-	ProductID int64  `thrift:"product_id,1" form:"product_id" json:"product_id" vd:"$>0"`
-	Quantity  *int64 `thrift:"quantity,2,optional" form:"quantity" json:"quantity,omitempty" vd:"$>0"`
+	ProductID int64 `thrift:"product_id,1" form:"product_id" json:"product_id" vd:"$>0"`
+	Quantity  int64 `thrift:"quantity,2" form:"quantity" json:"quantity" vd:"$>0"`
 }
 
 func NewAddToCartRequest() *AddToCartRequest {
@@ -392,22 +392,13 @@ func (p *AddToCartRequest) GetProductID() (v int64) {
 	return p.ProductID
 }
 
-var AddToCartRequest_Quantity_DEFAULT int64
-
 func (p *AddToCartRequest) GetQuantity() (v int64) {
-	if !p.IsSetQuantity() {
-		return AddToCartRequest_Quantity_DEFAULT
-	}
-	return *p.Quantity
+	return p.Quantity
 }
 
 var fieldIDToName_AddToCartRequest = map[int16]string{
 	1: "product_id",
 	2: "quantity",
-}
-
-func (p *AddToCartRequest) IsSetQuantity() bool {
-	return p.Quantity != nil
 }
 
 func (p *AddToCartRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -487,11 +478,11 @@ func (p *AddToCartRequest) ReadField1(iprot thrift.TProtocol) error {
 }
 func (p *AddToCartRequest) ReadField2(iprot thrift.TProtocol) error {
 
-	var _field *int64
+	var _field int64
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		_field = &v
+		_field = v
 	}
 	p.Quantity = _field
 	return nil
@@ -548,16 +539,14 @@ WriteFieldEndError:
 }
 
 func (p *AddToCartRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetQuantity() {
-		if err = oprot.WriteFieldBegin("quantity", thrift.I64, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(*p.Quantity); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("quantity", thrift.I64, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.Quantity); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:
@@ -1174,7 +1163,7 @@ func (p *UpdateQuantityResponse) String() string {
 // ========== 切换选中状态 ==========
 type ToggleSelectRequest struct {
 	CartItemIds []int64 `thrift:"cart_item_ids,1" form:"cart_item_ids" json:"cart_item_ids"`
-	Selected    int8    `thrift:"selected,2" form:"selected" json:"selected" vd:"$>=0 && $<=1"`
+	Selected    bool    `thrift:"selected,2" form:"selected" json:"selected"`
 }
 
 func NewToggleSelectRequest() *ToggleSelectRequest {
@@ -1188,7 +1177,7 @@ func (p *ToggleSelectRequest) GetCartItemIds() (v []int64) {
 	return p.CartItemIds
 }
 
-func (p *ToggleSelectRequest) GetSelected() (v int8) {
+func (p *ToggleSelectRequest) GetSelected() (v bool) {
 	return p.Selected
 }
 
@@ -1225,7 +1214,7 @@ func (p *ToggleSelectRequest) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 2:
-			if fieldTypeId == thrift.BYTE {
+			if fieldTypeId == thrift.BOOL {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1286,8 +1275,8 @@ func (p *ToggleSelectRequest) ReadField1(iprot thrift.TProtocol) error {
 }
 func (p *ToggleSelectRequest) ReadField2(iprot thrift.TProtocol) error {
 
-	var _field int8
-	if v, err := iprot.ReadByte(); err != nil {
+	var _field bool
+	if v, err := iprot.ReadBool(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -1355,10 +1344,10 @@ WriteFieldEndError:
 }
 
 func (p *ToggleSelectRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("selected", thrift.BYTE, 2); err != nil {
+	if err = oprot.WriteFieldBegin("selected", thrift.BOOL, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteByte(p.Selected); err != nil {
+	if err := oprot.WriteBool(p.Selected); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

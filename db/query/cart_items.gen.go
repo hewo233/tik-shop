@@ -31,7 +31,7 @@ func newCartItem(db *gorm.DB, opts ...gen.DOOption) cartItem {
 	_cartItem.CustomerID = field.NewInt64(tableName, "customer_id")
 	_cartItem.ProductID = field.NewInt64(tableName, "product_id")
 	_cartItem.MerchantID = field.NewInt64(tableName, "merchant_id")
-	_cartItem.Quantity = field.NewInt(tableName, "quantity")
+	_cartItem.Quantity = field.NewInt64(tableName, "quantity")
 	_cartItem.Selected = field.NewBool(tableName, "selected")
 	_cartItem.CreatedAt = field.NewTime(tableName, "created_at")
 	_cartItem.UpdatedAt = field.NewTime(tableName, "updated_at")
@@ -200,7 +200,7 @@ type cartItem struct {
 	CustomerID field.Int64
 	ProductID  field.Int64
 	MerchantID field.Int64
-	Quantity   field.Int
+	Quantity   field.Int64
 	Selected   field.Bool
 	CreatedAt  field.Time
 	UpdatedAt  field.Time
@@ -227,7 +227,7 @@ func (c *cartItem) updateTableName(table string) *cartItem {
 	c.CustomerID = field.NewInt64(table, "customer_id")
 	c.ProductID = field.NewInt64(table, "product_id")
 	c.MerchantID = field.NewInt64(table, "merchant_id")
-	c.Quantity = field.NewInt(table, "quantity")
+	c.Quantity = field.NewInt64(table, "quantity")
 	c.Selected = field.NewBool(table, "selected")
 	c.CreatedAt = field.NewTime(table, "created_at")
 	c.UpdatedAt = field.NewTime(table, "updated_at")
