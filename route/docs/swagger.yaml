@@ -26,10 +26,20 @@ definitions:
     type: object
   base.CartItem:
     properties:
-      productId:
+      cart_item_id:
+        type: integer
+      merchant_id:
+        type: integer
+      product:
+        allOf:
+        - $ref: '#/definitions/base.Product'
+        description: 商品详情
+      product_id:
         type: integer
       quantity:
         type: integer
+      selected:
+        type: boolean
     type: object
   base.Customer:
     properties:
@@ -44,6 +54,17 @@ definitions:
         type: string
       shop_name:
         type: string
+    type: object
+  base.MerchantGroup:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/base.CartItem'
+        type: array
+      merchant_id:
+        type: integer
+      subtotal:
+        type: integer
     type: object
   base.MessageResponse:
     properties:
@@ -134,24 +155,78 @@ definitions:
     - UserStatus_BANNED
   cart.AddToCartRequest:
     properties:
-      productId:
+      product_id:
         type: integer
       quantity:
         type: integer
     type: object
-  cart.DeleteCartItemRequest:
+  cart.AddToCartResponse:
     properties:
-      productId:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      cart_item_id:
         type: integer
     type: object
-  cart.DeleteCartRequest:
-    type: object
-  cart.UpdateCartItemRequest:
+  cart.ClearCartResponse:
     properties:
-      productId:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      success:
+        type: boolean
+    type: object
+  cart.GetCartResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      groups:
+        items:
+          $ref: '#/definitions/base.MerchantGroup'
+        type: array
+      total_selected:
         type: integer
+    type: object
+  cart.RemoveItemsRequest:
+    properties:
+      cart_item_ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  cart.RemoveItemsResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      success:
+        type: boolean
+    type: object
+  cart.ToggleSelectRequest:
+    properties:
+      cart_item_ids:
+        items:
+          type: integer
+        type: array
+      selected:
+        type: boolean
+    type: object
+  cart.ToggleSelectResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      success:
+        type: boolean
+    type: object
+  cart.UpdateQuantityRequest:
+    properties:
       quantity:
+        description: 0=删除
         type: integer
+    type: object
+  cart.UpdateQuantityResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      success:
+        type: boolean
     type: object
   order.CancelOrderRequest:
     properties:
@@ -488,138 +563,6 @@ paths:
       summary: 更新管理员信息
       tags:
       - 管理员管理
-  /api/cart:
-    delete:
-      consumes:
-      - application/json
-      description: 清空购物车中的所有商品。
-      parameters:
-      - description: Details for clearing the cart
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/cart.DeleteCartRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Cart cleared successfully
-          schema:
-            $ref: '#/definitions/base.MessageResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: DeleteCart
-      tags:
-      - cart
-    get:
-      consumes:
-      - application/json
-      description: 获取购物车中的所有商品。
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: List of items in the cart
-          schema:
-            items:
-              $ref: '#/definitions/base.CartItem'
-            type: array
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: GetCart
-      tags:
-      - cart
-    post:
-      consumes:
-      - application/json
-      description: 向购物车中添加一件商品。
-      parameters:
-      - description: Details of the item to add
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/cart.AddToCartRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Item added to the cart successfully
-          schema:
-            $ref: '#/definitions/base.MessageResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: AddToCart
-      tags:
-      - cart
-  /api/cart/:productId:
-    delete:
-      consumes:
-      - application/json
-      description: 根据商品 ID 从购物车中移除指定商品。
-      parameters:
-      - description: Product ID
-        in: path
-        name: productId
-        required: true
-        type: string
-      - description: Details of the item to delete
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/cart.DeleteCartItemRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Item removed successfully
-          schema:
-            $ref: '#/definitions/base.MessageResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: DeleteCartItem
-      tags:
-      - cart
-    put:
-      consumes:
-      - application/json
-      description: 根据商品 ID 更新购物车中商品的数量。
-      parameters:
-      - description: Product ID
-        in: path
-        name: productId
-        required: true
-        type: string
-      - description: Details of the item to update
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/cart.UpdateCartItemRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Item updated successfully
-          schema:
-            $ref: '#/definitions/base.MessageResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: UpdateCartItem
-      tags:
-      - cart
   /api/order:
     post:
       consumes:
@@ -809,6 +752,183 @@ paths:
       summary: 用户注册
       tags:
       - 用户认证
+  /cart:
+    delete:
+      consumes:
+      - application/json
+      description: 删除购物车中所有商品
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart cleared successfully
+          schema:
+            $ref: '#/definitions/cart.ClearCartResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            $ref: '#/definitions/cart.ClearCartResponse'
+      summary: 清空购物车
+      tags:
+      - 购物车
+    get:
+      consumes:
+      - application/json
+      description: 获取当前用户的购物车信息，按商家分组返回
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart retrieved successfully
+          schema:
+            $ref: '#/definitions/cart.GetCartResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            $ref: '#/definitions/cart.GetCartResponse'
+      summary: 获取购物车
+      tags:
+      - 购物车
+    post:
+      consumes:
+      - application/json
+      description: 将指定数量的商品添加到购物车
+      parameters:
+      - description: 添加购物车请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/cart.AddToCartRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Item added successfully
+          schema:
+            $ref: '#/definitions/cart.AddToCartResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            $ref: '#/definitions/cart.AddToCartResponse'
+      summary: 添加商品到购物车
+      tags:
+      - 购物车
+  /cart/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 更新购物车中某项商品的数量，数量为0时表示删除
+      parameters:
+      - description: 购物车项ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新数量请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/cart.UpdateQuantityRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Quantity updated successfully
+          schema:
+            $ref: '#/definitions/cart.UpdateQuantityResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            $ref: '#/definitions/cart.UpdateQuantityResponse'
+      summary: 更新购物车商品数量
+      tags:
+      - 购物车
+  /cart/items:
+    delete:
+      consumes:
+      - application/json
+      description: 根据ID列表批量删除购物车中的商品
+      parameters:
+      - description: 删除请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/cart.RemoveItemsRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Items removed successfully
+          schema:
+            $ref: '#/definitions/cart.RemoveItemsResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            $ref: '#/definitions/cart.RemoveItemsResponse'
+      summary: 批量删除购物车项
+      tags:
+      - 购物车
+  /cart/select:
+    put:
+      consumes:
+      - application/json
+      description: 批量选中或取消选中购物车商品
+      parameters:
+      - description: 切换选中状态请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/cart.ToggleSelectRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Selection toggled successfully
+          schema:
+            $ref: '#/definitions/cart.ToggleSelectResponse'
+        "400":
+          description: Invalid request or validation failed
+          schema:
+            $ref: '#/definitions/cart.ToggleSelectResponse'
+      summary: 切换购物车选中状态
+      tags:
+      - 购物车
   /customer/{user_id}:
     get:
       consumes:

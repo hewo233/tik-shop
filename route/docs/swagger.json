@@ -116,206 +116,6 @@
                 }
             }
         },
-        "/api/cart": {
-            "get": {
-                "description": "获取购物车中的所有商品。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "cart"
-                ],
-                "summary": "GetCart",
-                "responses": {
-                    "200": {
-                        "description": "List of items in the cart",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/base.CartItem"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "向购物车中添加一件商品。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "cart"
-                ],
-                "summary": "AddToCart",
-                "parameters": [
-                    {
-                        "description": "Details of the item to add",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/cart.AddToCartRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Item added to the cart successfully",
-                        "schema": {
-                            "$ref": "#/definitions/base.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "清空购物车中的所有商品。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "cart"
-                ],
-                "summary": "DeleteCart",
-                "parameters": [
-                    {
-                        "description": "Details for clearing the cart",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/cart.DeleteCartRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Cart cleared successfully",
-                        "schema": {
-                            "$ref": "#/definitions/base.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cart/:productId": {
-            "put": {
-                "description": "根据商品 ID 更新购物车中商品的数量。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "cart"
-                ],
-                "summary": "UpdateCartItem",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID",
-                        "name": "productId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Details of the item to update",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/cart.UpdateCartItemRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Item updated successfully",
-                        "schema": {
-                            "$ref": "#/definitions/base.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "根据商品 ID 从购物车中移除指定商品。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "cart"
-                ],
-                "summary": "DeleteCartItem",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Product ID",
-                        "name": "productId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Details of the item to delete",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/cart.DeleteCartItemRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Item removed successfully",
-                        "schema": {
-                            "$ref": "#/definitions/base.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/api/order": {
             "post": {
                 "description": "创建一个新的订单，包括订单的详细信息。",
@@ -600,6 +400,273 @@
                         "description": "Invalid request or validation failed",
                         "schema": {
                             "$ref": "#/definitions/user.RegisterResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart": {
+            "get": {
+                "description": "获取当前用户的购物车信息，按商家分组返回",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "购物车"
+                ],
+                "summary": "获取购物车",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cart retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/cart.GetCartResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/cart.GetCartResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "将指定数量的商品添加到购物车",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "购物车"
+                ],
+                "summary": "添加商品到购物车",
+                "parameters": [
+                    {
+                        "description": "添加购物车请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.AddToCartRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item added successfully",
+                        "schema": {
+                            "$ref": "#/definitions/cart.AddToCartResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/cart.AddToCartResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除购物车中所有商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "购物车"
+                ],
+                "summary": "清空购物车",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cart cleared successfully",
+                        "schema": {
+                            "$ref": "#/definitions/cart.ClearCartResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/cart.ClearCartResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/items": {
+            "delete": {
+                "description": "根据ID列表批量删除购物车中的商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "购物车"
+                ],
+                "summary": "批量删除购物车项",
+                "parameters": [
+                    {
+                        "description": "删除请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.RemoveItemsRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Items removed successfully",
+                        "schema": {
+                            "$ref": "#/definitions/cart.RemoveItemsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/cart.RemoveItemsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/select": {
+            "put": {
+                "description": "批量选中或取消选中购物车商品",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "购物车"
+                ],
+                "summary": "切换购物车选中状态",
+                "parameters": [
+                    {
+                        "description": "切换选中状态请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.ToggleSelectRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Selection toggled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/cart.ToggleSelectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/cart.ToggleSelectResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/{id}": {
+            "put": {
+                "description": "更新购物车中某项商品的数量，数量为0时表示删除",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "购物车"
+                ],
+                "summary": "更新购物车商品数量",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "购物车项ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "更新数量请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cart.UpdateQuantityRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Quantity updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/cart.UpdateQuantityResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or validation failed",
+                        "schema": {
+                            "$ref": "#/definitions/cart.UpdateQuantityResponse"
                         }
                     }
                 }
@@ -1359,11 +1426,28 @@
         "base.CartItem": {
             "type": "object",
             "properties": {
-                "productId": {
+                "cart_item_id": {
+                    "type": "integer"
+                },
+                "merchant_id": {
+                    "type": "integer"
+                },
+                "product": {
+                    "description": "商品详情",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/base.Product"
+                        }
+                    ]
+                },
+                "product_id": {
                     "type": "integer"
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "selected": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1386,6 +1470,23 @@
                 },
                 "shop_name": {
                     "type": "string"
+                }
+            }
+        },
+        "base.MerchantGroup": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base.CartItem"
+                    }
+                },
+                "merchant_id": {
+                    "type": "integer"
+                },
+                "subtotal": {
+                    "type": "integer"
                 }
             }
         },
@@ -1520,7 +1621,7 @@
         "cart.AddToCartRequest": {
             "type": "object",
             "properties": {
-                "productId": {
+                "product_id": {
                     "type": "integer"
                 },
                 "quantity": {
@@ -1528,25 +1629,109 @@
                 }
             }
         },
-        "cart.DeleteCartItemRequest": {
+        "cart.AddToCartResponse": {
             "type": "object",
             "properties": {
-                "productId": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "cart_item_id": {
                     "type": "integer"
                 }
             }
         },
-        "cart.DeleteCartRequest": {
-            "type": "object"
-        },
-        "cart.UpdateCartItemRequest": {
+        "cart.ClearCartResponse": {
             "type": "object",
             "properties": {
-                "productId": {
-                    "type": "integer"
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
                 },
-                "quantity": {
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "cart.GetCartResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/base.MerchantGroup"
+                    }
+                },
+                "total_selected": {
                     "type": "integer"
+                }
+            }
+        },
+        "cart.RemoveItemsRequest": {
+            "type": "object",
+            "properties": {
+                "cart_item_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "cart.RemoveItemsResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "cart.ToggleSelectRequest": {
+            "type": "object",
+            "properties": {
+                "cart_item_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "selected": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "cart.ToggleSelectResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "cart.UpdateQuantityRequest": {
+            "type": "object",
+            "properties": {
+                "quantity": {
+                    "description": "0=删除",
+                    "type": "integer"
+                }
+            }
+        },
+        "cart.UpdateQuantityResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
