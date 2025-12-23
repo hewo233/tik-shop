@@ -156,7 +156,7 @@ func (p *CartItem) FastReadField1(buf []byte) (int, error) {
 		offset += l
 		_field = v
 	}
-	p.CartItemId = _field
+	p.Id = _field
 	return offset, nil
 }
 
@@ -264,7 +264,7 @@ func (p *CartItem) BLength() int {
 func (p *CartItem) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 1)
-	offset += thrift.Binary.WriteI64(buf[offset:], p.CartItemId)
+	offset += thrift.Binary.WriteI64(buf[offset:], p.Id)
 	return offset
 }
 

@@ -57,7 +57,7 @@ struct Product {
 // cart begin::
 // ========== 购物车项结构(独立定义) ==========
 struct CartItem {
-    1: i64 cart_item_id,
+    1: i64 id,
     2: i64 product_id,
     3: i64 merchant_id,
     4: i64 quantity,

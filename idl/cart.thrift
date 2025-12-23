@@ -5,7 +5,7 @@ include "product.thrift"
 
 // 购物车项(带关联商品)
 struct CartItem {
-    1: i64                 cart_item_id,  // 对应 db.model.CartItem.ID
+    1: i64                 id,  // 对应 db.model.CartItem.ID
     2: i64                 product_id,
     3: i64                 merchant_id,   // 冗余字段,用于前端分组
     4: i64                 quantity,

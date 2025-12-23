@@ -4,11 +4,14 @@ package cart
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/common"
+	"github.com/hewo/tik-shop/shared/consts"
 )
 
 func rootMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleCustomer),
+	}
 }
 
 func _apiMw() []app.HandlerFunc {
@@ -42,7 +45,6 @@ func _updatecartitemMw() []app.HandlerFunc {
 }
 
 func _addtocartMw() []app.HandlerFunc {
-	// your code...
 	return nil
 }
 

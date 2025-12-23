@@ -12,7 +12,7 @@ var c = &query.Q.CartItem
 
 type CartSqlManageImpl struct{}
 
-func NewCartItemSqlManageImpl() *CartSqlManageImpl {
+func NewCartSqlManageImpl() *CartSqlManageImpl {
 	return &CartSqlManageImpl{}
 }
 
@@ -46,7 +46,7 @@ func (m *CartSqlManageImpl) AddToCart(customerID int64, productID int64, quantit
 			ProductID:  productID,
 			MerchantID: product.MerchantID,
 			Quantity:   quantity,
-			Selected:   false,
+			Selected:   true,
 		}
 		err2 := c.Create(newItem)
 		if err2 != nil {
@@ -60,10 +60,7 @@ func (m *CartSqlManageImpl) AddToCart(customerID int64, productID int64, quantit
 	info, err := c.Where(
 		c.ID.Eq(item.ID),
 		c.Quantity.Add(quantity).Lte(product.Stock),
-	).Updates(map[string]interface{}{
-		"quantity": gorm.Expr("quantity + ?", quantity),
-		"selected": true,
-	})
+	).Update(c.Quantity, item.Quantity+quantity)
 
 	if err != nil {
 		return -1, err
@@ -88,6 +85,22 @@ func (m *CartSqlManageImpl) UpdateQuantity(cartItemID int64, customerID int64, n
 			return fmt.Errorf("cart item not found")
 		}
 	}
+
+	item, err := c.Where(c.ID.Eq(cartItemID), c.CustomerID.Eq(customerID)).First()
+	if err != nil {
+		return err
+	}
+
+	p := query.Q.Product
+	product, err := p.Where(p.ID.Eq(item.ProductID)).First()
+	if err != nil {
+		return err
+	}
+
+	if newQuantity > product.Stock {
+		return fmt.Errorf("product stock is not enough")
+	}
+
 	// update
 	info, err := c.Where(c.ID.Eq(cartItemID), c.CustomerID.Eq(customerID)).Update(c.Quantity, newQuantity)
 	if err != nil {

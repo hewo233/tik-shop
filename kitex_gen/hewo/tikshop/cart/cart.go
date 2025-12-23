@@ -11,7 +11,7 @@ import (
 )
 
 type CartItem struct {
-	CartItemId int64            `thrift:"cart_item_id,1" frugal:"1,default,i64" json:"cart_item_id"`
+	Id         int64            `thrift:"id,1" frugal:"1,default,i64" json:"id"`
 	ProductId  int64            `thrift:"product_id,2" frugal:"2,default,i64" json:"product_id"`
 	MerchantId int64            `thrift:"merchant_id,3" frugal:"3,default,i64" json:"merchant_id"`
 	Quantity   int64            `thrift:"quantity,4" frugal:"4,default,i64" json:"quantity"`
@@ -26,8 +26,8 @@ func NewCartItem() *CartItem {
 func (p *CartItem) InitDefault() {
 }
 
-func (p *CartItem) GetCartItemId() (v int64) {
-	return p.CartItemId
+func (p *CartItem) GetId() (v int64) {
+	return p.Id
 }
 
 func (p *CartItem) GetProductId() (v int64) {
@@ -54,8 +54,8 @@ func (p *CartItem) GetProduct() (v *product.Product) {
 	}
 	return p.Product
 }
-func (p *CartItem) SetCartItemId(val int64) {
-	p.CartItemId = val
+func (p *CartItem) SetId(val int64) {
+	p.Id = val
 }
 func (p *CartItem) SetProductId(val int64) {
 	p.ProductId = val
@@ -74,7 +74,7 @@ func (p *CartItem) SetProduct(val *product.Product) {
 }
 
 var fieldIDToName_CartItem = map[int16]string{
-	1: "cart_item_id",
+	1: "id",
 	2: "product_id",
 	3: "merchant_id",
 	4: "quantity",
@@ -190,7 +190,7 @@ func (p *CartItem) ReadField1(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.CartItemId = _field
+	p.Id = _field
 	return nil
 }
 func (p *CartItem) ReadField2(iprot thrift.TProtocol) error {
@@ -296,10 +296,10 @@ WriteStructEndError:
 }
 
 func (p *CartItem) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("cart_item_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.CartItemId); err != nil {
+	if err := oprot.WriteI64(p.Id); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -411,7 +411,7 @@ func (p *CartItem) DeepEqual(ano *CartItem) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.CartItemId) {
+	if !p.Field1DeepEqual(ano.Id) {
 		return false
 	}
 	if !p.Field2DeepEqual(ano.ProductId) {
@@ -434,7 +434,7 @@ func (p *CartItem) DeepEqual(ano *CartItem) bool {
 
 func (p *CartItem) Field1DeepEqual(src int64) bool {
 
-	if p.CartItemId != src {
+	if p.Id != src {
 		return false
 	}
 	return true

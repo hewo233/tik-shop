@@ -1740,7 +1740,7 @@ func (p *Product) String() string {
 // cart begin::
 // ========== 购物车项结构(独立定义) ==========
 type CartItem struct {
-	CartItemID int64 `thrift:"cart_item_id,1" form:"cart_item_id" json:"cart_item_id" query:"cart_item_id"`
+	ID         int64 `thrift:"id,1" form:"id" json:"id" query:"id"`
 	ProductID  int64 `thrift:"product_id,2" form:"product_id" json:"product_id" query:"product_id"`
 	MerchantID int64 `thrift:"merchant_id,3" form:"merchant_id" json:"merchant_id" query:"merchant_id"`
 	Quantity   int64 `thrift:"quantity,4" form:"quantity" json:"quantity" query:"quantity"`
@@ -1756,8 +1756,8 @@ func NewCartItem() *CartItem {
 func (p *CartItem) InitDefault() {
 }
 
-func (p *CartItem) GetCartItemID() (v int64) {
-	return p.CartItemID
+func (p *CartItem) GetID() (v int64) {
+	return p.ID
 }
 
 func (p *CartItem) GetProductID() (v int64) {
@@ -1786,7 +1786,7 @@ func (p *CartItem) GetProduct() (v *Product) {
 }
 
 var fieldIDToName_CartItem = map[int16]string{
-	1: "cart_item_id",
+	1: "id",
 	2: "product_id",
 	3: "merchant_id",
 	4: "quantity",
@@ -1902,7 +1902,7 @@ func (p *CartItem) ReadField1(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.CartItemID = _field
+	p.ID = _field
 	return nil
 }
 func (p *CartItem) ReadField2(iprot thrift.TProtocol) error {
@@ -2008,10 +2008,10 @@ WriteStructEndError:
 }
 
 func (p *CartItem) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("cart_item_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.CartItemID); err != nil {
+	if err := oprot.WriteI64(p.ID); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
