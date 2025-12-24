@@ -29,9 +29,8 @@ func newOrder(db *gorm.DB, opts ...gen.DOOption) order {
 	_order.ALL = field.NewAsterisk(tableName)
 	_order.ID = field.NewInt64(tableName, "id")
 	_order.CustomerID = field.NewInt64(tableName, "customer_id")
-	_order.OrderNo = field.NewString(tableName, "order_no")
-	_order.TotalAmount = field.NewInt64(tableName, "total_amount")
 	_order.Status = field.NewInt8(tableName, "status")
+	_order.TotalAmount = field.NewInt64(tableName, "total_amount")
 	_order.SnapshotAddress = field.NewString(tableName, "snapshot_address")
 	_order.CreatedAt = field.NewTime(tableName, "created_at")
 	_order.UpdatedAt = field.NewTime(tableName, "updated_at")
@@ -234,11 +233,6 @@ func newOrder(db *gorm.DB, opts ...gen.DOOption) order {
 				RelationField: field.NewRelation("OrderItems.Order.OrderItems", "model.OrderItem"),
 			},
 		},
-		Product: struct {
-			field.RelationField
-		}{
-			RelationField: field.NewRelation("OrderItems.Product", "model.Product"),
-		},
 	}
 
 	_order.Customer = orderBelongsToCustomer{
@@ -258,9 +252,8 @@ type order struct {
 	ALL             field.Asterisk
 	ID              field.Int64
 	CustomerID      field.Int64
-	OrderNo         field.String
-	TotalAmount     field.Int64
 	Status          field.Int8
+	TotalAmount     field.Int64
 	SnapshotAddress field.String
 	CreatedAt       field.Time
 	UpdatedAt       field.Time
@@ -285,9 +278,8 @@ func (o *order) updateTableName(table string) *order {
 	o.ALL = field.NewAsterisk(table)
 	o.ID = field.NewInt64(table, "id")
 	o.CustomerID = field.NewInt64(table, "customer_id")
-	o.OrderNo = field.NewString(table, "order_no")
-	o.TotalAmount = field.NewInt64(table, "total_amount")
 	o.Status = field.NewInt8(table, "status")
+	o.TotalAmount = field.NewInt64(table, "total_amount")
 	o.SnapshotAddress = field.NewString(table, "snapshot_address")
 	o.CreatedAt = field.NewTime(table, "created_at")
 	o.UpdatedAt = field.NewTime(table, "updated_at")
@@ -307,12 +299,11 @@ func (o *order) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (o *order) fillFieldMap() {
-	o.fieldMap = make(map[string]field.Expr, 10)
+	o.fieldMap = make(map[string]field.Expr, 9)
 	o.fieldMap["id"] = o.ID
 	o.fieldMap["customer_id"] = o.CustomerID
-	o.fieldMap["order_no"] = o.OrderNo
-	o.fieldMap["total_amount"] = o.TotalAmount
 	o.fieldMap["status"] = o.Status
+	o.fieldMap["total_amount"] = o.TotalAmount
 	o.fieldMap["snapshot_address"] = o.SnapshotAddress
 	o.fieldMap["created_at"] = o.CreatedAt
 	o.fieldMap["updated_at"] = o.UpdatedAt
@@ -384,9 +375,6 @@ type orderHasManyOrderItems struct {
 		OrderItems struct {
 			field.RelationField
 		}
-	}
-	Product struct {
-		field.RelationField
 	}
 }
 

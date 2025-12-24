@@ -34,7 +34,7 @@ type Order struct {
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updated_at"`
 
-	Customer   *Customer   `gorm:"foreignKey:CustomerID;references:CustomerID" json:"-"`
+	Customer   *Customer   `gorm:"foreignKey:CustomerID;references:UserID" json:"-"`
 	OrderItems []OrderItem `gorm:"foreignKey:OrderID;references:ID" json:"items"`
 }
 

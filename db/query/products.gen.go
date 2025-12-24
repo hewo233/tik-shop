@@ -57,12 +57,6 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 						Order struct {
 							field.RelationField
 						}
-						Product struct {
-							field.RelationField
-							Merchant struct {
-								field.RelationField
-							}
-						}
 					}
 				}
 				Cart struct {
@@ -72,6 +66,9 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 					}
 					Product struct {
 						field.RelationField
+						Merchant struct {
+							field.RelationField
+						}
 					}
 				}
 			}
@@ -101,12 +98,6 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 						Order struct {
 							field.RelationField
 						}
-						Product struct {
-							field.RelationField
-							Merchant struct {
-								field.RelationField
-							}
-						}
 					}
 				}
 				Cart struct {
@@ -116,6 +107,9 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 					}
 					Product struct {
 						field.RelationField
+						Merchant struct {
+							field.RelationField
+						}
 					}
 				}
 			}{
@@ -135,12 +129,6 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 						Order struct {
 							field.RelationField
 						}
-						Product struct {
-							field.RelationField
-							Merchant struct {
-								field.RelationField
-							}
-						}
 					}
 				}{
 					RelationField: field.NewRelation("Merchant.User.Customer.Orders", "model.Order"),
@@ -154,31 +142,12 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 						Order struct {
 							field.RelationField
 						}
-						Product struct {
-							field.RelationField
-							Merchant struct {
-								field.RelationField
-							}
-						}
 					}{
 						RelationField: field.NewRelation("Merchant.User.Customer.Orders.OrderItems", "model.OrderItem"),
 						Order: struct {
 							field.RelationField
 						}{
 							RelationField: field.NewRelation("Merchant.User.Customer.Orders.OrderItems.Order", "model.Order"),
-						},
-						Product: struct {
-							field.RelationField
-							Merchant struct {
-								field.RelationField
-							}
-						}{
-							RelationField: field.NewRelation("Merchant.User.Customer.Orders.OrderItems.Product", "model.Product"),
-							Merchant: struct {
-								field.RelationField
-							}{
-								RelationField: field.NewRelation("Merchant.User.Customer.Orders.OrderItems.Product.Merchant", "model.Merchant"),
-							},
 						},
 					},
 				},
@@ -189,6 +158,9 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 					}
 					Product struct {
 						field.RelationField
+						Merchant struct {
+							field.RelationField
+						}
 					}
 				}{
 					RelationField: field.NewRelation("Merchant.User.Customer.Cart", "model.CartItem"),
@@ -199,8 +171,16 @@ func newProduct(db *gorm.DB, opts ...gen.DOOption) product {
 					},
 					Product: struct {
 						field.RelationField
+						Merchant struct {
+							field.RelationField
+						}
 					}{
 						RelationField: field.NewRelation("Merchant.User.Customer.Cart.Product", "model.Product"),
+						Merchant: struct {
+							field.RelationField
+						}{
+							RelationField: field.NewRelation("Merchant.User.Customer.Cart.Product.Merchant", "model.Merchant"),
+						},
 					},
 				},
 			},
@@ -338,12 +318,6 @@ type productBelongsToMerchant struct {
 					Order struct {
 						field.RelationField
 					}
-					Product struct {
-						field.RelationField
-						Merchant struct {
-							field.RelationField
-						}
-					}
 				}
 			}
 			Cart struct {
@@ -353,6 +327,9 @@ type productBelongsToMerchant struct {
 				}
 				Product struct {
 					field.RelationField
+					Merchant struct {
+						field.RelationField
+					}
 				}
 			}
 		}

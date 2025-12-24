@@ -53,9 +53,6 @@ func newMerchant(db *gorm.DB, opts ...gen.DOOption) merchant {
 							Order struct {
 								field.RelationField
 							}
-							Product struct {
-								field.RelationField
-							}
 						}
 					}
 					Cart struct {
@@ -100,9 +97,6 @@ func newMerchant(db *gorm.DB, opts ...gen.DOOption) merchant {
 							Order struct {
 								field.RelationField
 							}
-							Product struct {
-								field.RelationField
-							}
 						}
 					}
 					Cart struct {
@@ -141,9 +135,6 @@ func newMerchant(db *gorm.DB, opts ...gen.DOOption) merchant {
 							Order struct {
 								field.RelationField
 							}
-							Product struct {
-								field.RelationField
-							}
 						}
 					}
 					Cart struct {
@@ -172,9 +163,6 @@ func newMerchant(db *gorm.DB, opts ...gen.DOOption) merchant {
 							Order struct {
 								field.RelationField
 							}
-							Product struct {
-								field.RelationField
-							}
 						}
 					}{
 						RelationField: field.NewRelation("Products.Merchant.User.Customer.Orders", "model.Order"),
@@ -188,20 +176,12 @@ func newMerchant(db *gorm.DB, opts ...gen.DOOption) merchant {
 							Order struct {
 								field.RelationField
 							}
-							Product struct {
-								field.RelationField
-							}
 						}{
 							RelationField: field.NewRelation("Products.Merchant.User.Customer.Orders.OrderItems", "model.OrderItem"),
 							Order: struct {
 								field.RelationField
 							}{
 								RelationField: field.NewRelation("Products.Merchant.User.Customer.Orders.OrderItems.Order", "model.Order"),
-							},
-							Product: struct {
-								field.RelationField
-							}{
-								RelationField: field.NewRelation("Products.Merchant.User.Customer.Orders.OrderItems.Product", "model.Product"),
 							},
 						},
 					},
@@ -355,9 +335,6 @@ type merchantHasManyProducts struct {
 					OrderItems struct {
 						field.RelationField
 						Order struct {
-							field.RelationField
-						}
-						Product struct {
 							field.RelationField
 						}
 					}

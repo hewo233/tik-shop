@@ -32,8 +32,9 @@ func newOrderItem(db *gorm.DB, opts ...gen.DOOption) orderItem {
 	_orderItem.ProductID = field.NewInt64(tableName, "product_id")
 	_orderItem.MerchantID = field.NewInt64(tableName, "merchant_id")
 	_orderItem.ProductName = field.NewString(tableName, "product_name")
-	_orderItem.Price = field.NewFloat64(tableName, "price")
+	_orderItem.Cost = field.NewInt64(tableName, "price")
 	_orderItem.Quantity = field.NewInt(tableName, "quantity")
+	_orderItem.TotalCost = field.NewInt64(tableName, "total_cost")
 	_orderItem.Order = orderItemBelongsToOrder{
 		db: db.Session(&gorm.Session{}),
 
@@ -186,9 +187,6 @@ func newOrderItem(db *gorm.DB, opts ...gen.DOOption) orderItem {
 			Order struct {
 				field.RelationField
 			}
-			Product struct {
-				field.RelationField
-			}
 		}{
 			RelationField: field.NewRelation("Order.OrderItems", "model.OrderItem"),
 			Order: struct {
@@ -196,18 +194,7 @@ func newOrderItem(db *gorm.DB, opts ...gen.DOOption) orderItem {
 			}{
 				RelationField: field.NewRelation("Order.OrderItems.Order", "model.Order"),
 			},
-			Product: struct {
-				field.RelationField
-			}{
-				RelationField: field.NewRelation("Order.OrderItems.Product", "model.Product"),
-			},
 		},
-	}
-
-	_orderItem.Product = orderItemBelongsToProduct{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("Product", "model.Product"),
 	}
 
 	_orderItem.fillFieldMap()
@@ -224,11 +211,10 @@ type orderItem struct {
 	ProductID   field.Int64
 	MerchantID  field.Int64
 	ProductName field.String
-	Price       field.Float64
+	Cost        field.Int64
 	Quantity    field.Int
+	TotalCost   field.Int64
 	Order       orderItemBelongsToOrder
-
-	Product orderItemBelongsToProduct
 
 	fieldMap map[string]field.Expr
 }
@@ -250,8 +236,9 @@ func (o *orderItem) updateTableName(table string) *orderItem {
 	o.ProductID = field.NewInt64(table, "product_id")
 	o.MerchantID = field.NewInt64(table, "merchant_id")
 	o.ProductName = field.NewString(table, "product_name")
-	o.Price = field.NewFloat64(table, "price")
+	o.Cost = field.NewInt64(table, "price")
 	o.Quantity = field.NewInt(table, "quantity")
+	o.TotalCost = field.NewInt64(table, "total_cost")
 
 	o.fillFieldMap()
 
@@ -274,8 +261,9 @@ func (o *orderItem) fillFieldMap() {
 	o.fieldMap["product_id"] = o.ProductID
 	o.fieldMap["merchant_id"] = o.MerchantID
 	o.fieldMap["product_name"] = o.ProductName
-	o.fieldMap["price"] = o.Price
+	o.fieldMap["price"] = o.Cost
 	o.fieldMap["quantity"] = o.Quantity
+	o.fieldMap["total_cost"] = o.TotalCost
 
 }
 
@@ -283,15 +271,12 @@ func (o orderItem) clone(db *gorm.DB) orderItem {
 	o.orderItemDo.ReplaceConnPool(db.Statement.ConnPool)
 	o.Order.db = db.Session(&gorm.Session{Initialized: true})
 	o.Order.db.Statement.ConnPool = db.Statement.ConnPool
-	o.Product.db = db.Session(&gorm.Session{Initialized: true})
-	o.Product.db.Statement.ConnPool = db.Statement.ConnPool
 	return o
 }
 
 func (o orderItem) replaceDB(db *gorm.DB) orderItem {
 	o.orderItemDo.ReplaceDB(db)
 	o.Order.db = db.Session(&gorm.Session{})
-	o.Product.db = db.Session(&gorm.Session{})
 	return o
 }
 
@@ -342,9 +327,6 @@ type orderItemBelongsToOrder struct {
 	OrderItems struct {
 		field.RelationField
 		Order struct {
-			field.RelationField
-		}
-		Product struct {
 			field.RelationField
 		}
 	}
@@ -421,87 +403,6 @@ func (a orderItemBelongsToOrderTx) Count() int64 {
 }
 
 func (a orderItemBelongsToOrderTx) Unscoped() *orderItemBelongsToOrderTx {
-	a.tx = a.tx.Unscoped()
-	return &a
-}
-
-type orderItemBelongsToProduct struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a orderItemBelongsToProduct) Where(conds ...field.Expr) *orderItemBelongsToProduct {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a orderItemBelongsToProduct) WithContext(ctx context.Context) *orderItemBelongsToProduct {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a orderItemBelongsToProduct) Session(session *gorm.Session) *orderItemBelongsToProduct {
-	a.db = a.db.Session(session)
-	return &a
-}
-
-func (a orderItemBelongsToProduct) Model(m *model.OrderItem) *orderItemBelongsToProductTx {
-	return &orderItemBelongsToProductTx{a.db.Model(m).Association(a.Name())}
-}
-
-func (a orderItemBelongsToProduct) Unscoped() *orderItemBelongsToProduct {
-	a.db = a.db.Unscoped()
-	return &a
-}
-
-type orderItemBelongsToProductTx struct{ tx *gorm.Association }
-
-func (a orderItemBelongsToProductTx) Find() (result *model.Product, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a orderItemBelongsToProductTx) Append(values ...*model.Product) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a orderItemBelongsToProductTx) Replace(values ...*model.Product) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a orderItemBelongsToProductTx) Delete(values ...*model.Product) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a orderItemBelongsToProductTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a orderItemBelongsToProductTx) Count() int64 {
-	return a.tx.Count()
-}
-
-func (a orderItemBelongsToProductTx) Unscoped() *orderItemBelongsToProductTx {
 	a.tx = a.tx.Unscoped()
 	return &a
 }

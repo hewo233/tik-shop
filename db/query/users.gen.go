@@ -125,9 +125,6 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 				Order struct {
 					field.RelationField
 				}
-				Product struct {
-					field.RelationField
-				}
 			}
 		}{
 			RelationField: field.NewRelation("Customer.Orders", "model.Order"),
@@ -141,20 +138,12 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 				Order struct {
 					field.RelationField
 				}
-				Product struct {
-					field.RelationField
-				}
 			}{
 				RelationField: field.NewRelation("Customer.Orders.OrderItems", "model.OrderItem"),
 				Order: struct {
 					field.RelationField
 				}{
 					RelationField: field.NewRelation("Customer.Orders.OrderItems.Order", "model.Order"),
-				},
-				Product: struct {
-					field.RelationField
-				}{
-					RelationField: field.NewRelation("Customer.Orders.OrderItems.Product", "model.Product"),
 				},
 			},
 		},
@@ -323,9 +312,6 @@ type userHasOneCustomer struct {
 		OrderItems struct {
 			field.RelationField
 			Order struct {
-				field.RelationField
-			}
-			Product struct {
 				field.RelationField
 			}
 		}
