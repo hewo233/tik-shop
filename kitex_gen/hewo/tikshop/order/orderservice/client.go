@@ -11,11 +11,11 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	SubmitOrder(ctx context.Context, request *order.SubmitOrderRequest, callOptions ...callopt.Option) (r *order.SubmitOrderResponse, err error)
-	PayOrder(ctx context.Context, request *order.PayOrderRequest, callOptions ...callopt.Option) (r *order.PayOrderResponse, err error)
-	CancelOrder(ctx context.Context, request *order.CancelOrderRequest, callOptions ...callopt.Option) (r *order.CancelOrderResponse, err error)
-	GetOrders(ctx context.Context, request *order.GetOrdersRequest, callOptions ...callopt.Option) (r *order.GetOrdersResponse, err error)
-	GetOrderById(ctx context.Context, request *order.GetOrderByIdRequest, callOptions ...callopt.Option) (r *order.GetOrderByIdResponse, err error)
+	CreateOrder(ctx context.Context, req *order.CreateOrderRequest, callOptions ...callopt.Option) (r *order.CreateOrderResponse, err error)
+	ListOrders(ctx context.Context, req *order.ListOrdersRequest, callOptions ...callopt.Option) (r *order.ListOrdersResponse, err error)
+	GetOrder(ctx context.Context, req *order.GetOrderRequest, callOptions ...callopt.Option) (r *order.GetOrderResponse, err error)
+	MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidRequest, callOptions ...callopt.Option) (r *order.MarkOrderPaidResponse, err error)
+	CancelOrder(ctx context.Context, req *order.CancelOrderRequest, callOptions ...callopt.Option) (r *order.CancelOrderResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -47,27 +47,27 @@ type kOrderServiceClient struct {
 	*kClient
 }
 
-func (p *kOrderServiceClient) SubmitOrder(ctx context.Context, request *order.SubmitOrderRequest, callOptions ...callopt.Option) (r *order.SubmitOrderResponse, err error) {
+func (p *kOrderServiceClient) CreateOrder(ctx context.Context, req *order.CreateOrderRequest, callOptions ...callopt.Option) (r *order.CreateOrderResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.SubmitOrder(ctx, request)
+	return p.kClient.CreateOrder(ctx, req)
 }
 
-func (p *kOrderServiceClient) PayOrder(ctx context.Context, request *order.PayOrderRequest, callOptions ...callopt.Option) (r *order.PayOrderResponse, err error) {
+func (p *kOrderServiceClient) ListOrders(ctx context.Context, req *order.ListOrdersRequest, callOptions ...callopt.Option) (r *order.ListOrdersResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.PayOrder(ctx, request)
+	return p.kClient.ListOrders(ctx, req)
 }
 
-func (p *kOrderServiceClient) CancelOrder(ctx context.Context, request *order.CancelOrderRequest, callOptions ...callopt.Option) (r *order.CancelOrderResponse, err error) {
+func (p *kOrderServiceClient) GetOrder(ctx context.Context, req *order.GetOrderRequest, callOptions ...callopt.Option) (r *order.GetOrderResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CancelOrder(ctx, request)
+	return p.kClient.GetOrder(ctx, req)
 }
 
-func (p *kOrderServiceClient) GetOrders(ctx context.Context, request *order.GetOrdersRequest, callOptions ...callopt.Option) (r *order.GetOrdersResponse, err error) {
+func (p *kOrderServiceClient) MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidRequest, callOptions ...callopt.Option) (r *order.MarkOrderPaidResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetOrders(ctx, request)
+	return p.kClient.MarkOrderPaid(ctx, req)
 }
 
-func (p *kOrderServiceClient) GetOrderById(ctx context.Context, request *order.GetOrderByIdRequest, callOptions ...callopt.Option) (r *order.GetOrderByIdResponse, err error) {
+func (p *kOrderServiceClient) CancelOrder(ctx context.Context, req *order.CancelOrderRequest, callOptions ...callopt.Option) (r *order.CancelOrderResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetOrderById(ctx, request)
+	return p.kClient.CancelOrder(ctx, req)
 }

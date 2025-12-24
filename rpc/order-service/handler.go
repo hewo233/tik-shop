@@ -63,3 +63,27 @@ func (s *OrderServiceImpl) GetOrderById(ctx context.Context, request *order.GetO
 	}
 	return
 }
+
+// CreateOrder implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *order.CreateOrderRequest) (resp *order.CreateOrderResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// ListOrders implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) ListOrders(ctx context.Context, req *order.ListOrdersRequest) (resp *order.ListOrdersResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// GetOrder implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) GetOrder(ctx context.Context, req *order.GetOrderRequest) (resp *order.GetOrderResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// MarkOrderPaid implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidRequest) (resp *order.MarkOrderPaidResponse, err error) {
+	// TODO: Your code here...
+	return
+}

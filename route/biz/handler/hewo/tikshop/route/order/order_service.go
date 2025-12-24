@@ -133,3 +133,67 @@ func CancelOrder(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// PlaceOrder .
+// @router /order [POST]
+func PlaceOrder(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req order.CreateOrderRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(order.CreateOrderResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// ListOrders .
+// @router /order [GET]
+func ListOrders(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req order.ListOrdersRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(order.ListOrdersResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// GetOrder .
+// @router /order/:id [GET]
+func GetOrder(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req order.GetOrderRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(order.GetOrderResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// MarkOrderPaid .
+// @router /order/:id/mark_paid [POST]
+func MarkOrderPaid(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req order.MarkOrderPaidRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(order.MarkOrderPaidResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}

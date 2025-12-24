@@ -65,3 +65,28 @@ func _getorderinfoMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _listordersMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _idMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getorderMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _markorderpaidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _placeorderMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

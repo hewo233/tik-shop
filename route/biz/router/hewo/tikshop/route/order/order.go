@@ -17,23 +17,11 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
-	{
-		_api := root.Group("/api", _apiMw()...)
-		_api.POST("/order", append(_postorderMw(), order.PostOrder)...)
-		_order := _api.Group("/order", _orderMw()...)
-		{
-			_orderid := _order.Group("/:orderId", _orderidMw()...)
-			_orderid.POST("/pay", append(_payorderMw(), order.PayOrder)...)
-		}
-		_api.GET("/orders", append(_getordersMw(), order.GetOrders)...)
-		_orders := _api.Group("/orders", _ordersMw()...)
-		{
-			_orderid0 := _orders.Group("/:orderId", _orderid0Mw()...)
-			_orderid0.POST("/cancel", append(_cancelorderMw(), order.CancelOrder)...)
-		}
-		{
-			_order0 := _api.Group("/order", _order0Mw()...)
-			_order0.GET("/:orderId", append(_getorderinfoMw(), order.GetOrderInfo)...)
-		}
-	}
+	root.GET("/order", append(_listordersMw(), order.ListOrders)...)
+	_order := root.Group("/order", _orderMw()...)
+	_order.GET("/:id", append(_getorderMw(), order.GetOrder)...)
+	_id := _order.Group("/:id", _idMw()...)
+	_id.POST("/cancel", append(_cancelorderMw(), order.CancelOrder)...)
+	_id.POST("/mark_paid", append(_markorderpaidMw(), order.MarkOrderPaid)...)
+	root.POST("/order", append(_placeorderMw(), order.PlaceOrder)...)
 }

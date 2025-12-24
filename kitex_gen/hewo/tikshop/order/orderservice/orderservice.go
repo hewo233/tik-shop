@@ -14,38 +14,38 @@ import (
 var errInvalidMessageType = errors.New("invalid message type for service method handler")
 
 var serviceMethods = map[string]kitex.MethodInfo{
-	"submitOrder": kitex.NewMethodInfo(
-		submitOrderHandler,
-		newOrderServiceSubmitOrderArgs,
-		newOrderServiceSubmitOrderResult,
+	"CreateOrder": kitex.NewMethodInfo(
+		createOrderHandler,
+		newOrderServiceCreateOrderArgs,
+		newOrderServiceCreateOrderResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"payOrder": kitex.NewMethodInfo(
-		payOrderHandler,
-		newOrderServicePayOrderArgs,
-		newOrderServicePayOrderResult,
+	"ListOrders": kitex.NewMethodInfo(
+		listOrdersHandler,
+		newOrderServiceListOrdersArgs,
+		newOrderServiceListOrdersResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"cancelOrder": kitex.NewMethodInfo(
+	"GetOrder": kitex.NewMethodInfo(
+		getOrderHandler,
+		newOrderServiceGetOrderArgs,
+		newOrderServiceGetOrderResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"MarkOrderPaid": kitex.NewMethodInfo(
+		markOrderPaidHandler,
+		newOrderServiceMarkOrderPaidArgs,
+		newOrderServiceMarkOrderPaidResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"CancelOrder": kitex.NewMethodInfo(
 		cancelOrderHandler,
 		newOrderServiceCancelOrderArgs,
 		newOrderServiceCancelOrderResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
-	),
-	"getOrders": kitex.NewMethodInfo(
-		getOrdersHandler,
-		newOrderServiceGetOrdersArgs,
-		newOrderServiceGetOrdersResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
-	),
-	"getOrderById": kitex.NewMethodInfo(
-		getOrderByIdHandler,
-		newOrderServiceGetOrderByIdArgs,
-		newOrderServiceGetOrderByIdResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -115,14 +115,14 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 	return svcInfo
 }
 
-func submitOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*order.OrderServiceSubmitOrderArgs)
-	realResult := result.(*order.OrderServiceSubmitOrderResult)
-	success, err := handler.(order.OrderService).SubmitOrder(ctx, realArg.Request)
+func createOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*order.OrderServiceCreateOrderArgs)
+	realResult := result.(*order.OrderServiceCreateOrderResult)
+	success, err := handler.(order.OrderService).CreateOrder(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
-			realResult.Error = v
+			realResult.Err = v
 		default:
 			return err
 		}
@@ -131,22 +131,22 @@ func submitOrderHandler(ctx context.Context, handler interface{}, arg, result in
 	}
 	return nil
 }
-func newOrderServiceSubmitOrderArgs() interface{} {
-	return order.NewOrderServiceSubmitOrderArgs()
+func newOrderServiceCreateOrderArgs() interface{} {
+	return order.NewOrderServiceCreateOrderArgs()
 }
 
-func newOrderServiceSubmitOrderResult() interface{} {
-	return order.NewOrderServiceSubmitOrderResult()
+func newOrderServiceCreateOrderResult() interface{} {
+	return order.NewOrderServiceCreateOrderResult()
 }
 
-func payOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*order.OrderServicePayOrderArgs)
-	realResult := result.(*order.OrderServicePayOrderResult)
-	success, err := handler.(order.OrderService).PayOrder(ctx, realArg.Request)
+func listOrdersHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*order.OrderServiceListOrdersArgs)
+	realResult := result.(*order.OrderServiceListOrdersResult)
+	success, err := handler.(order.OrderService).ListOrders(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
-			realResult.Error = v
+			realResult.Err = v
 		default:
 			return err
 		}
@@ -155,22 +155,70 @@ func payOrderHandler(ctx context.Context, handler interface{}, arg, result inter
 	}
 	return nil
 }
-func newOrderServicePayOrderArgs() interface{} {
-	return order.NewOrderServicePayOrderArgs()
+func newOrderServiceListOrdersArgs() interface{} {
+	return order.NewOrderServiceListOrdersArgs()
 }
 
-func newOrderServicePayOrderResult() interface{} {
-	return order.NewOrderServicePayOrderResult()
+func newOrderServiceListOrdersResult() interface{} {
+	return order.NewOrderServiceListOrdersResult()
+}
+
+func getOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*order.OrderServiceGetOrderArgs)
+	realResult := result.(*order.OrderServiceGetOrderResult)
+	success, err := handler.(order.OrderService).GetOrder(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newOrderServiceGetOrderArgs() interface{} {
+	return order.NewOrderServiceGetOrderArgs()
+}
+
+func newOrderServiceGetOrderResult() interface{} {
+	return order.NewOrderServiceGetOrderResult()
+}
+
+func markOrderPaidHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*order.OrderServiceMarkOrderPaidArgs)
+	realResult := result.(*order.OrderServiceMarkOrderPaidResult)
+	success, err := handler.(order.OrderService).MarkOrderPaid(ctx, realArg.Req)
+	if err != nil {
+		switch v := err.(type) {
+		case *base.ErrorResponse:
+			realResult.Err = v
+		default:
+			return err
+		}
+	} else {
+		realResult.Success = success
+	}
+	return nil
+}
+func newOrderServiceMarkOrderPaidArgs() interface{} {
+	return order.NewOrderServiceMarkOrderPaidArgs()
+}
+
+func newOrderServiceMarkOrderPaidResult() interface{} {
+	return order.NewOrderServiceMarkOrderPaidResult()
 }
 
 func cancelOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*order.OrderServiceCancelOrderArgs)
 	realResult := result.(*order.OrderServiceCancelOrderResult)
-	success, err := handler.(order.OrderService).CancelOrder(ctx, realArg.Request)
+	success, err := handler.(order.OrderService).CancelOrder(ctx, realArg.Req)
 	if err != nil {
 		switch v := err.(type) {
 		case *base.ErrorResponse:
-			realResult.Error = v
+			realResult.Err = v
 		default:
 			return err
 		}
@@ -187,54 +235,6 @@ func newOrderServiceCancelOrderResult() interface{} {
 	return order.NewOrderServiceCancelOrderResult()
 }
 
-func getOrdersHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*order.OrderServiceGetOrdersArgs)
-	realResult := result.(*order.OrderServiceGetOrdersResult)
-	success, err := handler.(order.OrderService).GetOrders(ctx, realArg.Request)
-	if err != nil {
-		switch v := err.(type) {
-		case *base.ErrorResponse:
-			realResult.Error = v
-		default:
-			return err
-		}
-	} else {
-		realResult.Success = success
-	}
-	return nil
-}
-func newOrderServiceGetOrdersArgs() interface{} {
-	return order.NewOrderServiceGetOrdersArgs()
-}
-
-func newOrderServiceGetOrdersResult() interface{} {
-	return order.NewOrderServiceGetOrdersResult()
-}
-
-func getOrderByIdHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*order.OrderServiceGetOrderByIdArgs)
-	realResult := result.(*order.OrderServiceGetOrderByIdResult)
-	success, err := handler.(order.OrderService).GetOrderById(ctx, realArg.Request)
-	if err != nil {
-		switch v := err.(type) {
-		case *base.ErrorResponse:
-			realResult.Error = v
-		default:
-			return err
-		}
-	} else {
-		realResult.Success = success
-	}
-	return nil
-}
-func newOrderServiceGetOrderByIdArgs() interface{} {
-	return order.NewOrderServiceGetOrderByIdArgs()
-}
-
-func newOrderServiceGetOrderByIdResult() interface{} {
-	return order.NewOrderServiceGetOrderByIdResult()
-}
-
 type kClient struct {
 	c client.Client
 }
@@ -245,72 +245,72 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) SubmitOrder(ctx context.Context, request *order.SubmitOrderRequest) (r *order.SubmitOrderResponse, err error) {
-	var _args order.OrderServiceSubmitOrderArgs
-	_args.Request = request
-	var _result order.OrderServiceSubmitOrderResult
-	if err = p.c.Call(ctx, "submitOrder", &_args, &_result); err != nil {
+func (p *kClient) CreateOrder(ctx context.Context, req *order.CreateOrderRequest) (r *order.CreateOrderResponse, err error) {
+	var _args order.OrderServiceCreateOrderArgs
+	_args.Req = req
+	var _result order.OrderServiceCreateOrderResult
+	if err = p.c.Call(ctx, "CreateOrder", &_args, &_result); err != nil {
 		return
 	}
 	switch {
-	case _result.Error != nil:
-		return r, _result.Error
+	case _result.Err != nil:
+		return r, _result.Err
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) PayOrder(ctx context.Context, request *order.PayOrderRequest) (r *order.PayOrderResponse, err error) {
-	var _args order.OrderServicePayOrderArgs
-	_args.Request = request
-	var _result order.OrderServicePayOrderResult
-	if err = p.c.Call(ctx, "payOrder", &_args, &_result); err != nil {
+func (p *kClient) ListOrders(ctx context.Context, req *order.ListOrdersRequest) (r *order.ListOrdersResponse, err error) {
+	var _args order.OrderServiceListOrdersArgs
+	_args.Req = req
+	var _result order.OrderServiceListOrdersResult
+	if err = p.c.Call(ctx, "ListOrders", &_args, &_result); err != nil {
 		return
 	}
 	switch {
-	case _result.Error != nil:
-		return r, _result.Error
+	case _result.Err != nil:
+		return r, _result.Err
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CancelOrder(ctx context.Context, request *order.CancelOrderRequest) (r *order.CancelOrderResponse, err error) {
+func (p *kClient) GetOrder(ctx context.Context, req *order.GetOrderRequest) (r *order.GetOrderResponse, err error) {
+	var _args order.OrderServiceGetOrderArgs
+	_args.Req = req
+	var _result order.OrderServiceGetOrderResult
+	if err = p.c.Call(ctx, "GetOrder", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidRequest) (r *order.MarkOrderPaidResponse, err error) {
+	var _args order.OrderServiceMarkOrderPaidArgs
+	_args.Req = req
+	var _result order.OrderServiceMarkOrderPaidResult
+	if err = p.c.Call(ctx, "MarkOrderPaid", &_args, &_result); err != nil {
+		return
+	}
+	switch {
+	case _result.Err != nil:
+		return r, _result.Err
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CancelOrder(ctx context.Context, req *order.CancelOrderRequest) (r *order.CancelOrderResponse, err error) {
 	var _args order.OrderServiceCancelOrderArgs
-	_args.Request = request
+	_args.Req = req
 	var _result order.OrderServiceCancelOrderResult
-	if err = p.c.Call(ctx, "cancelOrder", &_args, &_result); err != nil {
+	if err = p.c.Call(ctx, "CancelOrder", &_args, &_result); err != nil {
 		return
 	}
 	switch {
-	case _result.Error != nil:
-		return r, _result.Error
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) GetOrders(ctx context.Context, request *order.GetOrdersRequest) (r *order.GetOrdersResponse, err error) {
-	var _args order.OrderServiceGetOrdersArgs
-	_args.Request = request
-	var _result order.OrderServiceGetOrdersResult
-	if err = p.c.Call(ctx, "getOrders", &_args, &_result); err != nil {
-		return
-	}
-	switch {
-	case _result.Error != nil:
-		return r, _result.Error
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) GetOrderById(ctx context.Context, request *order.GetOrderByIdRequest) (r *order.GetOrderByIdResponse, err error) {
-	var _args order.OrderServiceGetOrderByIdArgs
-	_args.Request = request
-	var _result order.OrderServiceGetOrderByIdResult
-	if err = p.c.Call(ctx, "getOrderById", &_args, &_result); err != nil {
-		return
-	}
-	switch {
-	case _result.Error != nil:
-		return r, _result.Error
+	case _result.Err != nil:
+		return r, _result.Err
 	}
 	return _result.GetSuccess(), nil
 }
