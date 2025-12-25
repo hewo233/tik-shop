@@ -116,215 +116,6 @@
                 }
             }
         },
-        "/api/order": {
-            "post": {
-                "description": "创建一个新的订单，包括订单的详细信息。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "PostOrder",
-                "parameters": [
-                    {
-                        "description": "Order details for creation",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.PostOrderRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Order created successfully",
-                        "schema": {
-                            "$ref": "#/definitions/order.PostOrderResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/order/:orderId": {
-            "get": {
-                "description": "根据订单 ID 获取订单的详细信息。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "GetOrderInfo",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order ID",
-                        "name": "orderId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "orderId",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Order details",
-                        "schema": {
-                            "$ref": "#/definitions/base.Order"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/order/:orderId/pay": {
-            "post": {
-                "description": "根据订单 ID 支付订单。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "PayOrder",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order ID",
-                        "name": "orderId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Payment details for the order",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.PayOrderRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Payment successful",
-                        "schema": {
-                            "$ref": "#/definitions/base.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/orders": {
-            "get": {
-                "description": "获取订单列表，支持分页和过滤。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "GetOrders",
-                "responses": {
-                    "200": {
-                        "description": "List of orders",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/base.Order"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/orders/:orderId/cancel": {
-            "post": {
-                "description": "根据订单 ID 取消订单。",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "CancelOrder",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order ID",
-                        "name": "orderId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Details for canceling the order",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/order.CancelOrderRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Order canceled successfully",
-                        "schema": {
-                            "$ref": "#/definitions/base.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/auth/login": {
             "post": {
                 "description": "通过邮箱和密码进行用户登录,返回 JWT token",
@@ -866,6 +657,246 @@
                 }
             }
         },
+        "/order": {
+            "get": {
+                "description": "分页获取用户的订单列表，支持按状态筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "订单管理"
+                ],
+                "summary": "获取订单列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "每页大小",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "订单状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Orders retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/order.ListOrdersResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/order.ListOrdersResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "用户下单，包含商品列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "订单管理"
+                ],
+                "summary": "创建订单",
+                "parameters": [
+                    {
+                        "description": "创建订单请求参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order.CreateOrderRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/order.CreateOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/order.CreateOrderResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}": {
+            "get": {
+                "description": "根据订单 ID 获取订单详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "订单管理"
+                ],
+                "summary": "获取订单详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order details retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/order.GetOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or order not found",
+                        "schema": {
+                            "$ref": "#/definitions/order.GetOrderResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}/cancel": {
+            "post": {
+                "description": "根据订单 ID 取消订单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "订单管理"
+                ],
+                "summary": "取消订单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order canceled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/order.CancelOrderResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/order.CancelOrderResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{id}/mark_paid": {
+            "post": {
+                "description": "根据订单 ID 将订单状态标记为已支付",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "订单管理"
+                ],
+                "summary": "标记订单已支付",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order marked as paid successfully",
+                        "schema": {
+                            "$ref": "#/definitions/order.MarkOrderPaidResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/order.MarkOrderPaidResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "用于测试服务器是否正常响应，返回 \"pong\" 消息",
@@ -1386,23 +1417,6 @@
         }
     },
     "definitions": {
-        "base.Address": {
-            "type": "object",
-            "properties": {
-                "city": {
-                    "type": "string"
-                },
-                "country": {
-                    "type": "string"
-                },
-                "postalCode": {
-                    "type": "string"
-                },
-                "street": {
-                    "type": "string"
-                }
-            }
-        },
         "base.Admin": {
             "type": "object",
             "properties": {
@@ -1426,7 +1440,7 @@
         "base.CartItem": {
             "type": "object",
             "properties": {
-                "cart_item_id": {
+                "id": {
                     "type": "integer"
                 },
                 "merchant_id": {
@@ -1487,69 +1501,6 @@
                 },
                 "subtotal": {
                     "type": "integer"
-                }
-            }
-        },
-        "base.MessageResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "description": "Return status description",
-                    "type": "string"
-                }
-            }
-        },
-        "base.Order": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/base.OrderItem"
-                    }
-                },
-                "orderId": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "totalAmount": {
-                    "type": "integer"
-                },
-                "userId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "base.OrderItem": {
-            "type": "object",
-            "properties": {
-                "price": {
-                    "type": "integer"
-                },
-                "productId": {
-                    "type": "integer"
-                },
-                "quantity": {
-                    "type": "integer"
-                }
-            }
-        },
-        "base.PaymentDetails": {
-            "type": "object",
-            "properties": {
-                "cardNumber": {
-                    "type": "string"
-                },
-                "cvv": {
-                    "type": "string"
-                },
-                "expiryDate": {
-                    "type": "string"
                 }
             }
         },
@@ -1735,52 +1686,110 @@
                 }
             }
         },
-        "order.CancelOrderRequest": {
+        "order.CancelOrderResponse": {
             "type": "object",
             "properties": {
-                "orderId": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "order.CreateOrderItem": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "integer"
+                },
+                "quantity": {
                     "type": "integer"
                 }
             }
         },
-        "order.PayOrderRequest": {
+        "order.CreateOrderRequest": {
             "type": "object",
             "properties": {
-                "orderId": {
-                    "type": "integer"
-                },
-                "paymentDetails": {
-                    "$ref": "#/definitions/base.PaymentDetails"
-                },
-                "paymentMethod": {
-                    "type": "string"
-                }
-            }
-        },
-        "order.PostOrderRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "$ref": "#/definitions/base.Address"
-                },
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/base.CartItem"
+                        "$ref": "#/definitions/order.CreateOrderItem"
                     }
-                },
-                "paymentMethod": {
-                    "type": "string"
                 }
             }
         },
-        "order.PostOrderResponse": {
+        "order.CreateOrderResponse": {
             "type": "object",
             "properties": {
-                "message": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "order_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "order.GetOrderResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "order": {
+                    "$ref": "#/definitions/order.OrderItem"
+                }
+            }
+        },
+        "order.ListOrdersResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/order.OrderItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "order.MarkOrderPaidResponse": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "$ref": "#/definitions/base.BaseResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "order.OrderItem": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "description": "单价(分)",
+                    "type": "integer"
+                },
+                "merchant_id": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "product_name": {
                     "type": "string"
                 },
-                "orderId": {
+                "quantity": {
+                    "type": "integer"
+                },
+                "total_cost": {
+                    "description": "小计(分)",
                     "type": "integer"
                 }
             }

@@ -16,8 +16,17 @@ import (
 	order "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/order"
 )
 
-// CreateOrder .
-// @router /order [POST]
+// CreateOrder
+// @Summary 创建订单
+// @Description 用户下单，包含商品列表
+// @Tags 订单管理
+// @Accept json
+// @Produce json
+// @Param request body order.CreateOrderRequest true "创建订单请求参数"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} order.CreateOrderResponse "Order created successfully"
+// @Failure 400 {object} order.CreateOrderResponse "Invalid request"
+// @Router /order [POST]
 func CreateOrder(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req order.CreateOrderRequest
@@ -63,8 +72,19 @@ func CreateOrder(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// ListOrders .
-// @router /order [GET]
+// ListOrders
+// @Summary 获取订单列表
+// @Description 分页获取用户的订单列表，支持按状态筛选
+// @Tags 订单管理
+// @Accept json
+// @Produce json
+// @Param page query int true "页码" default(1)
+// @Param page_size query int true "每页大小" default(10)
+// @Param status query int false "订单状态"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} order.ListOrdersResponse "Orders retrieved successfully"
+// @Failure 400 {object} order.ListOrdersResponse "Invalid request"
+// @Router /order [GET]
 func ListOrders(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req order.ListOrdersRequest
@@ -101,8 +121,17 @@ func ListOrders(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// GetOrder .
-// @router /order/:id [GET]
+// GetOrder
+// @Summary 获取订单详情
+// @Description 根据订单 ID 获取订单详细信息
+// @Tags 订单管理
+// @Accept json
+// @Produce json
+// @Param id path int true "订单ID"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} order.GetOrderResponse "Order details retrieved successfully"
+// @Failure 400 {object} order.GetOrderResponse "Invalid request or order not found"
+// @Router /order/{id} [GET]
 func GetOrder(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req order.GetOrderRequest
@@ -148,17 +177,17 @@ func GetOrder(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// CancelOrder .
-// @Summary CancelOrder
-// @Description 根据订单 ID 取消订单。
-// @Tags order
+// CancelOrder
+// @Summary 取消订单
+// @Description 根据订单 ID 取消订单
+// @Tags 订单管理
 // @Accept json
 // @Produce json
-// @Param orderId path string true "Order ID"
-// @Param request body order.CancelOrderRequest true "Details for canceling the order"
-// @Success 200 {object} base.MessageResponse "Order canceled successfully"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/orders/:orderId/cancel [POST]
+// @Param id path int true "订单ID"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} order.CancelOrderResponse "Order canceled successfully"
+// @Failure 400 {object} order.CancelOrderResponse "Invalid request"
+// @Router /order/{id}/cancel [POST]
 func CancelOrder(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req order.CancelOrderRequest
@@ -203,8 +232,17 @@ func CancelOrder(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
-// MarkOrderPaid .
-// @router /order/:id/mark_paid [POST]
+// MarkOrderPaid
+// @Summary 标记订单已支付
+// @Description 根据订单 ID 将订单状态标记为已支付
+// @Tags 订单管理
+// @Accept json
+// @Produce json
+// @Param id path int true "订单ID"
+// @Param Authorization header string true "Bearer token"
+// @Success 200 {object} order.MarkOrderPaidResponse "Order marked as paid successfully"
+// @Failure 400 {object} order.MarkOrderPaidResponse "Invalid request"
+// @Router /order/{id}/mark_paid [POST]
 func MarkOrderPaid(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req order.MarkOrderPaidRequest

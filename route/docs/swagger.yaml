@@ -1,16 +1,5 @@
 basePath: /
 definitions:
-  base.Address:
-    properties:
-      city:
-        type: string
-      country:
-        type: string
-      postalCode:
-        type: string
-      street:
-        type: string
-    type: object
   base.Admin:
     properties:
       level:
@@ -26,7 +15,7 @@ definitions:
     type: object
   base.CartItem:
     properties:
-      cart_item_id:
+      id:
         type: integer
       merchant_id:
         type: integer
@@ -65,47 +54,6 @@ definitions:
         type: integer
       subtotal:
         type: integer
-    type: object
-  base.MessageResponse:
-    properties:
-      message:
-        description: Return status description
-        type: string
-    type: object
-  base.Order:
-    properties:
-      createdAt:
-        type: string
-      items:
-        items:
-          $ref: '#/definitions/base.OrderItem'
-        type: array
-      orderId:
-        type: integer
-      status:
-        type: string
-      totalAmount:
-        type: integer
-      userId:
-        type: integer
-    type: object
-  base.OrderItem:
-    properties:
-      price:
-        type: integer
-      productId:
-        type: integer
-      quantity:
-        type: integer
-    type: object
-  base.PaymentDetails:
-    properties:
-      cardNumber:
-        type: string
-      cvv:
-        type: string
-      expiryDate:
-        type: string
     type: object
   base.Product:
     properties:
@@ -228,36 +176,74 @@ definitions:
       success:
         type: boolean
     type: object
-  order.CancelOrderRequest:
+  order.CancelOrderResponse:
     properties:
-      orderId:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      success:
+        type: boolean
+    type: object
+  order.CreateOrderItem:
+    properties:
+      product_id:
+        type: integer
+      quantity:
         type: integer
     type: object
-  order.PayOrderRequest:
+  order.CreateOrderRequest:
     properties:
-      orderId:
-        type: integer
-      paymentDetails:
-        $ref: '#/definitions/base.PaymentDetails'
-      paymentMethod:
-        type: string
-    type: object
-  order.PostOrderRequest:
-    properties:
-      address:
-        $ref: '#/definitions/base.Address'
       items:
         items:
-          $ref: '#/definitions/base.CartItem'
+          $ref: '#/definitions/order.CreateOrderItem'
         type: array
-      paymentMethod:
-        type: string
     type: object
-  order.PostOrderResponse:
+  order.CreateOrderResponse:
     properties:
-      message:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      order_id:
+        type: integer
+    type: object
+  order.GetOrderResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      order:
+        $ref: '#/definitions/order.OrderItem'
+    type: object
+  order.ListOrdersResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      orders:
+        items:
+          $ref: '#/definitions/order.OrderItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  order.MarkOrderPaidResponse:
+    properties:
+      base:
+        $ref: '#/definitions/base.BaseResponse'
+      success:
+        type: boolean
+    type: object
+  order.OrderItem:
+    properties:
+      cost:
+        description: 单价(分)
+        type: integer
+      merchant_id:
+        type: integer
+      product_id:
+        type: integer
+      product_name:
         type: string
-      orderId:
+      quantity:
+        type: integer
+      total_cost:
+        description: 小计(分)
         type: integer
     type: object
   product.CreateProductRequest:
@@ -563,143 +549,6 @@ paths:
       summary: 更新管理员信息
       tags:
       - 管理员管理
-  /api/order:
-    post:
-      consumes:
-      - application/json
-      description: 创建一个新的订单，包括订单的详细信息。
-      parameters:
-      - description: Order details for creation
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/order.PostOrderRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Order created successfully
-          schema:
-            $ref: '#/definitions/order.PostOrderResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: PostOrder
-      tags:
-      - order
-  /api/order/:orderId:
-    get:
-      consumes:
-      - application/json
-      description: 根据订单 ID 获取订单的详细信息。
-      parameters:
-      - description: Order ID
-        in: path
-        name: orderId
-        required: true
-        type: string
-      - in: query
-        name: orderId
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Order details
-          schema:
-            $ref: '#/definitions/base.Order'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: GetOrderInfo
-      tags:
-      - order
-  /api/order/:orderId/pay:
-    post:
-      consumes:
-      - application/json
-      description: 根据订单 ID 支付订单。
-      parameters:
-      - description: Order ID
-        in: path
-        name: orderId
-        required: true
-        type: string
-      - description: Payment details for the order
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/order.PayOrderRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Payment successful
-          schema:
-            $ref: '#/definitions/base.MessageResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: PayOrder
-      tags:
-      - order
-  /api/orders:
-    get:
-      consumes:
-      - application/json
-      description: 获取订单列表，支持分页和过滤。
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: List of orders
-          schema:
-            items:
-              $ref: '#/definitions/base.Order'
-            type: array
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: GetOrders
-      tags:
-      - order
-  /api/orders/:orderId/cancel:
-    post:
-      consumes:
-      - application/json
-      description: 根据订单 ID 取消订单。
-      parameters:
-      - description: Order ID
-        in: path
-        name: orderId
-        required: true
-        type: string
-      - description: Details for canceling the order
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/order.CancelOrderRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Order canceled successfully
-          schema:
-            $ref: '#/definitions/base.MessageResponse'
-        "400":
-          description: Invalid request
-          schema:
-            type: string
-      summary: CancelOrder
-      tags:
-      - order
   /auth/login:
     post:
       consumes:
@@ -1059,6 +908,167 @@ paths:
       summary: 更新商家信息
       tags:
       - 商家管理
+  /order:
+    get:
+      consumes:
+      - application/json
+      description: 分页获取用户的订单列表，支持按状态筛选
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - default: 10
+        description: 每页大小
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      - description: 订单状态
+        in: query
+        name: status
+        type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Orders retrieved successfully
+          schema:
+            $ref: '#/definitions/order.ListOrdersResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/order.ListOrdersResponse'
+      summary: 获取订单列表
+      tags:
+      - 订单管理
+    post:
+      consumes:
+      - application/json
+      description: 用户下单，包含商品列表
+      parameters:
+      - description: 创建订单请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.CreateOrderRequest'
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order created successfully
+          schema:
+            $ref: '#/definitions/order.CreateOrderResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/order.CreateOrderResponse'
+      summary: 创建订单
+      tags:
+      - 订单管理
+  /order/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据订单 ID 获取订单详细信息
+      parameters:
+      - description: 订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order details retrieved successfully
+          schema:
+            $ref: '#/definitions/order.GetOrderResponse'
+        "400":
+          description: Invalid request or order not found
+          schema:
+            $ref: '#/definitions/order.GetOrderResponse'
+      summary: 获取订单详情
+      tags:
+      - 订单管理
+  /order/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: 根据订单 ID 取消订单
+      parameters:
+      - description: 订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order canceled successfully
+          schema:
+            $ref: '#/definitions/order.CancelOrderResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/order.CancelOrderResponse'
+      summary: 取消订单
+      tags:
+      - 订单管理
+  /order/{id}/mark_paid:
+    post:
+      consumes:
+      - application/json
+      description: 根据订单 ID 将订单状态标记为已支付
+      parameters:
+      - description: 订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order marked as paid successfully
+          schema:
+            $ref: '#/definitions/order.MarkOrderPaidResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/order.MarkOrderPaidResponse'
+      summary: 标记订单已支付
+      tags:
+      - 订单管理
   /ping:
     get:
       consumes:
