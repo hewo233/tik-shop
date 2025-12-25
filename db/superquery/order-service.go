@@ -95,8 +95,16 @@ func (m *OrderSqlManageImpl) GetOrder(orderID int64, customerID int64) (*model.O
 	return ord, err
 }
 
-func (m *OrderSqlManageImpl) ListOrders(customerID int64, offset int, limit int) ([]*model.Order, error) {
-	ords, err := o.Preload(o.OrderItems).Where(o.CustomerID.Eq(customerID)).Offset(offset).Limit(limit).Find()
+func (m *OrderSqlManageImpl) ListOrders(customerID int64, offset int, limit int, status int) ([]*model.Order, error) {
+
+	ords := make([]*model.Order, 0)
+	var err error
+
+	if status == -1 {
+		ords, err = o.Preload(o.OrderItems).Where(o.CustomerID.Eq(customerID)).Offset(offset).Limit(limit).Find()
+	} else {
+		ords, err = o.Preload(o.OrderItems).Where(o.CustomerID.Eq(customerID), o.Status.Eq(int8(status))).Offset(offset).Limit(limit).Find()
+	}
 	return ords, err
 }
 

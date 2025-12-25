@@ -69,17 +69,17 @@ struct ListOrdersResponse {
 
 // ========== 3. 订单详情接口 ==========
 struct GetOrderRequest {
-    1: i64 id (api.path = "id", api.vd = "$>0"),
+    1: i64 order_id (api.path = "id", api.vd = "$>0"),
 }
 
 struct GetOrderResponse {
     1: base.BaseResponse base,
-    2: optional OrderItem order,
+    2: optional Order order,
 }
 
 // ========== 4. 取消订单接口 ==========
 struct CancelOrderRequest {
-    1: i64 id (api.path = "id", api.vd = "$>0"),
+    1: i64 order_id (api.path = "id", api.vd = "$>0"),
 }
 
 struct CancelOrderResponse {

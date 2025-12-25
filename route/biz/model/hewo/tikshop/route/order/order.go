@@ -2200,7 +2200,7 @@ func (p *ListOrdersResponse) String() string {
 
 // ========== 3. 订单详情接口 ==========
 type GetOrderRequest struct {
-	ID int64 `thrift:"id,1" json:"id" path:"id" vd:"$>0"`
+	OrderID int64 `thrift:"order_id,1" json:"order_id" path:"id" vd:"$>0"`
 }
 
 func NewGetOrderRequest() *GetOrderRequest {
@@ -2210,12 +2210,12 @@ func NewGetOrderRequest() *GetOrderRequest {
 func (p *GetOrderRequest) InitDefault() {
 }
 
-func (p *GetOrderRequest) GetID() (v int64) {
-	return p.ID
+func (p *GetOrderRequest) GetOrderID() (v int64) {
+	return p.OrderID
 }
 
 var fieldIDToName_GetOrderRequest = map[int16]string{
-	1: "id",
+	1: "order_id",
 }
 
 func (p *GetOrderRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -2282,7 +2282,7 @@ func (p *GetOrderRequest) ReadField1(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.ID = _field
+	p.OrderID = _field
 	return nil
 }
 
@@ -2316,10 +2316,10 @@ WriteStructEndError:
 }
 
 func (p *GetOrderRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("order_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.ID); err != nil {
+	if err := oprot.WriteI64(p.OrderID); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2342,7 +2342,7 @@ func (p *GetOrderRequest) String() string {
 
 type GetOrderResponse struct {
 	Base  *base.BaseResponse `thrift:"base,1" form:"base" json:"base" query:"base"`
-	Order *OrderItem         `thrift:"order,2,optional" form:"order" json:"order,omitempty" query:"order"`
+	Order *Order             `thrift:"order,2,optional" form:"order" json:"order,omitempty" query:"order"`
 }
 
 func NewGetOrderResponse() *GetOrderResponse {
@@ -2361,9 +2361,9 @@ func (p *GetOrderResponse) GetBase() (v *base.BaseResponse) {
 	return p.Base
 }
 
-var GetOrderResponse_Order_DEFAULT *OrderItem
+var GetOrderResponse_Order_DEFAULT *Order
 
-func (p *GetOrderResponse) GetOrder() (v *OrderItem) {
+func (p *GetOrderResponse) GetOrder() (v *Order) {
 	if !p.IsSetOrder() {
 		return GetOrderResponse_Order_DEFAULT
 	}
@@ -2456,7 +2456,7 @@ func (p *GetOrderResponse) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 func (p *GetOrderResponse) ReadField2(iprot thrift.TProtocol) error {
-	_field := NewOrderItem()
+	_field := NewOrder()
 	if err := _field.Read(iprot); err != nil {
 		return err
 	}
@@ -2543,7 +2543,7 @@ func (p *GetOrderResponse) String() string {
 
 // ========== 4. 取消订单接口 ==========
 type CancelOrderRequest struct {
-	ID int64 `thrift:"id,1" json:"id" path:"id" vd:"$>0"`
+	OrderID int64 `thrift:"order_id,1" json:"order_id" path:"id" vd:"$>0"`
 }
 
 func NewCancelOrderRequest() *CancelOrderRequest {
@@ -2553,12 +2553,12 @@ func NewCancelOrderRequest() *CancelOrderRequest {
 func (p *CancelOrderRequest) InitDefault() {
 }
 
-func (p *CancelOrderRequest) GetID() (v int64) {
-	return p.ID
+func (p *CancelOrderRequest) GetOrderID() (v int64) {
+	return p.OrderID
 }
 
 var fieldIDToName_CancelOrderRequest = map[int16]string{
-	1: "id",
+	1: "order_id",
 }
 
 func (p *CancelOrderRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -2625,7 +2625,7 @@ func (p *CancelOrderRequest) ReadField1(iprot thrift.TProtocol) error {
 	} else {
 		_field = v
 	}
-	p.ID = _field
+	p.OrderID = _field
 	return nil
 }
 
@@ -2659,10 +2659,10 @@ WriteStructEndError:
 }
 
 func (p *CancelOrderRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("order_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.ID); err != nil {
+	if err := oprot.WriteI64(p.OrderID); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

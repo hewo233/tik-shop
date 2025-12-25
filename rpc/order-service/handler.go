@@ -14,7 +14,7 @@ type OrderServiceImpl struct {
 type OrderSqlManage interface {
 	CreateOrder(order *order.CreateOrderRequest) (int64, error)
 	GetOrder(orderID int64, customerID int64) (*model.Order, error)
-	ListOrders(customerID int64, offset int, limit int) ([]*model.Order, error)
+	ListOrders(customerID int64, offset int, limit int, status int) ([]*model.Order, error)
 	CancelOrder(orderID int64, customerID int64) error
 }
 
@@ -35,7 +35,7 @@ func (s *OrderServiceImpl) ListOrders(ctx context.Context, req *order.ListOrders
 	offset := (req.Page - 1) * req.PageSize
 	limit := req.PageSize
 
-	ors, err := s.OrderSqlManage.ListOrders(req.CustomerId, int(offset), int(limit))
+	ors, err := s.OrderSqlManage.ListOrders(req.CustomerId, int(offset), int(limit), int(*req.Status))
 	if err != nil {
 		return nil, err
 	}
