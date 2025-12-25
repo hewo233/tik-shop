@@ -4,6 +4,8 @@ package order
 
 import (
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/hewo/tik-shop/route/biz/router/hewo/tikshop/route/common"
+	"github.com/hewo/tik-shop/shared/consts"
 )
 
 func rootMw() []app.HandlerFunc {
@@ -17,8 +19,9 @@ func _apiMw() []app.HandlerFunc {
 }
 
 func _orderMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleCustomer),
+	}
 }
 
 func _postorderMw() []app.HandlerFunc {
@@ -67,8 +70,9 @@ func _getorderinfoMw() []app.HandlerFunc {
 }
 
 func _listordersMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleMerchant),
+	}
 }
 
 func _idMw() []app.HandlerFunc {
