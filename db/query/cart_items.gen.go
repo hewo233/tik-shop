@@ -122,7 +122,7 @@ func newCartItem(db *gorm.DB, opts ...gen.DOOption) cartItem {
 			}
 			OrderItems struct {
 				field.RelationField
-				Order struct {
+				OrderInfo struct {
 					field.RelationField
 				}
 			}
@@ -135,15 +135,15 @@ func newCartItem(db *gorm.DB, opts ...gen.DOOption) cartItem {
 			},
 			OrderItems: struct {
 				field.RelationField
-				Order struct {
+				OrderInfo struct {
 					field.RelationField
 				}
 			}{
 				RelationField: field.NewRelation("Customer.Orders.OrderItems", "model.OrderItem"),
-				Order: struct {
+				OrderInfo: struct {
 					field.RelationField
 				}{
-					RelationField: field.NewRelation("Customer.Orders.OrderItems.Order", "model.Order"),
+					RelationField: field.NewRelation("Customer.Orders.OrderItems.OrderInfo", "model.Order"),
 				},
 			},
 		},
@@ -300,7 +300,7 @@ type cartItemBelongsToCustomer struct {
 		}
 		OrderItems struct {
 			field.RelationField
-			Order struct {
+			OrderInfo struct {
 				field.RelationField
 			}
 		}

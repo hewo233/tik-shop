@@ -4,6 +4,7 @@ import (
 	"github.com/hewo/tik-shop/db/connectDB"
 	"github.com/hewo/tik-shop/db/query"
 	"github.com/hewo/tik-shop/db/superquery"
+	"github.com/hewo/tik-shop/shared/consts"
 	"log"
 	"net"
 
@@ -15,7 +16,7 @@ import (
 )
 
 func main() {
-	database, err := connectDB.ConnectDB()
+	database, err := connectDB.ConnectDB(consts.RpcDBEnvPath)
 	if err != nil {
 	}
 	query.SetDefault(database)

@@ -45,7 +45,7 @@ func newAdmin(db *gorm.DB, opts ...gen.DOOption) admin {
 				}
 				OrderItems struct {
 					field.RelationField
-					Order struct {
+					OrderInfo struct {
 						field.RelationField
 					}
 				}
@@ -82,7 +82,7 @@ func newAdmin(db *gorm.DB, opts ...gen.DOOption) admin {
 				}
 				OrderItems struct {
 					field.RelationField
-					Order struct {
+					OrderInfo struct {
 						field.RelationField
 					}
 				}
@@ -95,15 +95,15 @@ func newAdmin(db *gorm.DB, opts ...gen.DOOption) admin {
 				},
 				OrderItems: struct {
 					field.RelationField
-					Order struct {
+					OrderInfo struct {
 						field.RelationField
 					}
 				}{
 					RelationField: field.NewRelation("User.Customer.Orders.OrderItems", "model.OrderItem"),
-					Order: struct {
+					OrderInfo: struct {
 						field.RelationField
 					}{
-						RelationField: field.NewRelation("User.Customer.Orders.OrderItems.Order", "model.Order"),
+						RelationField: field.NewRelation("User.Customer.Orders.OrderItems.OrderInfo", "model.Order"),
 					},
 				},
 			},
@@ -270,7 +270,7 @@ type adminBelongsToUser struct {
 			}
 			OrderItems struct {
 				field.RelationField
-				Order struct {
+				OrderInfo struct {
 					field.RelationField
 				}
 			}

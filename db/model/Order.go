@@ -51,5 +51,5 @@ type OrderItem struct {
 	TotalCost   int64  `gorm:"column:total_cost;type:bigint;not null" json:"total_cost"` // 下单时的总价 (快照)
 
 	// 关联
-	Order *Order `gorm:"foreignKey:OrderID;references:ID" json:"-"`
+	OrderInfo *Order `gorm:"foreignKey:OrderID;references:ID" json:"-"`
 }
