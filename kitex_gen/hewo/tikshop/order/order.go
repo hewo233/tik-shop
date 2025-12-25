@@ -1853,7 +1853,7 @@ func (p *CreateOrderRequest) Field2DeepEqual(src []*CreateOrderItem) bool {
 }
 
 type CreateOrderResponse struct {
-	OrderId string `thrift:"order_id,1" frugal:"1,default,string" json:"order_id"`
+	OrderId int64 `thrift:"order_id,1" frugal:"1,default,i64" json:"order_id"`
 }
 
 func NewCreateOrderResponse() *CreateOrderResponse {
@@ -1863,10 +1863,10 @@ func NewCreateOrderResponse() *CreateOrderResponse {
 func (p *CreateOrderResponse) InitDefault() {
 }
 
-func (p *CreateOrderResponse) GetOrderId() (v string) {
+func (p *CreateOrderResponse) GetOrderId() (v int64) {
 	return p.OrderId
 }
-func (p *CreateOrderResponse) SetOrderId(val string) {
+func (p *CreateOrderResponse) SetOrderId(val int64) {
 	p.OrderId = val
 }
 
@@ -1894,7 +1894,7 @@ func (p *CreateOrderResponse) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1932,8 +1932,8 @@ ReadStructEndError:
 
 func (p *CreateOrderResponse) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -1972,10 +1972,10 @@ WriteStructEndError:
 }
 
 func (p *CreateOrderResponse) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("order_id", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("order_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.OrderId); err != nil {
+	if err := oprot.WriteI64(p.OrderId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2008,9 +2008,9 @@ func (p *CreateOrderResponse) DeepEqual(ano *CreateOrderResponse) bool {
 	return true
 }
 
-func (p *CreateOrderResponse) Field1DeepEqual(src string) bool {
+func (p *CreateOrderResponse) Field1DeepEqual(src int64) bool {
 
-	if strings.Compare(p.OrderId, src) != 0 {
+	if p.OrderId != src {
 		return false
 	}
 	return true
@@ -2637,8 +2637,8 @@ func (p *ListOrdersResponse) Field2DeepEqual(src int64) bool {
 }
 
 type GetOrderRequest struct {
-	OrderId    string `thrift:"order_id,1,required" frugal:"1,required,string" json:"order_id"`
-	CustomerId int64  `thrift:"customer_id,2,required" frugal:"2,required,i64" json:"customer_id"`
+	OrderId    int64 `thrift:"order_id,1,required" frugal:"1,required,i64" json:"order_id"`
+	CustomerId int64 `thrift:"customer_id,2,required" frugal:"2,required,i64" json:"customer_id"`
 }
 
 func NewGetOrderRequest() *GetOrderRequest {
@@ -2648,14 +2648,14 @@ func NewGetOrderRequest() *GetOrderRequest {
 func (p *GetOrderRequest) InitDefault() {
 }
 
-func (p *GetOrderRequest) GetOrderId() (v string) {
+func (p *GetOrderRequest) GetOrderId() (v int64) {
 	return p.OrderId
 }
 
 func (p *GetOrderRequest) GetCustomerId() (v int64) {
 	return p.CustomerId
 }
-func (p *GetOrderRequest) SetOrderId(val string) {
+func (p *GetOrderRequest) SetOrderId(val int64) {
 	p.OrderId = val
 }
 func (p *GetOrderRequest) SetCustomerId(val int64) {
@@ -2689,7 +2689,7 @@ func (p *GetOrderRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2748,8 +2748,8 @@ RequiredFieldNotSetError:
 
 func (p *GetOrderRequest) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -2803,10 +2803,10 @@ WriteStructEndError:
 }
 
 func (p *GetOrderRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("order_id", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("order_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.OrderId); err != nil {
+	if err := oprot.WriteI64(p.OrderId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2859,9 +2859,9 @@ func (p *GetOrderRequest) DeepEqual(ano *GetOrderRequest) bool {
 	return true
 }
 
-func (p *GetOrderRequest) Field1DeepEqual(src string) bool {
+func (p *GetOrderRequest) Field1DeepEqual(src int64) bool {
 
-	if strings.Compare(p.OrderId, src) != 0 {
+	if p.OrderId != src {
 		return false
 	}
 	return true
@@ -3045,8 +3045,8 @@ func (p *GetOrderResponse) Field1DeepEqual(src *Order) bool {
 }
 
 type MarkOrderPaidRequest struct {
-	OrderId    string `thrift:"order_id,1,required" frugal:"1,required,string" json:"order_id"`
-	CustomerId int64  `thrift:"customer_id,2,required" frugal:"2,required,i64" json:"customer_id"`
+	OrderId    int64 `thrift:"order_id,1,required" frugal:"1,required,i64" json:"order_id"`
+	CustomerId int64 `thrift:"customer_id,2,required" frugal:"2,required,i64" json:"customer_id"`
 }
 
 func NewMarkOrderPaidRequest() *MarkOrderPaidRequest {
@@ -3056,14 +3056,14 @@ func NewMarkOrderPaidRequest() *MarkOrderPaidRequest {
 func (p *MarkOrderPaidRequest) InitDefault() {
 }
 
-func (p *MarkOrderPaidRequest) GetOrderId() (v string) {
+func (p *MarkOrderPaidRequest) GetOrderId() (v int64) {
 	return p.OrderId
 }
 
 func (p *MarkOrderPaidRequest) GetCustomerId() (v int64) {
 	return p.CustomerId
 }
-func (p *MarkOrderPaidRequest) SetOrderId(val string) {
+func (p *MarkOrderPaidRequest) SetOrderId(val int64) {
 	p.OrderId = val
 }
 func (p *MarkOrderPaidRequest) SetCustomerId(val int64) {
@@ -3097,7 +3097,7 @@ func (p *MarkOrderPaidRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -3156,8 +3156,8 @@ RequiredFieldNotSetError:
 
 func (p *MarkOrderPaidRequest) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -3211,10 +3211,10 @@ WriteStructEndError:
 }
 
 func (p *MarkOrderPaidRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("order_id", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("order_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.OrderId); err != nil {
+	if err := oprot.WriteI64(p.OrderId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3267,9 +3267,9 @@ func (p *MarkOrderPaidRequest) DeepEqual(ano *MarkOrderPaidRequest) bool {
 	return true
 }
 
-func (p *MarkOrderPaidRequest) Field1DeepEqual(src string) bool {
+func (p *MarkOrderPaidRequest) Field1DeepEqual(src int64) bool {
 
-	if strings.Compare(p.OrderId, src) != 0 {
+	if p.OrderId != src {
 		return false
 	}
 	return true
@@ -3447,8 +3447,8 @@ func (p *MarkOrderPaidResponse) Field1DeepEqual(src bool) bool {
 }
 
 type CancelOrderRequest struct {
-	OrderId    string `thrift:"order_id,1,required" frugal:"1,required,string" json:"order_id"`
-	CustomerId int64  `thrift:"customer_id,2,required" frugal:"2,required,i64" json:"customer_id"`
+	OrderId    int64 `thrift:"order_id,1,required" frugal:"1,required,i64" json:"order_id"`
+	CustomerId int64 `thrift:"customer_id,2,required" frugal:"2,required,i64" json:"customer_id"`
 }
 
 func NewCancelOrderRequest() *CancelOrderRequest {
@@ -3458,14 +3458,14 @@ func NewCancelOrderRequest() *CancelOrderRequest {
 func (p *CancelOrderRequest) InitDefault() {
 }
 
-func (p *CancelOrderRequest) GetOrderId() (v string) {
+func (p *CancelOrderRequest) GetOrderId() (v int64) {
 	return p.OrderId
 }
 
 func (p *CancelOrderRequest) GetCustomerId() (v int64) {
 	return p.CustomerId
 }
-func (p *CancelOrderRequest) SetOrderId(val string) {
+func (p *CancelOrderRequest) SetOrderId(val int64) {
 	p.OrderId = val
 }
 func (p *CancelOrderRequest) SetCustomerId(val int64) {
@@ -3499,7 +3499,7 @@ func (p *CancelOrderRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -3558,8 +3558,8 @@ RequiredFieldNotSetError:
 
 func (p *CancelOrderRequest) ReadField1(iprot thrift.TProtocol) error {
 
-	var _field string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field int64
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		_field = v
@@ -3613,10 +3613,10 @@ WriteStructEndError:
 }
 
 func (p *CancelOrderRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("order_id", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("order_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.OrderId); err != nil {
+	if err := oprot.WriteI64(p.OrderId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -3669,9 +3669,9 @@ func (p *CancelOrderRequest) DeepEqual(ano *CancelOrderRequest) bool {
 	return true
 }
 
-func (p *CancelOrderRequest) Field1DeepEqual(src string) bool {
+func (p *CancelOrderRequest) Field1DeepEqual(src int64) bool {
 
-	if strings.Compare(p.OrderId, src) != 0 {
+	if p.OrderId != src {
 		return false
 	}
 	return true

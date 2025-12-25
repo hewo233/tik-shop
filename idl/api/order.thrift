@@ -98,7 +98,7 @@ struct MarkOrderPaidResponse {
 
 // ========== Service 定义 ==========
 service OrderService {
-    CreateOrderResponse PlaceOrder(1: CreateOrderRequest req) (api.post="/order");
+    CreateOrderResponse CreateOrder(1: CreateOrderRequest req) (api.post="/order");
     ListOrdersResponse ListOrders(1: ListOrdersRequest req) (api.get="/order");
     GetOrderResponse GetOrder(1: GetOrderRequest req) (api.get="/order/:id");
     CancelOrderResponse CancelOrder(1: CancelOrderRequest req) (api.post="/order/:id/cancel");

@@ -29,7 +29,7 @@ type Order struct {
 	TotalAmount int64 `gorm:"column:total_amount;type:bigint;not null" json:"total_amount"`
 
 	// 收货信息快照 (不要直接关联 Address 表，因为用户修改地址不应影响历史订单)
-	SnapshotAddress string `gorm:"column:snapshot_address;size:1024" json:"snapshot_address"`
+	Address OrderAddress `gorm:"column:address;serializer:json" json:"address"`
 
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updated_at"`
@@ -47,7 +47,7 @@ type OrderItem struct {
 
 	ProductName string `gorm:"column:product_name;size:255" json:"product_name"`
 	Cost        int64  `gorm:"column:price;type:bigint;not null" json:"cost"` // 下单时的单价 (快照)
-	Quantity    int    `gorm:"column:quantity;not null" json:"quantity"`
+	Quantity    int64  `gorm:"column:quantity;not null" json:"quantity"`
 	TotalCost   int64  `gorm:"column:total_cost;type:bigint;not null" json:"total_cost"` // 下单时的总价 (快照)
 
 	// 关联

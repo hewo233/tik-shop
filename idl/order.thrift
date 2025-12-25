@@ -49,7 +49,7 @@ struct CreateOrderRequest {
 }
 
 struct CreateOrderResponse {
-    1: string order_id,
+    1: i64 order_id,
 }
 
 struct ListOrdersRequest {
@@ -65,7 +65,7 @@ struct ListOrdersResponse {
 }
 
 struct GetOrderRequest {
-    1: required string order_id,
+    1: required i64 order_id,
     2: required i64    customer_id,
 }
 
@@ -74,7 +74,7 @@ struct GetOrderResponse {
 }
 
 struct MarkOrderPaidRequest {
-    1: required string order_id,
+    1: required i64 order_id,
     2: required i64    customer_id,
 }
 
@@ -83,7 +83,7 @@ struct MarkOrderPaidResponse {
 }
 
 struct CancelOrderRequest {
-    1: required string order_id,
+    1: required i64 order_id,
     2: required i64    customer_id,
 }
 

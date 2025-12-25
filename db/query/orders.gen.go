@@ -31,7 +31,7 @@ func newOrder(db *gorm.DB, opts ...gen.DOOption) order {
 	_order.CustomerID = field.NewInt64(tableName, "customer_id")
 	_order.Status = field.NewInt8(tableName, "status")
 	_order.TotalAmount = field.NewInt64(tableName, "total_amount")
-	_order.SnapshotAddress = field.NewString(tableName, "snapshot_address")
+	_order.Address = field.NewField(tableName, "address")
 	_order.CreatedAt = field.NewTime(tableName, "created_at")
 	_order.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_order.OrderItems = orderHasManyOrderItems{
@@ -249,15 +249,15 @@ func newOrder(db *gorm.DB, opts ...gen.DOOption) order {
 type order struct {
 	orderDo
 
-	ALL             field.Asterisk
-	ID              field.Int64
-	CustomerID      field.Int64
-	Status          field.Int8
-	TotalAmount     field.Int64
-	SnapshotAddress field.String
-	CreatedAt       field.Time
-	UpdatedAt       field.Time
-	OrderItems      orderHasManyOrderItems
+	ALL         field.Asterisk
+	ID          field.Int64
+	CustomerID  field.Int64
+	Status      field.Int8
+	TotalAmount field.Int64
+	Address     field.Field
+	CreatedAt   field.Time
+	UpdatedAt   field.Time
+	OrderItems  orderHasManyOrderItems
 
 	Customer orderBelongsToCustomer
 
@@ -280,7 +280,7 @@ func (o *order) updateTableName(table string) *order {
 	o.CustomerID = field.NewInt64(table, "customer_id")
 	o.Status = field.NewInt8(table, "status")
 	o.TotalAmount = field.NewInt64(table, "total_amount")
-	o.SnapshotAddress = field.NewString(table, "snapshot_address")
+	o.Address = field.NewField(table, "address")
 	o.CreatedAt = field.NewTime(table, "created_at")
 	o.UpdatedAt = field.NewTime(table, "updated_at")
 
@@ -304,7 +304,7 @@ func (o *order) fillFieldMap() {
 	o.fieldMap["customer_id"] = o.CustomerID
 	o.fieldMap["status"] = o.Status
 	o.fieldMap["total_amount"] = o.TotalAmount
-	o.fieldMap["snapshot_address"] = o.SnapshotAddress
+	o.fieldMap["address"] = o.Address
 	o.fieldMap["created_at"] = o.CreatedAt
 	o.fieldMap["updated_at"] = o.UpdatedAt
 

@@ -4,107 +4,146 @@ package order
 
 import (
 	"context"
+	"github.com/hewo/tik-shop/route/init/rpc"
+	"github.com/hewo/tik-shop/route/utils"
+	"github.com/jinzhu/copier"
+	"net/http"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	rpcOrder "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/order"
 	base "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/base"
 	order "github.com/hewo/tik-shop/route/biz/model/hewo/tikshop/route/order"
 )
 
-// GetOrders .
-// @Summary GetOrders
-// @Description 获取订单列表，支持分页和过滤。
-// @Tags order
-// @Accept json
-// @Produce json
-// @Param request query order.GetOrdersRequest true "Query parameters for filtering and pagination"
-// @Success 200 {array} base.Order "List of orders"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/orders [GET]
-func GetOrders(ctx context.Context, c *app.RequestContext) {
+// CreateOrder .
+// @router /order [POST]
+func CreateOrder(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req order.GetOrdersRequest
+	var req order.CreateOrderRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new([]*base.Order)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) order.CreateOrderResponse {
+		return order.CreateOrderResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
+
+	rpcReq := rpcOrder.NewCreateOrderRequest()
+	if err := copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.OrderClient.CreateOrder(ctx, rpcReq)
+	if err != nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &order.CreateOrderResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err := copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
 
-// GetOrderInfo .
-// @Summary GetOrderInfo
-// @Description 根据订单 ID 获取订单的详细信息。
-// @Tags order
-// @Accept json
-// @Produce json
-// @Param orderId path string true "Order ID"
-// @Param request query order.GetOrderInfoRequest true "Query parameters for order details"
-// @Success 200 {object} base.Order "Order details"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/order/:orderId [GET]
-func GetOrderInfo(ctx context.Context, c *app.RequestContext) {
+// ListOrders .
+// @router /order [GET]
+func ListOrders(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req order.GetOrderInfoRequest
+	var req order.ListOrdersRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(base.Order)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) order.ListOrdersResponse {
+		return order.ListOrdersResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
+
+	rpcReq := rpcOrder.NewListOrdersRequest()
+	if err := copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.OrderClient.ListOrders(ctx, rpcReq)
+	if rpcResp == nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := new(order.ListOrdersResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
 
-// PostOrder .
-// @Summary PostOrder
-// @Description 创建一个新的订单，包括订单的详细信息。
-// @Tags order
-// @Accept json
-// @Produce json
-// @Param request body order.PostOrderRequest true "Order details for creation"
-// @Success 200 {object} order.PostOrderResponse "Order created successfully"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/order [POST]
-func PostOrder(ctx context.Context, c *app.RequestContext) {
+// GetOrder .
+// @router /order/:id [GET]
+func GetOrder(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req order.PostOrderRequest
+	var req order.GetOrderRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(order.PostOrderResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// PayOrder .
-// @Summary PayOrder
-// @Description 根据订单 ID 支付订单。
-// @Tags order
-// @Accept json
-// @Produce json
-// @Param orderId path string true "Order ID"
-// @Param request body order.PayOrderRequest true "Payment details for the order"
-// @Success 200 {object} base.MessageResponse "Payment successful"
-// @Failure 400 {string} string "Invalid request"
-// @router /api/order/:orderId/pay [POST]
-func PayOrder(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req order.PayOrderRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) order.GetOrderResponse {
+		return order.GetOrderResponse{
+			Base: response,
+		}
+	})
+	if !ok {
 		return
 	}
 
-	resp := new(base.MessageResponse)
+	rpcReq := rpcOrder.NewGetOrderRequest()
+	if err := copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.OrderClient.GetOrder(ctx, rpcReq)
+	if rpcResp == nil {
+		utils.HandleRPCError(c, err)
+		return
+	}
+
+	resp := &order.GetOrderResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err := copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -125,59 +164,41 @@ func CancelOrder(ctx context.Context, c *app.RequestContext) {
 	var req order.CancelOrderRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) order.CancelOrderResponse {
+		return order.CancelOrderResponse{
+			Base: response,
+		}
+	})
+	if !ok {
 		return
 	}
 
-	resp := new(base.MessageResponse)
+	rpcReq := rpcOrder.NewCancelOrderRequest()
+	if err := copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
 
-	c.JSON(consts.StatusOK, resp)
-}
-
-// PlaceOrder .
-// @router /order [POST]
-func PlaceOrder(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req order.CreateOrderRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	rpcResp, err := rpc.OrderClient.CancelOrder(ctx, rpcReq)
+	if rpcResp == nil {
+		utils.HandleRPCError(c, err)
 		return
 	}
 
-	resp := new(order.CreateOrderResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// ListOrders .
-// @router /order [GET]
-func ListOrders(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req order.ListOrdersRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	resp := &order.CancelOrderResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err := copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
-
-	resp := new(order.ListOrdersResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// GetOrder .
-// @router /order/:id [GET]
-func GetOrder(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req order.GetOrderRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(order.GetOrderResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -189,11 +210,39 @@ func MarkOrderPaid(ctx context.Context, c *app.RequestContext) {
 	var req order.MarkOrderPaidRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(order.MarkOrderPaidResponse)
+	customerID, ok := NormalCustomerChecker(ctx, c, func(response *base.BaseResponse) order.MarkOrderPaidResponse {
+		return order.MarkOrderPaidResponse{
+			Base: response,
+		}
+	})
+	if !ok {
+		return
+	}
+
+	rpcReq := rpcOrder.NewMarkOrderPaidRequest()
+	if err := copier.Copy(rpcReq, &req); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
+	rpcReq.CustomerId = customerID
+
+	rpcResp, err := rpc.OrderClient.MarkOrderPaid(ctx, rpcReq)
+
+	resp := &order.MarkOrderPaidResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+
+	if err := copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }

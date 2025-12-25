@@ -33,7 +33,7 @@ func newOrderItem(db *gorm.DB, opts ...gen.DOOption) orderItem {
 	_orderItem.MerchantID = field.NewInt64(tableName, "merchant_id")
 	_orderItem.ProductName = field.NewString(tableName, "product_name")
 	_orderItem.Cost = field.NewInt64(tableName, "price")
-	_orderItem.Quantity = field.NewInt(tableName, "quantity")
+	_orderItem.Quantity = field.NewInt64(tableName, "quantity")
 	_orderItem.TotalCost = field.NewInt64(tableName, "total_cost")
 	_orderItem.Order = orderItemBelongsToOrder{
 		db: db.Session(&gorm.Session{}),
@@ -212,7 +212,7 @@ type orderItem struct {
 	MerchantID  field.Int64
 	ProductName field.String
 	Cost        field.Int64
-	Quantity    field.Int
+	Quantity    field.Int64
 	TotalCost   field.Int64
 	Order       orderItemBelongsToOrder
 
@@ -237,7 +237,7 @@ func (o *orderItem) updateTableName(table string) *orderItem {
 	o.MerchantID = field.NewInt64(table, "merchant_id")
 	o.ProductName = field.NewString(table, "product_name")
 	o.Cost = field.NewInt64(table, "price")
-	o.Quantity = field.NewInt(table, "quantity")
+	o.Quantity = field.NewInt64(table, "quantity")
 	o.TotalCost = field.NewInt64(table, "total_cost")
 
 	o.fillFieldMap()
