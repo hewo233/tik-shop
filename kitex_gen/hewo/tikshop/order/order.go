@@ -819,7 +819,7 @@ type Order struct {
 	Id          int64         `thrift:"id,1" frugal:"1,default,i64" json:"id"`
 	CustomerId  int64         `thrift:"customer_id,2" frugal:"2,default,i64" json:"customer_id"`
 	Status      OrderStatus   `thrift:"status,4" frugal:"4,default,OrderStatus" json:"status"`
-	Items       []*OrderItem  `thrift:"items,5" frugal:"5,default,list<OrderItem>" json:"items"`
+	OrderItems  []*OrderItem  `thrift:"order_items,5" frugal:"5,default,list<OrderItem>" json:"order_items"`
 	TotalAmount int64         `thrift:"total_amount,6" frugal:"6,default,i64" json:"total_amount"`
 	Address     *OrderAddress `thrift:"address,7" frugal:"7,default,OrderAddress" json:"address"`
 	CreatedAt   int64         `thrift:"created_at,8" frugal:"8,default,i64" json:"created_at"`
@@ -844,8 +844,8 @@ func (p *Order) GetStatus() (v OrderStatus) {
 	return p.Status
 }
 
-func (p *Order) GetItems() (v []*OrderItem) {
-	return p.Items
+func (p *Order) GetOrderItems() (v []*OrderItem) {
+	return p.OrderItems
 }
 
 func (p *Order) GetTotalAmount() (v int64) {
@@ -873,8 +873,8 @@ func (p *Order) SetCustomerId(val int64) {
 func (p *Order) SetStatus(val OrderStatus) {
 	p.Status = val
 }
-func (p *Order) SetItems(val []*OrderItem) {
-	p.Items = val
+func (p *Order) SetOrderItems(val []*OrderItem) {
+	p.OrderItems = val
 }
 func (p *Order) SetTotalAmount(val int64) {
 	p.TotalAmount = val
@@ -890,7 +890,7 @@ var fieldIDToName_Order = map[int16]string{
 	1: "id",
 	2: "customer_id",
 	4: "status",
-	5: "items",
+	5: "order_items",
 	6: "total_amount",
 	7: "address",
 	8: "created_at",
@@ -1057,7 +1057,7 @@ func (p *Order) ReadField5(iprot thrift.TProtocol) error {
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
 	}
-	p.Items = _field
+	p.OrderItems = _field
 	return nil
 }
 func (p *Order) ReadField6(iprot thrift.TProtocol) error {
@@ -1196,13 +1196,13 @@ WriteFieldEndError:
 }
 
 func (p *Order) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("items", thrift.LIST, 5); err != nil {
+	if err = oprot.WriteFieldBegin("order_items", thrift.LIST, 5); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Items)); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.OrderItems)); err != nil {
 		return err
 	}
-	for _, v := range p.Items {
+	for _, v := range p.OrderItems {
 		if err := v.Write(oprot); err != nil {
 			return err
 		}
@@ -1294,7 +1294,7 @@ func (p *Order) DeepEqual(ano *Order) bool {
 	if !p.Field4DeepEqual(ano.Status) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.Items) {
+	if !p.Field5DeepEqual(ano.OrderItems) {
 		return false
 	}
 	if !p.Field6DeepEqual(ano.TotalAmount) {
@@ -1332,10 +1332,10 @@ func (p *Order) Field4DeepEqual(src OrderStatus) bool {
 }
 func (p *Order) Field5DeepEqual(src []*OrderItem) bool {
 
-	if len(p.Items) != len(src) {
+	if len(p.OrderItems) != len(src) {
 		return false
 	}
-	for i, v := range p.Items {
+	for i, v := range p.OrderItems {
 		_src := src[i]
 		if !v.DeepEqual(_src) {
 			return false

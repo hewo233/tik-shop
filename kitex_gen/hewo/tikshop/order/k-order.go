@@ -728,7 +728,7 @@ func (p *Order) FastReadField5(buf []byte) (int, error) {
 
 		_field = append(_field, _elem)
 	}
-	p.Items = _field
+	p.OrderItems = _field
 	return offset, nil
 }
 
@@ -834,7 +834,7 @@ func (p *Order) fastWriteField5(buf []byte, w thrift.NocopyWriter) int {
 	listBeginOffset := offset
 	offset += thrift.Binary.ListBeginLength()
 	var length int
-	for _, v := range p.Items {
+	for _, v := range p.OrderItems {
 		length++
 		offset += v.FastWriteNocopy(buf[offset:], w)
 	}
@@ -888,7 +888,7 @@ func (p *Order) field5Length() int {
 	l := 0
 	l += thrift.Binary.FieldBeginLength()
 	l += thrift.Binary.ListBeginLength()
-	for _, v := range p.Items {
+	for _, v := range p.OrderItems {
 		_ = v
 		l += v.BLength()
 	}

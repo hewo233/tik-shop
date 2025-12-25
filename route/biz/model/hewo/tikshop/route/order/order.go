@@ -691,7 +691,7 @@ type Order struct {
 	ID          int64         `thrift:"id,1" form:"id" json:"id" query:"id"`
 	CustomerID  int64         `thrift:"customer_id,2" form:"customer_id" json:"customer_id" query:"customer_id"`
 	Status      OrderStatus   `thrift:"status,3" form:"status" json:"status" query:"status"`
-	Items       []*OrderItem  `thrift:"items,4" form:"items" json:"items" query:"items"`
+	OrderItems  []*OrderItem  `thrift:"order_items,4" form:"order_items" json:"order_items" query:"order_items"`
 	TotalAmount int64         `thrift:"total_amount,5" form:"total_amount" json:"total_amount" query:"total_amount"`
 	Address     *OrderAddress `thrift:"address,6" form:"address" json:"address" query:"address"`
 	CreatedAt   int64         `thrift:"created_at,7" form:"created_at" json:"created_at" query:"created_at"`
@@ -716,8 +716,8 @@ func (p *Order) GetStatus() (v OrderStatus) {
 	return p.Status
 }
 
-func (p *Order) GetItems() (v []*OrderItem) {
-	return p.Items
+func (p *Order) GetOrderItems() (v []*OrderItem) {
+	return p.OrderItems
 }
 
 func (p *Order) GetTotalAmount() (v int64) {
@@ -741,7 +741,7 @@ var fieldIDToName_Order = map[int16]string{
 	1: "id",
 	2: "customer_id",
 	3: "status",
-	4: "items",
+	4: "order_items",
 	5: "total_amount",
 	6: "address",
 	7: "created_at",
@@ -908,7 +908,7 @@ func (p *Order) ReadField4(iprot thrift.TProtocol) error {
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
 	}
-	p.Items = _field
+	p.OrderItems = _field
 	return nil
 }
 func (p *Order) ReadField5(iprot thrift.TProtocol) error {
@@ -1047,13 +1047,13 @@ WriteFieldEndError:
 }
 
 func (p *Order) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("items", thrift.LIST, 4); err != nil {
+	if err = oprot.WriteFieldBegin("order_items", thrift.LIST, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Items)); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.OrderItems)); err != nil {
 		return err
 	}
-	for _, v := range p.Items {
+	for _, v := range p.OrderItems {
 		if err := v.Write(oprot); err != nil {
 			return err
 		}
@@ -1930,7 +1930,7 @@ func (p *ListOrdersRequest) String() string {
 
 type ListOrdersResponse struct {
 	Base   *base.BaseResponse `thrift:"base,1" form:"base" json:"base" query:"base"`
-	Orders []*OrderItem       `thrift:"orders,2" form:"orders" json:"orders" query:"orders"`
+	Orders []*Order           `thrift:"orders,2" form:"orders" json:"orders" query:"orders"`
 	Total  *int64             `thrift:"total,3,optional" form:"total" json:"total,omitempty" query:"total"`
 }
 
@@ -1950,7 +1950,7 @@ func (p *ListOrdersResponse) GetBase() (v *base.BaseResponse) {
 	return p.Base
 }
 
-func (p *ListOrdersResponse) GetOrders() (v []*OrderItem) {
+func (p *ListOrdersResponse) GetOrders() (v []*Order) {
 	return p.Orders
 }
 
@@ -2062,8 +2062,8 @@ func (p *ListOrdersResponse) ReadField2(iprot thrift.TProtocol) error {
 	if err != nil {
 		return err
 	}
-	_field := make([]*OrderItem, 0, size)
-	values := make([]OrderItem, size)
+	_field := make([]*Order, 0, size)
+	values := make([]Order, size)
 	for i := 0; i < size; i++ {
 		_elem := &values[i]
 		_elem.InitDefault()

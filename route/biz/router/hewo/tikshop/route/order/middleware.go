@@ -71,7 +71,7 @@ func _getorderinfoMw() []app.HandlerFunc {
 
 func _listordersMw() []app.HandlerFunc {
 	return []app.HandlerFunc{
-		common.PasetoAuth(consts.RoleAdmin, consts.RoleMerchant),
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleCustomer),
 	}
 }
 
@@ -96,6 +96,7 @@ func _placeorderMw() []app.HandlerFunc {
 }
 
 func _createorderMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		common.PasetoAuth(consts.RoleAdmin, consts.RoleCustomer),
+	}
 }

@@ -18,7 +18,7 @@ struct OrderAddress {
 }
 
 // 订单商品项
-struct OrderItem {
+    struct OrderItem {
     1: i64    product_id,
     2: i64    quantity,
     3: i64    cost,          // 单价(分)
@@ -32,7 +32,7 @@ struct Order {
     1: i64          id,
     2: i64          customer_id,
     4: OrderStatus  status,
-    5: list<OrderItem> items,
+    5: list<OrderItem> order_items,
     6: i64          total_amount,  // 总金额(分)
     7: OrderAddress    address,
     8: i64          created_at,

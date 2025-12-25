@@ -33,7 +33,7 @@ struct Order {
     1: i64 id,
     2: i64 customer_id,
     3: OrderStatus status,
-    4: list<OrderItem> items,
+    4: list<OrderItem> order_items,
     5: i64 total_amount,
     6: OrderAddress address,
     7: i64 created_at,
@@ -63,7 +63,7 @@ struct ListOrdersRequest {
 
 struct ListOrdersResponse {
     1: base.BaseResponse base,
-    2: list<OrderItem> orders,
+    2: list<Order> orders,
     3: optional i64 total,
 }
 

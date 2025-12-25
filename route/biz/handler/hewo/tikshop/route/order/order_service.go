@@ -116,7 +116,16 @@ func ListOrders(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(order.ListOrdersResponse)
+	resp := &order.ListOrdersResponse{
+		Base: &base.BaseResponse{
+			Code:    20000,
+			Message: "Success",
+		},
+	}
+	if err := copier.Copy(resp, rpcResp); err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }

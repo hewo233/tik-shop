@@ -46,7 +46,7 @@ func PasetoAuth(audiences ...string) app.HandlerFunc {
 
 		tokenAudience, err := token.GetAudience()
 		if err != nil {
-			errHere := errno.StatusBadRequest.WithMessage("invalid toekn: missing audience in token")
+			errHere := errno.StatusBadRequest.WithMessage("invalid token: missing audience in token")
 			c.JSON(http.StatusUnauthorized, errHere)
 			c.Abort()
 			return
