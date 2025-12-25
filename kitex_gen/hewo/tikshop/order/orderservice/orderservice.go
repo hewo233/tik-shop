@@ -35,13 +35,6 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"MarkOrderPaid": kitex.NewMethodInfo(
-		markOrderPaidHandler,
-		newOrderServiceMarkOrderPaidArgs,
-		newOrderServiceMarkOrderPaidResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
-	),
 	"CancelOrder": kitex.NewMethodInfo(
 		cancelOrderHandler,
 		newOrderServiceCancelOrderArgs,
@@ -187,30 +180,6 @@ func newOrderServiceGetOrderResult() interface{} {
 	return order.NewOrderServiceGetOrderResult()
 }
 
-func markOrderPaidHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*order.OrderServiceMarkOrderPaidArgs)
-	realResult := result.(*order.OrderServiceMarkOrderPaidResult)
-	success, err := handler.(order.OrderService).MarkOrderPaid(ctx, realArg.Req)
-	if err != nil {
-		switch v := err.(type) {
-		case *base.ErrorResponse:
-			realResult.Err = v
-		default:
-			return err
-		}
-	} else {
-		realResult.Success = success
-	}
-	return nil
-}
-func newOrderServiceMarkOrderPaidArgs() interface{} {
-	return order.NewOrderServiceMarkOrderPaidArgs()
-}
-
-func newOrderServiceMarkOrderPaidResult() interface{} {
-	return order.NewOrderServiceMarkOrderPaidResult()
-}
-
 func cancelOrderHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*order.OrderServiceCancelOrderArgs)
 	realResult := result.(*order.OrderServiceCancelOrderResult)
@@ -278,20 +247,6 @@ func (p *kClient) GetOrder(ctx context.Context, req *order.GetOrderRequest) (r *
 	_args.Req = req
 	var _result order.OrderServiceGetOrderResult
 	if err = p.c.Call(ctx, "GetOrder", &_args, &_result); err != nil {
-		return
-	}
-	switch {
-	case _result.Err != nil:
-		return r, _result.Err
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidRequest) (r *order.MarkOrderPaidResponse, err error) {
-	var _args order.OrderServiceMarkOrderPaidArgs
-	_args.Req = req
-	var _result order.OrderServiceMarkOrderPaidResult
-	if err = p.c.Call(ctx, "MarkOrderPaid", &_args, &_result); err != nil {
 		return
 	}
 	switch {

@@ -73,15 +73,6 @@ struct GetOrderResponse {
     1: Order order,
 }
 
-struct MarkOrderPaidRequest {
-    1: required i64 order_id,
-    2: required i64    customer_id,
-}
-
-struct MarkOrderPaidResponse {
-    1: bool success,
-}
-
 struct CancelOrderRequest {
     1: required i64 order_id,
     2: required i64    customer_id,
@@ -95,6 +86,5 @@ service OrderService {
     CreateOrderResponse CreateOrder(1: CreateOrderRequest req) throws (1: base.ErrorResponse err);
     ListOrdersResponse ListOrders(1: ListOrdersRequest req) throws (1: base.ErrorResponse err);
     GetOrderResponse GetOrder(1: GetOrderRequest req) throws (1: base.ErrorResponse err);
-    MarkOrderPaidResponse MarkOrderPaid(1: MarkOrderPaidRequest req) throws (1: base.ErrorResponse err);
     CancelOrderResponse CancelOrder(1: CancelOrderRequest req) throws (1: base.ErrorResponse err);
 }

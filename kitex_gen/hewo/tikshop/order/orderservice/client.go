@@ -14,7 +14,6 @@ type Client interface {
 	CreateOrder(ctx context.Context, req *order.CreateOrderRequest, callOptions ...callopt.Option) (r *order.CreateOrderResponse, err error)
 	ListOrders(ctx context.Context, req *order.ListOrdersRequest, callOptions ...callopt.Option) (r *order.ListOrdersResponse, err error)
 	GetOrder(ctx context.Context, req *order.GetOrderRequest, callOptions ...callopt.Option) (r *order.GetOrderResponse, err error)
-	MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidRequest, callOptions ...callopt.Option) (r *order.MarkOrderPaidResponse, err error)
 	CancelOrder(ctx context.Context, req *order.CancelOrderRequest, callOptions ...callopt.Option) (r *order.CancelOrderResponse, err error)
 }
 
@@ -60,11 +59,6 @@ func (p *kOrderServiceClient) ListOrders(ctx context.Context, req *order.ListOrd
 func (p *kOrderServiceClient) GetOrder(ctx context.Context, req *order.GetOrderRequest, callOptions ...callopt.Option) (r *order.GetOrderResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetOrder(ctx, req)
-}
-
-func (p *kOrderServiceClient) MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidRequest, callOptions ...callopt.Option) (r *order.MarkOrderPaidResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.MarkOrderPaid(ctx, req)
 }
 
 func (p *kOrderServiceClient) CancelOrder(ctx context.Context, req *order.CancelOrderRequest, callOptions ...callopt.Option) (r *order.CancelOrderResponse, err error) {

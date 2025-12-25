@@ -855,51 +855,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/order/{id}/mark_paid": {
-            "post": {
-                "description": "根据订单 ID 将订单状态标记为已支付",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "订单管理"
-                ],
-                "summary": "标记订单已支付",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "订单ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Order marked as paid successfully",
-                        "schema": {
-                            "$ref": "#/definitions/order.MarkOrderPaidResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/order.MarkOrderPaidResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/ping": {
             "get": {
                 "description": "用于测试服务器是否正常响应，返回 \"pong\" 消息",
@@ -1758,17 +1713,6 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
-                }
-            }
-        },
-        "order.MarkOrderPaidResponse": {
-            "type": "object",
-            "properties": {
-                "base": {
-                    "$ref": "#/definitions/base.BaseResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },

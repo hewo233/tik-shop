@@ -87,21 +87,10 @@ struct CancelOrderResponse {
     2: optional bool success,
 }
 
-struct MarkOrderPaidRequest {
-    1: i64 id (api.path = "id", api.vd = "$>0"),
-}
-
-struct MarkOrderPaidResponse {
-    1: base.BaseResponse base,
-    2: optional bool success,
-}
-
 // ========== Service 定义 ==========
 service OrderService {
     CreateOrderResponse CreateOrder(1: CreateOrderRequest req) (api.post="/order");
     ListOrdersResponse ListOrders(1: ListOrdersRequest req) (api.get="/order");
     GetOrderResponse GetOrder(1: GetOrderRequest req) (api.get="/order/:id");
     CancelOrderResponse CancelOrder(1: CancelOrderRequest req) (api.post="/order/:id/cancel");
-    MarkOrderPaidResponse MarkOrderPaid(1: MarkOrderPaidRequest req) (api.post="/order/:id/mark_paid");
-
 }

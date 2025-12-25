@@ -222,13 +222,6 @@ definitions:
       total:
         type: integer
     type: object
-  order.MarkOrderPaidResponse:
-    properties:
-      base:
-        $ref: '#/definitions/base.BaseResponse'
-      success:
-        type: boolean
-    type: object
   order.OrderItem:
     properties:
       cost:
@@ -1037,36 +1030,6 @@ paths:
           schema:
             $ref: '#/definitions/order.CancelOrderResponse'
       summary: 取消订单
-      tags:
-      - 订单管理
-  /order/{id}/mark_paid:
-    post:
-      consumes:
-      - application/json
-      description: 根据订单 ID 将订单状态标记为已支付
-      parameters:
-      - description: 订单ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Bearer token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Order marked as paid successfully
-          schema:
-            $ref: '#/definitions/order.MarkOrderPaidResponse'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/order.MarkOrderPaidResponse'
-      summary: 标记订单已支付
       tags:
       - 订单管理
   /ping:

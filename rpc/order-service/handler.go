@@ -76,9 +76,3 @@ func (s *OrderServiceImpl) CancelOrder(ctx context.Context, req *order.CancelOrd
 	}
 	return resp, nil
 }
-
-// MarkOrderPaid implements the OrderServiceImpl interface.
-func (s *OrderServiceImpl) MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidRequest) (resp *order.MarkOrderPaidResponse, err error) {
-	// TODO: Your code here...
-	return
-}
