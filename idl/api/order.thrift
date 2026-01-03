@@ -11,6 +11,7 @@ enum OrderStatus {
     COMPLETED       = 3, // 已完成
     CANCELLED       = 4, // 已取消
     REFUNDED        = 5  // 已退款
+    WAITING         = 6  // 下单中
 }
 
 struct OrderAddress {

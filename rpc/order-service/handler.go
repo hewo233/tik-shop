@@ -2,14 +2,29 @@ package main
 
 import (
 	"context"
+	"github.com/bwmarrin/snowflake"
 	"github.com/hewo/tik-shop/db/model"
 	order "github.com/hewo/tik-shop/kitex_gen/hewo/tikshop/order"
+	"github.com/hewo/tik-shop/mq"
 	"github.com/jinzhu/copier"
+	"log"
+	"time"
 )
+
+var idNode *snowflake.Node
+
+func init() {
+	var err error
+	idNode, err = snowflake.NewNode(1) // 节点 ID 1
+	if err != nil {
+		panic(err)
+	}
+}
 
 // OrderServiceImpl implements the last service interface defined in the IDL.
 type OrderServiceImpl struct {
 	OrderSqlManage
+	ProductCacheManage
 }
 type OrderSqlManage interface {
 	CreateOrder(order *order.CreateOrderRequest) (int64, error)
@@ -17,16 +32,44 @@ type OrderSqlManage interface {
 	ListOrders(customerID int64, offset int, limit int, status int) ([]*model.Order, error)
 	CancelOrder(orderID int64, customerID int64) error
 }
+type ProductCacheManage interface {
+	DeductStock(ctx context.Context, productIDs []int64, quantities []int64) error
+}
 
 // CreateOrder implements the OrderServiceImpl interface.
 func (s *OrderServiceImpl) CreateOrder(ctx context.Context, req *order.CreateOrderRequest) (resp *order.CreateOrderResponse, err error) {
-	id, err := s.OrderSqlManage.CreateOrder(req)
+	orderID := idNode.Generate().Int64()
+
+	items := make([]mq.OrderItem, len(req.Items))
+
+	ProductIDs := make([]int64, len(req.Items))
+	Quantities := make([]int64, len(req.Items))
+	for i, item := range req.Items {
+		ProductIDs[i] = item.ProductId
+		Quantities[i] = item.Quantity
+		items[i] = mq.OrderItem{
+			ProductId: item.ProductId,
+			Count:     item.Quantity,
+		}
+	}
+
+	err = s.ProductCacheManage.DeductStock(ctx, ProductIDs, Quantities)
 	if err != nil {
 		return nil, err
 	}
-	resp = &order.CreateOrderResponse{
-		OrderId: id,
+
+	// send message to mq
+	msg := mq.OrderMessage{
+		OrderId:   orderID,
+		Uid:       req.CustomerId,
+		Items:     items,
+		Timestamp: time.Now().Unix(),
 	}
+
+	if err := mq.Producer.SendOrderMsg(ctx, msg); err != nil {
+		log.Println("Failed to send order message to MQ:", err)
+	}
+
 	return resp, nil
 }
 

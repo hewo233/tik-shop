@@ -10,6 +10,7 @@ const (
 	OrderStatusCompleted int8 = 3 // 已完成
 	OrderStatusCancelled int8 = 4 // 已取消
 	OrderStatusRefunded  int8 = 5 // 已退款
+	OrderStatusWaiting   int8 = 6 // 待处理
 )
 
 type OrderAddress struct {
@@ -20,7 +21,7 @@ type OrderAddress struct {
 
 // Order 订单主表
 type Order struct {
-	ID         int64 `gorm:"primaryKey;column:id" json:"id"`
+	ID         int64 `gorm:"primaryKey;column:id;autoIncrement:false" json:"id"`
 	CustomerID int64 `gorm:"column:customer_id;index;not null" json:"customer_id"`
 
 	// 订单状态：0:待支付, 1:已支付/待发货, 2:已发货, 3:已完成, 4:已取消

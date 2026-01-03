@@ -21,6 +21,7 @@ const (
 	OrderStatus_COMPLETED       OrderStatus = 3
 	OrderStatus_CANCELLED       OrderStatus = 4
 	OrderStatus_REFUNDED        OrderStatus = 5
+	OrderStatus_WAITING         OrderStatus = 6
 )
 
 func (p OrderStatus) String() string {
@@ -37,6 +38,8 @@ func (p OrderStatus) String() string {
 		return "CANCELLED"
 	case OrderStatus_REFUNDED:
 		return "REFUNDED"
+	case OrderStatus_WAITING:
+		return "WAITING"
 	}
 	return "<UNSET>"
 }
@@ -55,6 +58,8 @@ func OrderStatusFromString(s string) (OrderStatus, error) {
 		return OrderStatus_CANCELLED, nil
 	case "REFUNDED":
 		return OrderStatus_REFUNDED, nil
+	case "WAITING":
+		return OrderStatus_WAITING, nil
 	}
 	return OrderStatus(0), fmt.Errorf("not a valid OrderStatus string")
 }

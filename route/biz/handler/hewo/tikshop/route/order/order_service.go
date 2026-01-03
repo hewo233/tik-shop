@@ -61,7 +61,7 @@ func CreateOrder(ctx context.Context, c *app.RequestContext) {
 	resp := &order.CreateOrderResponse{
 		Base: &base.BaseResponse{
 			Code:    20000,
-			Message: "Success",
+			Message: "已经锁单，查询中",
 		},
 	}
 	if err := copier.Copy(resp, rpcResp); err != nil {

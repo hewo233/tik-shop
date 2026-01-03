@@ -12,6 +12,7 @@ import (
 // ProductServiceImpl implements the last service interface defined in the IDL.
 type ProductServiceImpl struct {
 	ProductSqlManage
+	ProductCacheManage
 }
 
 type ProductSqlManage interface {
@@ -22,6 +23,13 @@ type ProductSqlManage interface {
 	UpdateProductByID(product *model.Product) error
 	DeleteProductByID(productID int64, merchantID int64) (err error)
 	ModifyStockByID(product *model.Product) error
+}
+
+type ProductCacheManage interface {
+	GetProductInfo(ctx context.Context, productID int64) (*model.Product, error)
+	UpdateProductStock(ctx context.Context, productID int64) error
+	ModifyProductStock(ctx context.Context, productID int64, delta int64) error
+	DeleteProductCache(ctx context.Context, productID int64) error
 }
 
 // CreateProduct implements the ProductServiceImpl interface.
@@ -47,7 +55,7 @@ func (s *ProductServiceImpl) CreateProduct(ctx context.Context, request *product
 
 // GetProductByID implements the ProductServiceImpl interface.
 func (s *ProductServiceImpl) GetProductByID(ctx context.Context, req *product.GetProductByIDRequest) (resp *product.GetProductByIDResponse, err error) {
-	pro, err := s.ProductSqlManage.GetProductByID(req.ProductId)
+	pro, err := s.ProductCacheManage.GetProductInfo(ctx, req.ProductId)
 	if err != nil {
 		return nil, err
 	}
@@ -124,6 +132,10 @@ func (s *ProductServiceImpl) UpdateProductByID(ctx context.Context, req *product
 		return nil, &base.ErrorResponse{Code: consts.StatusInternalServerError, Message: err.Error()}
 	}
 
+	err = s.ProductCacheManage.UpdateProductStock(ctx, req.ProductId)
+	if err != nil {
+		return nil, err
+	}
 	return resp, nil
 
 }
@@ -143,6 +155,10 @@ func (s *ProductServiceImpl) DeleteProductByID(ctx context.Context, req *product
 		Success: true,
 	}
 
+	err = s.ProductCacheManage.DeleteProductCache(ctx, req.ProductId)
+	if err != nil {
+		return nil, err
+	}
 	return resp, nil
 }
 
@@ -169,6 +185,11 @@ func (s *ProductServiceImpl) ModifyStockByID(ctx context.Context, req *product.M
 
 	resp = &product.ModifyStockByIDResponse{
 		Stock: existed.Stock,
+	}
+
+	err = s.ProductCacheManage.ModifyProductStock(ctx, req.ProductId, req.Delta)
+	if err != nil {
+		return nil, err
 	}
 
 	return resp, nil
